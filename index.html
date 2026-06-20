@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>忍道之路 · NINDO</title>
+<style>
+:root{
+  --ink:#0f0c07; --ink2:#1a1409; --panel:#211a0e;
+  --paper:#ecdcb4; --paper-dim:#a89a78;
+  --naruto:#ff7a1a; --chakra:#54b8f0; --seal:#c03022;
+  --gold:#e0a83e; --hp:#e04848; --block:#86c5ea;
+  --atk:#e06548; --skl:#52b3a4; --pwr:#a87fd6; --curse:#6b6b6b;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{
+  background:var(--ink);
+  color:var(--paper);
+  font-family:"Noto Serif SC","Songti SC","STSong",serif;
+  overflow:hidden;user-select:none;-webkit-user-select:none;
+}
+button{font-family:inherit}
+#app{height:100dvh;display:flex;flex-direction:column;max-width:1020px;margin:0 auto;position:relative;overflow:hidden}
+
+/* ============ 顶栏 ============ */
+#topbar{
+  display:none;align-items:center;gap:12px;padding:6px 12px;
+  border-bottom:1px solid rgba(236,220,180,.14);
+  font-size:13.5px;min-height:42px;flex-wrap:wrap;z-index:20;
+  background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.1));
+}
+#topbar.on{display:flex}
+.tstat{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.tstat.hp{color:#ef6a6a}.tstat.gd{color:var(--gold)}.tstat.fl{color:var(--paper-dim)}
+.tbtn{background:none;border:1px solid rgba(236,220,180,.25);color:var(--paper-dim);
+  border-radius:4px;padding:2px 9px;font-size:12px;cursor:pointer}
+.tbtn:active{background:rgba(255,255,255,.08)}
+#relicbar{display:flex;gap:5px;flex-wrap:wrap}
+.relic-i{width:25px;height:25px;border-radius:50%;cursor:pointer;font-size:13px;
+  background:radial-gradient(circle at 35% 30%,#41351e,#191204);
+  border:1px solid var(--gold);display:flex;align-items:center;justify-content:center}
+#potionbar{display:flex;gap:5px}
+.potion-i{width:25px;height:25px;border-radius:6px;cursor:pointer;font-size:13px;
+  background:radial-gradient(circle at 35% 30%,#23303d,#0d1217);
+  border:1px solid var(--chakra);display:flex;align-items:center;justify-content:center}
+.potion-i.empty{opacity:.25;border-style:dashed;cursor:default}
+
+/* ============ 屏幕 ============ */
+.screen{flex:1;display:none;flex-direction:column;overflow-y:auto;overflow-x:hidden;padding:14px;position:relative}
+.screen.active{display:flex}
+.sec-t{text-align:center;font-size:clamp(20px,4vw,26px);letter-spacing:.32em;margin:10px 0 2px;font-weight:700}
+.sec-s{text-align:center;color:var(--paper-dim);font-size:12.5px;margin-bottom:8px;line-height:1.7}
+.divider{width:110px;height:2px;background:linear-gradient(90deg,transparent,var(--naruto),transparent);margin:8px auto 14px}
+.center{display:flex;flex-direction:column;align-items:center;gap:14px}
+.btn{
+  display:inline-block;background:linear-gradient(180deg,#d8402e,#a32619);color:#fff;
+  border:none;cursor:pointer;padding:12px 36px;font-size:16px;letter-spacing:.22em;
+  border-radius:4px;box-shadow:0 4px 0 #5e130b,0 6px 14px rgba(0,0,0,.5);
+  transition:transform .08s,box-shadow .08s;font-weight:700;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #5e130b}
+
+.btn.ghost{background:linear-gradient(180deg,#3d3520,#28220f);box-shadow:0 4px 0 #14100a,0 6px 14px rgba(0,0,0,.5);color:var(--paper)}
+.btn.blue{background:linear-gradient(180deg,#3f8fc0,#23618c);box-shadow:0 4px 0 #123349}
+.btn:disabled{opacity:.4;pointer-events:none}
+.btn.small{padding:8px 18px;font-size:13px;letter-spacing:.12em}
+
+/* ============ 标题 ============ */
+#screen-title{justify-content:center;align-items:center;gap:0;
+  background:
+   radial-gradient(ellipse 70% 45% at 50% 18%, rgba(255,122,26,.13), transparent),
+   radial-gradient(ellipse 90% 40% at 50% 110%, rgba(84,184,240,.08), transparent);
+}
+.uzu-wrap{position:relative;width:130px;height:130px;margin-bottom:18px}
+.uzu{position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 0 30%,rgba(255,122,26,.75) 42%,transparent 55%,transparent 60%,rgba(255,122,26,.35) 75%,transparent 88%);
+  animation:spin 7s linear infinite;
+  -webkit-mask:radial-gradient(circle,transparent 26%,#000 27%);mask:radial-gradient(circle,transparent 26%,#000 27%)}
+.uzu.u2{animation-duration:11s;animation-direction:reverse;opacity:.5;inset:14px}
+.uzu-core{position:absolute;inset:38px;border-radius:50%;border:3px solid var(--naruto);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 0 26px rgba(255,122,26,.5),inset 0 0 14px rgba(255,122,26,.35)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.title-main{font-size:clamp(46px,11vw,84px);letter-spacing:.14em;font-weight:900;
+  background:linear-gradient(180deg,#fff3da 30%,#e8b06a 70%,#c97a2a);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 14px rgba(255,122,26,.3));line-height:1.15}
+.title-sub{color:var(--naruto);letter-spacing:.62em;margin:6px 0 26px;font-size:13px;text-indent:.62em}
+.title-desc{color:var(--paper-dim);text-align:center;line-height:2;font-size:13.5px;max-width:430px;margin-bottom:30px}
+.title-desc b{color:var(--paper)}
+
+/* ============ 地图 ============ */
+#map-wrap{max-width:540px;margin:0 auto;width:100%}
+#map-svg{width:100%;display:block}
+.mnode{cursor:default}
+.mnode circle.bg{fill:#241c0e;stroke:rgba(236,220,180,.28);stroke-width:1.5}
+.mnode text{fill:var(--paper);font-size:17px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.mnode text.lbl{font-size:8.5px;fill:var(--paper-dim)}
+.mnode.avail{cursor:pointer}
+.mnode.avail circle.bg{stroke:var(--naruto);stroke-width:2.5;filter:drop-shadow(0 0 6px rgba(255,122,26,.8))}
+.mnode.avail circle.pulse{fill:none;stroke:var(--naruto);stroke-width:2;animation:mpulse 1.6s infinite}
+@keyframes mpulse{0%{r:17;opacity:.9}100%{r:28;opacity:0}}
+.mnode.done circle.bg{opacity:.35}.mnode.done text{opacity:.3}
+.mnode.cur circle.bg{stroke:var(--chakra);stroke-width:2.5}
+.medge{stroke:rgba(236,220,180,.22);stroke-width:2;stroke-dasharray:3 6;fill:none;stroke-linecap:round}
+.medge.lit{stroke:rgba(255,122,26,.65)}
+.act-banner{text-align:center;color:var(--gold);font-size:13px;letter-spacing:.3em;margin-bottom:2px}
+
+/* ============ 战斗 ============ */
+#screen-combat{padding:0;overflow:hidden}
+#stage{flex:1;position:relative;display:flex;align-items:stretch;min-height:230px;overflow:hidden}
+#stage.act1{background:
+  radial-gradient(ellipse 100% 60% at 50% 105%, rgba(38,66,32,.55), transparent),
+  radial-gradient(ellipse 60% 40% at 80% 0%, rgba(84,184,240,.07), transparent),
+  linear-gradient(180deg,#12150c,#0d0f08)}
+#stage.act2{background:
+  radial-gradient(ellipse 100% 60% at 50% 105%, rgba(64,30,72,.5), transparent),
+  radial-gradient(ellipse 60% 40% at 20% 0%, rgba(192,48,34,.08), transparent),
+  linear-gradient(180deg,#150d16,#0c080d)}
+#stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 6px)}
+#stage.shake{animation:shake .35s}
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(4px,-2px)}}
+
+#player-side{width:34%;min-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:10px 4px 14px;z-index:2}
+#enemy-side{flex:1;display:flex;align-items:flex-end;justify-content:space-evenly;padding:10px 8px 14px;flex-wrap:wrap;gap:4px;z-index:2}
+
+.unit{display:flex;flex-direction:column;align-items:center;position:relative;transition:opacity .5s}
+.unit.dead{opacity:0;pointer-events:none}
+.unit .intent{font-size:13px;min-height:20px;margin-bottom:3px;color:var(--paper-dim);
+  background:rgba(0,0,0,.45);padding:1px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+.unit .intent b{color:#ff6b5b;font-size:14.5px}
+.unit .intent .ib{color:var(--block)}
+.frame{width:96px;height:96px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 38% 30%, var(--f1,#3a3322), var(--f2,#171208) 75%);
+  border:2.5px solid var(--fc,#8a7c5a);
+  box-shadow:0 6px 16px rgba(0,0,0,.55), inset 0 0 18px rgba(0,0,0,.5);
+  transition:transform .15s}
+.frame .face{font-size:50px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+.frame::before{content:"";position:absolute;inset:-7px;border-radius:50%;
+  border:1.5px dashed color-mix(in srgb, var(--fc) 55%, transparent)}
+.unit.player .frame{--fc:var(--naruto);--f1:#4a3014;--f2:#1c1006;box-shadow:0 6px 16px rgba(0,0,0,.55),0 0 22px rgba(255,122,26,.25)}
+.unit.elite .frame{--fc:var(--pwr);--f1:#33203f;--f2:#150c1a}
+.unit.boss .frame{--fc:var(--seal);width:118px;height:118px;--f1:#3f1820;--f2:#170709;
+  box-shadow:0 6px 16px rgba(0,0,0,.6),0 0 30px rgba(192,48,34,.35)}
+.unit.boss .frame .face{font-size:64px}
+.unit.targetable .frame{cursor:pointer}
+.unit.target-glow .frame{border-color:var(--naruto);
+  box-shadow:0 0 0 4px rgba(255,122,26,.25),0 0 26px rgba(255,122,26,.7);cursor:pointer;
+  animation:tglow 1s infinite}
+@keyframes tglow{50%{box-shadow:0 0 0 7px rgba(255,122,26,.12),0 0 36px rgba(255,122,26,.95)}}
+.unit.lunge .frame{animation:lunge .32s}
+@keyframes lunge{30%{transform:translateX(26px) scale(1.05)}}
+.unit.lunge-l .frame{animation:lungeL .32s}
+@keyframes lungeL{30%{transform:translateX(-26px) scale(1.05)}}
+.unit.hitfx .frame{animation:hitfx .3s}
+@keyframes hitfx{20%{transform:translateX(-6px);filter:brightness(2) saturate(.4)}60%{transform:translateX(5px)}}
+.uname{font-size:12.5px;margin-top:5px;letter-spacing:.05em}
+.uname .ub{color:var(--block);font-size:12px}
+.hpbar{width:104px;height:10px;background:#000;border-radius:6px;margin-top:4px;overflow:hidden;border:1px solid rgba(255,255,255,.18);position:relative}
+.hpbar i{display:block;height:100%;background:linear-gradient(90deg,#8c1f1f,#e04848);transition:width .3s;border-radius:6px}
+.hpbar.pb i{background:linear-gradient(90deg,#1f6a8c,#54b8f0)}
+.hptx{font-size:10.5px;color:var(--paper-dim);margin-top:2px}
+.strow{display:flex;gap:4px;justify-content:center;margin-top:3px;flex-wrap:wrap;min-height:17px;max-width:150px}
+.stag{font-size:10.5px;padding:0 5px;border-radius:3px;background:rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,.22);cursor:pointer;white-space:nowrap}
+.stag.buff{border-color:rgba(126,224,126,.5)}.stag.debuff{border-color:rgba(224,101,72,.6)}
+
+.slashfx{position:absolute;width:90px;height:90px;pointer-events:none;z-index:30}
+.slashfx::before,.slashfx::after{content:"";position:absolute;left:50%;top:50%;width:100px;height:3.5px;
+  background:linear-gradient(90deg,transparent,#fff,#ffd9a0,transparent);border-radius:2px;
+  transform-origin:center;animation:slash .28s forwards}
+.slashfx::after{animation-delay:.07s;animation-name:slash2}
+@keyframes slash{0%{transform:translate(-50%,-50%) rotate(40deg) scaleX(0);opacity:1}60%{transform:translate(-50%,-50%) rotate(40deg) scaleX(1.15)}100%{opacity:0;transform:translate(-50%,-50%) rotate(40deg) scaleX(1.2)}}
+@keyframes slash2{0%{transform:translate(-50%,-50%) rotate(-35deg) scaleX(0);opacity:1}60%{transform:translate(-50%,-50%) rotate(-35deg) scaleX(1.1)}100%{opacity:0;transform:translate(-50%,-50%) rotate(-35deg) scaleX(1.15)}}
+.blockfx{position:absolute;pointer-events:none;z-index:30;font-size:34px;animation:blockpop .5s forwards}
+@keyframes blockpop{0%{transform:scale(.4);opacity:0}40%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:0}}
+.fdmg{position:absolute;font-weight:900;pointer-events:none;z-index:40;font-size:25px;color:#ff5b4a;
+  text-shadow:0 0 6px #000,0 2px 3px #000;animation:fup .85s forwards}
+.fdmg.blk{color:var(--block);font-size:19px}
+.fdmg.heal{color:#7ee07e}
+@keyframes fup{15%{transform:translateY(-8px) scale(1.25)}100%{transform:translateY(-52px) scale(1);opacity:0}}
+
+#turn-banner{position:absolute;top:38%;left:0;right:0;text-align:center;z-index:45;pointer-events:none;
+  font-size:30px;letter-spacing:.5em;font-weight:900;color:var(--paper);opacity:0;text-indent:.5em;
+  text-shadow:0 0 18px rgba(255,122,26,.8),0 2px 6px #000}
+#turn-banner.go{animation:banner 1.1s forwards}
+@keyframes banner{0%{opacity:0;transform:scale(1.3)}25%{opacity:1;transform:scale(1)}75%{opacity:1}100%{opacity:0}}
+
+#combat-bottom{background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.6));border-top:1px solid rgba(236,220,180,.12)}
+#combat-info{display:flex;justify-content:space-between;align-items:center;padding:4px 12px;font-size:12px;color:var(--paper-dim)}
+.pilebtn{background:rgba(255,255,255,.05);border:1px solid rgba(236,220,180,.2);color:var(--paper-dim);
+  border-radius:4px;padding:3px 10px;font-size:11.5px;cursor:pointer}
+#hand-outer{display:flex;align-items:center;gap:8px;padding:4px 10px 12px}
+#orb{width:58px;height:58px;min-width:58px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 36% 28%,#8fd4f7,#1d5a80 72%);
+  border:2px solid var(--chakra);color:#fff;font-weight:900;font-size:21px;
+  box-shadow:0 0 16px rgba(84,184,240,.55),inset 0 -4px 8px rgba(0,0,0,.3)}
+#orb small{font-size:8.5px;font-weight:400;opacity:.9;letter-spacing:.1em}
+#orb.zero{filter:grayscale(.8);box-shadow:none}
+#hand{flex:1;position:relative;height:172px}
+#endturn{min-width:74px;padding:12px 10px;font-size:14px;letter-spacing:.1em;border-radius:6px}
+#endturn.enemyturn{filter:grayscale(1);pointer-events:none}
+
+/* 卡牌 */
+.card{width:112px;height:156px;border-radius:9px;position:absolute;cursor:pointer;
+  background:linear-gradient(168deg,#2e2615 0%,#1b1509 70%);
+  border:2px solid var(--cc,#777);
+  box-shadow:0 4px 10px rgba(0,0,0,.55);
+  display:flex;flex-direction:column;padding:7px 7px 5px;
+  transition:transform .16s,box-shadow .16s,left .25s;
+  transform-origin:bottom center}
+.card.inhand:hover{z-index:30!important}
+.card .gem{position:absolute;top:-9px;left:-9px;width:25px;height:25px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#8fd4f7,#1d5a80);
+  border:1.5px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;
+  font-size:13.5px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
+.card.noafford .gem{background:radial-gradient(circle at 35% 30%,#e08585,#7a1d1d)}
+.card.noafford{opacity:.62}
+.card .tband{font-size:8.5px;text-align:center;color:var(--paper-dim);letter-spacing:.18em;
+  border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:3px}
+.card .art{height:40px;display:flex;align-items:center;justify-content:center;font-size:27px;
+  background:radial-gradient(ellipse at center, color-mix(in srgb,var(--cc) 22%,transparent), transparent 75%);
+  margin:2px 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.card .nm{font-size:12.5px;font-weight:700;text-align:center;color:var(--cc);line-height:1.15;min-height:15px}
+.card .ds{font-size:10.5px;text-align:center;flex:1;display:flex;align-items:center;justify-content:center;
+  line-height:1.4;color:var(--paper);font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding:1px}
+.card .ds b{color:var(--naruto);font-size:12px}
+.card .rar{position:absolute;bottom:4px;right:6px;font-size:8px;color:var(--gold);letter-spacing:.1em}
+.card.atk{--cc:var(--atk)}.card.skl{--cc:var(--skl)}.card.pwr{--cc:var(--pwr)}.card.curse{--cc:var(--curse)}
+.card.upg .nm{color:#8ee08e}
+.card.r2{box-shadow:0 4px 10px rgba(0,0,0,.55),0 0 11px rgba(224,168,62,.3)}
+.card.r3{box-shadow:0 4px 10px rgba(0,0,0,.55),0 0 14px rgba(168,127,214,.5)}
+.card.picked{transform:translateY(-34px) scale(1.12)!important;z-index:40!important;
+  box-shadow:0 14px 28px rgba(0,0,0,.7),0 0 18px color-mix(in srgb,var(--cc) 60%,transparent)}
+.card.static{position:static;cursor:pointer}
+.card.playing{animation:playcard .3s forwards}
+@keyframes playcard{to{transform:translateY(-130px) scale(.7);opacity:0}}
+
+#target-hint{position:absolute;top:8px;left:0;right:0;text-align:center;z-index:44;pointer-events:none;
+  color:var(--naruto);font-size:13.5px;letter-spacing:.2em;opacity:0;transition:opacity .2s;
+  text-shadow:0 0 8px #000}
+#target-hint.on{opacity:1}
+
+/* ============ 网格/弹层/通用列表 ============ */
+.cgrid{display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin:12px 0;padding-bottom:6px}
+.ritem{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid rgba(236,220,180,.22);
+  padding:13px 20px;border-radius:7px;cursor:pointer;min-width:270px;max-width:420px;justify-content:center;
+  font-size:14.5px;transition:border-color .15s;text-align:center;line-height:1.5}
+.ritem:active,.ritem:hover{border-color:var(--naruto)}
+.ritem.noclick{pointer-events:none}
+#overlay{position:absolute;inset:0;background:rgba(5,3,0,.88);z-index:60;display:none;
+  flex-direction:column;align-items:center;padding:18px;overflow-y:auto}
+#overlay.on{display:flex}
+#toast{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:90;
+  background:rgba(0,0,0,.92);border:1px solid var(--naruto);color:var(--paper);
+  padding:8px 20px;border-radius:5px;font-size:13.5px;opacity:0;transition:opacity .25s;pointer-events:none;
+  max-width:88%;text-align:center;line-height:1.5}
+#toast.show{opacity:1}
+.shop-relic{width:138px;background:var(--panel);border:1px solid var(--gold);border-radius:9px;
+  padding:13px 9px;text-align:center;cursor:pointer}
+.shop-relic .ric{font-size:32px}
+.shop-relic .rname{font-size:13px;color:var(--gold);margin:5px 0 4px}
+.shop-relic .rdesc{font-size:10.5px;color:var(--paper-dim);line-height:1.45;font-family:"PingFang SC","Microsoft YaHei",sans-serif}
+.price{text-align:center;color:var(--gold);font-size:13.5px;margin-top:6px}
+.price.cant{color:#8a5a5a}
+.sold{opacity:.3;pointer-events:none}
+.event-box{max-width:520px;margin:14px auto;background:var(--panel);border:1px solid rgba(236,220,180,.25);
+  border-radius:10px;padding:24px 22px;text-align:center;width:100%}
+.event-box .eic{font-size:52px}
+.event-box p{margin:13px 0;line-height:1.85;font-size:14.5px}
+.eopts{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.eopts .btn{letter-spacing:.05em;font-size:14px;padding:12px 16px}
+.statline{display:flex;gap:22px;justify-content:center;color:var(--paper-dim);font-size:13px;flex-wrap:wrap}
+.statline b{color:var(--paper)}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001s!important;transition-duration:.001s!important}
+}
+@media (max-width:620px){
+  .card{width:100px;height:144px}
+  .frame{width:82px;height:82px}.frame .face{font-size:42px}
+  .unit.boss .frame{width:100px;height:100px}.unit.boss .frame .face{font-size:54px}
+  #player-side{min-width:120px;width:30%}
+  #hand{height:160px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <div class="tstat hp">❤️<span id="t-hp"></span></div>
+    <div class="tstat gd">🪙<span id="t-gold"></span></div>
+    <div class="tstat fl" id="t-floor"></div>
+    <button class="tbtn" onclick="G.viewDeck()">🎴 卡组 <span id="t-deck"></span></button>
+    <div id="potionbar"></div>
+    <div id="relicbar"></div>
+    <button class="tbtn" id="sfx-btn" onclick="G.toggleSfx()">🔊</button>
+  </div>
+
+  <div class="screen active" id="screen-title">
+    <div class="uzu-wrap"><div class="uzu"></div><div class="uzu u2"></div><div class="uzu-core">🍥</div></div>
+    <div class="title-main">忍道之路</div>
+    <div class="title-sub">N I N D O · R O G U E L I K E</div>
+    <p class="title-desc">
+      音忍入侵,木叶告急。你将穿越<b>两章十六层</b>关卡,<br>
+      在分岔的路线间权衡:战斗、奇遇、商店、还是篝火。<br>
+      每回合 <b>3 点查克拉</b>,格挡回合末消散,意图完全公开——<br>
+      构筑你的忍术卡组,击败潜伏在最深处的<b>大蛇丸</b>。
+    </p>
+    <button class="btn" onclick="G.newRun()">开 始 任 务</button>
+    <p style="color:var(--paper-dim);font-size:11.5px;margin-top:22px;opacity:.7">攻击牌:点击后再点敌人 · 其余卡牌:连点两次打出 · 点击状态图标查看说明</p>
+  </div>
+
+  <div class="screen" id="screen-map">
+    <div class="act-banner" id="act-banner"></div>
+    <div class="sec-t" id="map-title"></div>
+    <div class="sec-s">⚔️战斗 💀精英 🔥篝火 ❓奇遇 🏪商店 ☠️首领 — 沿虚线路径前进</div>
+    <div class="divider"></div>
+    <div id="map-wrap"></div>
+  </div>
+
+  <div class="screen" id="screen-combat">
+    <div id="stage">
+      <div id="turn-banner"></div>
+      <div id="target-hint">— 点 击 敌 人 选 择 目 标 —</div>
+      <div id="player-side"></div>
+      <div id="enemy-side"></div>
+    </div>
+    <div id="combat-bottom">
+      <div id="combat-info">
+        <button class="pilebtn" onclick="G.viewPile('draw')">📥 抽牌堆 <span id="n-draw">0</span></button>
+        <span id="combat-log" style="flex:1;text-align:center;padding:0 6px"></span>
+        <button class="pilebtn" onclick="G.viewPile('discard')">📤 弃牌堆 <span id="n-discard">0</span></button>
+      </div>
+      <div id="hand-outer">
+        <div id="orb"><span id="n-energy">3</span><small>查克拉</small></div>
+        <div id="hand"></div>
+        <button class="btn blue" id="endturn" onclick="G.endTurn()">结束<br>回合</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-reward"><div class="sec-t">战 斗 胜 利</div><div class="divider"></div><div class="center" id="reward-list"></div></div>
+  <div class="screen" id="screen-rest"></div>
+  <div class="screen" id="screen-event"><div class="event-box" id="event-box"></div></div>
+  <div class="screen" id="screen-shop"></div>
+  <div class="screen" id="screen-end"><div class="center" id="end-content" style="margin-top:7vh"></div></div>
+
+  <div id="overlay"></div>
+  <div id="toast"></div>
+</div>
+<script>
+/* ====================== 内容数据 ====================== */
+const KW = {
+  "力量":"你的攻击伤害增加等量数值(持续整场战斗)",
+  "身法":"你获得的格挡增加等量数值(持续整场战斗)",
+  "易伤":"受到的攻击伤害提高 50%,每回合减少 1 层",
+  "虚弱":"造成的攻击伤害降低 25%,每回合减少 1 层",
+  "中毒":"每回合开始受到等同层数的伤害,随后减少 1 层",
+  "影分身":"每回合结束,按层数 ×3 获得格挡",
+  "忍道":"每回合开始获得等量格挡",
+  "九尾":"每回合开始获得等量力量",
+  "消耗":"打出后从本场战斗中移除,不进入弃牌堆",
+  "格挡":"抵消伤害,自己回合开始时消散",
+  "再生":"敌人每回合回复生命",
+};
+
+/* t:atk/skl/pwr/curse  r:0起始 1普通 2稀有 3传说  ex:消耗 */
+const CARDS = {
+  taijutsu:{n:"体术连击",t:"atk",c:1,r:0,ic:"👊",d:"造成 <b>6</b> 点伤害",dmg:6,up:{d:"造成 <b>9</b> 点伤害",dmg:9}},
+  kawarimi:{n:"替身术",t:"skl",c:1,r:0,ic:"🪵",d:"获得 <b>5</b> 点格挡",blk:5,up:{d:"获得 <b>8</b> 点格挡",blk:8}},
+  rasengan:{n:"螺旋丸",t:"atk",c:2,r:0,ic:"🌀",d:"造成 <b>12</b> 点伤害",dmg:12,up:{n:"大玉螺旋丸",d:"造成 <b>17</b> 点伤害",dmg:17}},
+  /* —— 普通 —— */
+  kunai:{n:"苦无投掷",t:"atk",c:0,r:1,ic:"🗡️",d:"造成 <b>3</b> 点伤害",dmg:3,up:{d:"造成 <b>5</b> 点伤害",dmg:5}},
+  renda:{n:"木叶旋风",t:"atk",c:1,r:1,ic:"🌪️",d:"造成 <b>3</b>×<b>2</b> 点伤害",dmg:3,hits:2,up:{d:"造成 <b>4</b>×<b>2</b> 点伤害",dmg:4}},
+  bakufu:{n:"起爆符",t:"atk",c:1,r:1,ic:"🧧",d:"造成 <b>7</b> 点伤害,施加 <b>1</b> 层易伤",dmg:7,vuln:1,up:{d:"造成 <b>9</b> 点伤害,施加 <b>2</b> 层易伤",dmg:9,vuln:2}},
+  shuriken:{n:"手里剑乱舞",t:"atk",c:1,r:1,ic:"✴️",d:"对<b>所有</b>敌人造成 <b>5</b> 点伤害",dmg:5,aoe:1,up:{d:"对<b>所有</b>敌人造成 <b>8</b> 点伤害",dmg:8}},
+  smoke:{n:"烟雾弹",t:"skl",c:1,r:1,ic:"💨",d:"获得 <b>4</b> 点格挡,抽 <b>1</b> 张牌",blk:4,draw:1,up:{d:"获得 <b>6</b> 点格挡,抽 <b>1</b> 张牌",blk:6}},
+  fuuin:{n:"封印术",t:"skl",c:1,r:1,ic:"🈲",d:"对所有敌人施加 <b>2</b> 层虚弱",weak:2,up:{d:"对所有敌人施加 <b>3</b> 层虚弱",weak:3}},
+  shunshin:{n:"瞬身术",t:"skl",c:0,r:1,ic:"⚡",d:"抽 <b>2</b> 张牌",draw:2,up:{d:"抽 <b>3</b> 张牌",draw:3}},
+  guard:{n:"铁壁防御",t:"skl",c:2,r:1,ic:"🛡️",d:"获得 <b>11</b> 点格挡",blk:11,up:{d:"获得 <b>15</b> 点格挡",blk:15}},
+  sharingan_copy:{n:"看破",t:"skl",c:1,r:1,ic:"👁️",d:"获得 <b>3</b> 点格挡,施加 <b>1</b> 层虚弱",blk:3,tweak:1,up:{d:"获得 <b>5</b> 点格挡,施加 <b>2</b> 层虚弱",blk:5,tweak:2}},
+  /* —— 稀有 —— */
+  kagebunshin:{n:"影分身之术",t:"skl",c:1,r:2,ic:"👥",d:"获得 <b>1</b> 层影分身",clone:1,up:{d:"获得 <b>2</b> 层影分身",clone:2}},
+  chidori:{n:"千鸟",t:"atk",c:1,r:2,ic:"⚡",d:"造成 <b>11</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:11,self:2,up:{n:"雷切",d:"造成 <b>15</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:15}},
+  rasenrenwan:{n:"螺旋连丸",t:"atk",c:2,r:2,ic:"🌀",d:"造成 <b>8</b>×<b>2</b> 点伤害",dmg:8,hits:2,up:{d:"造成 <b>10</b>×<b>2</b> 点伤害",dmg:10}},
+  gamado:{n:"通灵术·蛤蟆防壁",t:"skl",c:2,r:2,ic:"🐸",d:"获得 <b>14</b> 点格挡",blk:14,up:{d:"获得 <b>19</b> 点格挡",blk:19}},
+  iryou:{n:"医疗忍术",t:"skl",c:1,r:2,ic:"💚",d:"回复 <b>5</b> 点生命。<b>消耗</b>",heal:5,ex:1,up:{d:"回复 <b>9</b> 点生命。<b>消耗</b>",heal:9}},
+  raiton:{n:"雷遁·麻痹术",t:"skl",c:1,r:2,ic:"🌩️",d:"施加 <b>1</b> 层易伤、<b>1</b> 层虚弱",tvuln:1,tweak:1,up:{d:"施加 <b>2</b> 层易伤、<b>2</b> 层虚弱",tvuln:2,tweak:2}},
+  katon:{n:"火遁·豪火球",t:"atk",c:2,r:2,ic:"🔥",d:"对<b>所有</b>敌人造成 <b>10</b> 点伤害",dmg:10,aoe:1,up:{d:"对<b>所有</b>敌人造成 <b>14</b> 点伤害",dmg:14}},
+  chakra_focus:{n:"查克拉炼成",t:"skl",c:0,r:2,ic:"🔵",d:"获得 <b>2</b> 点查克拉。<b>消耗</b>",energy:2,ex:1,up:{d:"获得 <b>3</b> 点查克拉。<b>消耗</b>",energy:3}},
+  sennin:{n:"仙人模式",t:"pwr",c:3,r:2,ic:"🐸",d:"力量 +<b>2</b>,身法 +<b>2</b>",str:2,dex:2,up:{c:2}},
+  nindo:{n:"我的忍道",t:"pwr",c:1,r:2,ic:"🍥",d:"每回合开始获得 <b>3</b> 点格挡",nindo:3,up:{d:"每回合开始获得 <b>5</b> 点格挡",nindo:5}},
+  /* —— 传说 —— */
+  fuuton:{n:"风遁·螺旋手里剑",t:"atk",c:3,r:3,ic:"🌀",d:"造成 <b>26</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:26,self:4,ex:1,up:{d:"造成 <b>34</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:34}},
+  kyuubi:{n:"九尾查克拉",t:"pwr",c:2,r:3,ic:"🦊",d:"每回合开始力量 +<b>1</b>",ramp:1,up:{c:1}},
+  tajuu:{n:"多重影分身",t:"skl",c:2,r:3,ic:"👥",d:"获得 <b>3</b> 层影分身。<b>消耗</b>",clone:3,ex:1,up:{d:"获得 <b>4</b> 层影分身。<b>消耗</b>",clone:4}},
+  senpou:{n:"仙法·超大玉螺旋丸",t:"atk",c:3,r:3,ic:"💥",d:"造成 <b>32</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:32,tweak:2,up:{d:"造成 <b>40</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:40}},
+  bijuudama:{n:"尾兽玉",t:"atk",c:3,r:3,ic:"⚫",d:"对<b>所有</b>敌人造成 <b>22</b> 点伤害,自身受 <b>6</b> 点伤害。<b>消耗</b>",dmg:22,aoe:1,self:6,ex:1,up:{d:"对<b>所有</b>敌人造成 <b>30</b> 点伤害,自身受 <b>6</b> 点伤害。<b>消耗</b>",dmg:30}},
+  /* —— 诅咒 —— */
+  jyuin:{n:"咒印之痕",t:"curse",c:0,r:9,ic:"🕸️",d:"无法打出。占据手牌。",unplayable:1},
+};
+const TYPE_LABEL={atk:"攻 击",skl:"技 能",pwr:"能 力",curse:"诅 咒"};
+const RAR_LABEL={1:"",2:"稀有",3:"传说",9:"诅咒",0:""};
+
+const RELICS = {
+  ramen:{ic:"🍜",n:"一乐拉面券",d:"每场战斗胜利后回复 3 点生命"},
+  necklace:{ic:"📿",n:"初代的项链",d:"获得时最大生命 +10 并回复 10 点"},
+  kunaibag:{ic:"🎒",n:"苦无袋",d:"每场战斗开始时获得 5 点格挡"},
+  book:{ic:"📕",n:"亲热天堂",d:"每场战斗第 1 回合多抽 2 张牌"},
+  hiraishin:{ic:"⚡",n:"飞雷神苦无",d:"每场战斗第 1 回合查克拉 +1"},
+  cells:{ic:"🧬",n:"千手细胞",d:"每回合开始回复 1 点生命"},
+  headband:{ic:"🥋",n:"师父的护额",d:"获得时力量永久 +1"},
+  fuuma:{ic:"✴️",n:"风魔手里剑",d:"每回合打出的第 1 张攻击牌伤害 +4"},
+  sharingan:{ic:"👁️",n:"写轮眼",d:"你施加的易伤层数 +1"},
+  contract:{ic:"📜",n:"通灵契约",d:"每场战斗开始时获得 1 层影分身"},
+  medkit:{ic:"🩹",n:"医疗背包",d:"篝火休息回复量提升至 50%"},
+  dice:{ic:"🎲",n:"纲手的赌骰",d:"战斗金币收益 +40%"},
+  bell:{ic:"🔔",n:"双铃铛",d:"每回合打出的第 1 张技能牌获得 3 点格挡"},
+  sakeflask:{ic:"🍶",n:"自来也的酒壶",d:"奇遇中受到的伤害减半(向下取整)"},
+};
+const BOSS_RELICS = {
+  scroll:{ic:"📜",n:"卷轴·通灵奥义",d:"每回合查克拉上限 +1"},
+  sage_cloak:{ic:"🧥",n:"仙人袍",d:"最大生命 +18,每场战斗开始获得 8 点格挡"},
+  kyuubi_seal:{ic:"🦊",n:"九尾封印·钥",d:"每回合打出的第 1 张攻击牌伤害 +6,最大生命 -8"},
+};
+
+const POTIONS = {
+  heisyo:{ic:"🍙",n:"兵粮丸",d:"回复 12 点生命"},
+  smokeball:{ic:"🟣",n:"烟玉",d:"获得 10 点格挡"},
+  bakukunai:{ic:"🧨",n:"起爆苦无束",d:"对所有敌人造成 9 点伤害"},
+  chakrapill:{ic:"🔵",n:"查克拉丸",d:"本回合查克拉 +2"},
+  antidote:{ic:"🟢",n:"解毒丸",d:"清除自身中毒、虚弱、易伤"},
+  strpill:{ic:"🔴",n:"士气丸",d:"本场战斗力量 +2"},
+};
+
+/* 敌人:moves循环;a伤害 hits b格挡 str weak vuln poison heal txt
+   special:{every:n, move:{...}} 每n回合插入大招 */
+const ENEMIES = {
+  /* 第一章:木叶外围 */
+  otonin:{n:"音忍下忍",sp:"🥷",hp:[24,30],moves:[{a:7,txt:"音波斩"},{b:6,txt:"防御姿态"},{a:4,hits:2,txt:"双连音刃"}]},
+  snake:{n:"大蛇",sp:"🐍",hp:[19,25],moves:[{a:5,poison:2,txt:"毒牙"},{a:8,txt:"绞缠"},{b:5,poison:1,txt:"喷吐毒雾"}]},
+  nukenin:{n:"叛忍",sp:"👹",hp:[32,38],moves:[{a:10,txt:"斩击"},{str:1,txt:"怒气积蓄"},{a:6,b:5,txt:"攻防一体"}]},
+  puppet:{n:"战傀儡",sp:"🪆",hp:[28,34],moves:[{b:9,txt:"机关展开"},{a:9,txt:"暗器齐射"},{a:5,weak:1,txt:"麻痹毒针"}]},
+  kiri:{n:"雾隐刺客",sp:"🌫️",hp:[26,32],moves:[{a:6,weak:1,txt:"雾隐斩"},{a:10,txt:"无声暗杀"},{b:7,txt:"隐入雾中"}]},
+  /* 第一章精英 / BOSS */
+  oni1:{n:"鬼兄·阿吽",sp:"👺",hp:[40,46],elite:1,moves:[{a:11,txt:"锁链爪"},{a:7,hits:2,txt:"连环撕裂"},{str:1,b:6,txt:"鬼力觉醒"}]},
+  oni2:{n:"鬼弟·吽阿",sp:"👹",hp:[40,46],elite:1,moves:[{b:10,txt:"铁壁"},{a:13,txt:"重击"},{a:8,weak:1,txt:"毒爪"}]},
+  haku:{n:"白",sp:"❄️",hp:[50,50],elite:1,moves:[{a:6,hits:2,txt:"千本连射"},{b:8,a:5,txt:"冰镜防御"},{a:9,weak:1,txt:"魔镜冰晶"}]},
+  zabuza:{n:"桃地再不斩",sp:"🗡️",hp:[98,98],boss:1,
+    moves:[{a:14,txt:"断刀横扫"},{a:8,hits:2,txt:"水分身连斩"},{b:8,str:1,txt:"杀意凝聚"}],
+    special:{every:4,move:{a:18,txt:"无声杀人术!"}}},
+  /* 第二章:音忍据点 */
+  oto_elite:{n:"咒印音忍",sp:"😈",hp:[36,44],moves:[{a:11,txt:"咒印爪击"},{a:6,hits:2,txt:"连斩"},{str:1,txt:"咒印侵蚀"}]},
+  spider:{n:"鬼童丸",sp:"🕷️",hp:[40,48],moves:[{a:7,poison:2,txt:"蜘蛛战弓"},{b:9,txt:"金属蛛网"},{a:12,txt:"蜘蛛黏金"}]},
+  jirobo:{n:"次郎坊",sp:"🪨",hp:[46,54],moves:[{b:12,txt:"土遁结界"},{a:13,txt:"重压掌"},{a:9,b:6,txt:"轰碎冲拳"}]},
+  twins:{n:"左近",sp:"👤",hp:[38,44],moves:[{a:9,txt:"多重连击"},{a:5,hits:2,txt:"双头连打"},{str:1,b:5,txt:"合体强化"}]},
+  twins2:{n:"右近",sp:"👥",hp:[38,44],moves:[{a:5,hits:2,txt:"分体突袭"},{b:8,txt:"寄生防御"},{a:10,txt:"锁骨枪击"}]},
+  kimimaro:{n:"君麻吕",sp:"🦴",hp:[84,84],elite:1,
+    moves:[{a:12,txt:"十指穿弹"},{a:7,hits:2,b:5,txt:"柳之舞"},{str:2,txt:"尸骨脉觉醒"}],
+    special:{every:4,move:{a:15,vulnP:1,txt:"椿之舞!"}}},
+  orochimaru:{n:"大蛇丸",sp:"🐍",hp:[158,158],boss:1,
+    moves:[{a:13,poison:2,txt:"潜影蛇手"},{b:13,heal:8,txt:"蜕皮再生"},{a:8,hits:2,txt:"双蛇缠绕"},{str:2,txt:"咒印之力"}],
+    special:{every:4,move:{a:23,txt:"草薙剑·空之太刀!"}},
+    phase2:{n:"八岐之术·大蛇丸",sp:"🐉",hpRatio:0.55,str:2,
+      moves:[{a:11,hits:2,txt:"八岐大蛇·双首"},{a:13,poison:2,txt:"猛毒蛇崩"},{b:15,heal:10,txt:"不死再生"},{str:3,txt:"禁术暴走"}],
+      special:{every:3,move:{a:26,txt:"八岐大蛇·灭!"}}},
+  },
+};
+
+/* 章节配置 */
+const ACTS=[
+  {name:"第一章 · 木叶外围",sub:"波之国边境的雾气中,杀气若隐若现",
+   pool:["otonin","snake","nukenin","puppet","kiri"],
+   elites:[["oni1","oni2"],["haku"]],boss:["zabuza"],bossName:"桃地再不斩"},
+  {name:"第二章 · 音忍据点",sub:"咒印的气息越来越浓,大蛇丸就在最深处",
+   pool:["oto_elite","spider","jirobo","twins","twins2"],
+   elites:[["kimimaro"],["twins","twins2"]],boss:["orochimaru"],bossName:"大蛇丸"},
+];
+
+const EVENTS = [
+  {ic:"🍜",title:"一乐拉面",text:"路过的拉面摊飘来熟悉的香味。大叔笑着招手:「来一碗吗?算你便宜点。」",
+   opts:[
+     {t:"🍥 大吃一顿(回复 18 点生命)",f:g=>{g.heal(18);return "热汤下肚,浑身暖洋洋的。"}},
+     {t:"💪 加练再吃(最大生命 +6)",f:g=>{g.maxHp+=6;g.hp+=6;return "你扎完马步才坐下,身体更结实了。"}},
+   ]},
+  {ic:"📦",title:"神秘卷轴",text:"树洞里藏着一个上锁的卷轴箱,封条上画着陌生的咒文。",
+   opts:[
+     {t:"📜 强行解开(获得 1 张随机稀有卡,受 6 点伤害)",f:g=>{g.eventDamage(6);if(g.hp<=0)return null;const c=g.randomCard(2);g.deck.push(c);return `咒印反噬了你,但你领悟了「${c.n}」!`}},
+     {t:"🚶 不碰为妙(离开)",f:g=>"小心驶得万年船。"},
+   ]},
+  {ic:"🤕",title:"受伤的同伴",text:"一名木叶同伴倒在路边,腿上中了苦无,看见你时眼睛亮了起来。",
+   opts:[
+     {t:"🪙 出 50 金币雇人护送他(获得随机忍具)",cond:g=>g.gold>=50,f:g=>{g.gold-=50;const r=g.randomRelic();if(!r)return "你已经收集了所有忍具,他回赠你 80 金币!"+(g.gold+=80,"");g.addRelic(r);return `同伴感激地塞给你他的「${RELICS[r].n}」。`}},
+     {t:"🩹 亲自帮他包扎(受 5 点伤害,最大生命 +4)",f:g=>{g.eventDamage(5);if(g.hp<=0)return null;g.maxHp+=4;return "你撕下衣袖为他止血,他教了你一招护体心法。"}},
+     {t:"🚶 任务要紧(离开)",f:g=>"忍者的世界,有时只能硬下心肠。"},
+   ]},
+  {ic:"⛩️",title:"荒废的神社",text:"半倒的鸟居后是一座小神社,功德箱积满灰尘,神像的眼睛似乎在注视你。",
+   opts:[
+     {t:"🙏 虔诚参拜(移除 1 张卡牌)",f:g=>{g.pendingRemove=true;return null}},
+     {t:"🪙 搜刮功德箱(+55 金币,受 9 点伤害)",f:g=>{g.gold+=55;g.eventDamage(9);if(g.hp<=0)return null;return "你刚抓起铜钱,房梁突然塌了一角砸在背上……"}},
+   ]},
+  {ic:"🕸️",title:"咒印的低语",text:"一块漆黑的石碑上刻着禁术,触碰它的瞬间,强大的力量顺着指尖涌入,同时有什么阴冷的东西爬上了后颈……",
+   opts:[
+     {t:"😈 接受力量(获得 1 张随机传说卡 + 1 张「咒印之痕」诅咒)",f:g=>{const c=g.randomCard(3);g.deck.push(c);g.deck.push(mkCard('jyuin'));return `你领悟了「${c.n}」——但咒印也烙进了你的卡组。`}},
+     {t:"🍥 拒绝诱惑(回复 8 点生命)",f:g=>{g.heal(8);return "「想变强,就用自己的方式!」你后退一步,心境反而澄明。"}},
+   ]},
+  {ic:"🎰",title:"流浪赌徒",text:"一个白发男人摇着骰盅冲你挑眉:「小鬼,赌一把吗?押 30 金币,赢了翻三倍。」",
+   opts:[
+     {t:"🎲 押 30 金币(50% 赢 90,50% 血本无归)",cond:g=>g.gold>=30,f:g=>{g.gold-=30;if(Math.random()<0.5){g.gold+=90;return "骰子停住——你赢了!男人肉痛地数出 90 金币。"}return "骰子停住……男人笑着收走了你的钱:「下次再来啊。」"}},
+     {t:"🚶 赌博有害(离开)",f:g=>"男人耸耸肩,继续吆喝下一个路人。"},
+   ]},
+];
+</script>
+<script>
+/* ====================== 工具 & 音效 ====================== */
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function toast(m){const t=$('toast');t.innerHTML=m;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1900)}
+function esc(s){return String(s).replace(/"/g,'&quot;')}
+
+const SFX={
+  on:true,ctx:null,
+  ac(){if(!this.ctx)try{this.ctx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){this.on=false}return this.ctx},
+  tone(f,dur,type='sine',vol=.18,slide=0,delay=0){
+    if(!this.on||!this.ac())return;const c=this.ctx,t=c.currentTime+delay;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,t);
+    if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(20,f+slide),t+dur);
+    g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02)},
+  noise(dur=.12,vol=.14,delay=0){
+    if(!this.on||!this.ac())return;const c=this.ctx,t=c.currentTime+delay;
+    const len=c.sampleRate*dur,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+    const s=c.createBufferSource();s.buffer=buf;
+    const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=1800;
+    const g=c.createGain();g.gain.value=vol;
+    s.connect(f);f.connect(g);g.connect(c.destination);s.start(t)},
+  card(){this.noise(.09,.08);this.tone(700,.08,'sine',.05,300)},
+  atk(){this.noise(.13,.18);this.tone(160,.12,'square',.1,-80)},
+  blk(){this.tone(120,.16,'sine',.2,-40);this.noise(.05,.05)},
+  heal(){this.tone(520,.15,'sine',.12);this.tone(780,.2,'sine',.1,.0,.1)},
+  gold(){this.tone(1180,.1,'square',.06);this.tone(1560,.14,'square',.05,0,.07)},
+  hurt(){this.tone(110,.25,'sawtooth',.16,-50);this.noise(.16,.14)},
+  turn(){this.tone(220,.2,'sine',.14,-60);this.noise(.08,.06)},
+  win(){[523,659,784,1046].forEach((f,i)=>this.tone(f,.22,'square',.07,0,i*.12))},
+  lose(){[330,277,233,175].forEach((f,i)=>this.tone(f,.3,'sawtooth',.09,0,i*.16))},
+  potion(){this.tone(880,.12,'sine',.1,200)},
+};
+function mkCard(key,upgraded=false){
+  const b=CARDS[key];
+  const c={key,n:b.n,t:b.t,c:b.c,r:b.r,ic:b.ic,d:b.d,upgraded:false,
+    dmg:b.dmg||0,hits:b.hits||1,blk:b.blk||0,draw:b.draw||0,vuln:b.vuln||0,tvuln:b.tvuln||0,
+    weak:b.weak||0,tweak:b.tweak||0,clone:b.clone||0,aoe:b.aoe||0,self:b.self||0,heal:b.heal||0,
+    str:b.str||0,dex:b.dex||0,nindo:b.nindo||0,ramp:b.ramp||0,energy:b.energy||0,
+    ex:b.ex||0,unplayable:b.unplayable||0};
+  if(upgraded)upgradeCard(c);return c;
+}
+function upgradeCard(c){
+  if(c.upgraded)return;
+  const up=CARDS[c.key].up||{};Object.assign(c,up);c.upgraded=true;
+  c.n=(up.n||CARDS[c.key].n)+"⁺";
+}
+function cardHTML(c,extra="",style=""){
+  return `<div class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
+    <div class="gem">${c.unplayable?'✕':c.c}</div>
+    <div class="tband">${TYPE_LABEL[c.t]}</div>
+    <div class="art">${c.ic}</div>
+    <div class="nm">${c.n}</div>
+    <div class="ds">${c.d}</div>
+    ${RAR_LABEL[c.r]?`<div class="rar">◆ ${RAR_LABEL[c.r]}</div>`:''}
+  </div>`;
+}
+
+/* ====================== 游戏主体 ====================== */
+const G={
+  sfxOn:true,
+  toggleSfx(){SFX.on=!SFX.on;$('sfx-btn').textContent=SFX.on?'🔊':'🔇';},
+
+  /* ---------- 新开局 ---------- */
+  newRun(){
+    SFX.ac();
+    this.maxHp=80;this.hp=80;this.gold=120;
+    this.act=0;this.row=0;this.curCol=-1;
+    this.relics=[];this.potions=['heisyo'];this.pendingRemove=false;
+    this.stats={dmg:0,kills:0,cards:0,turns:0,elites:0};
+    this.permStr=0;
+    this.deck=[];
+    for(let i=0;i<5;i++)this.deck.push(mkCard('taijutsu'));
+    for(let i=0;i<4;i++)this.deck.push(mkCard('kawarimi'));
+    this.deck.push(mkCard('rasengan'));
+    this.startAct(0);
+  },
+  startAct(a){
+    this.act=a;this.row=0;this.curCol=-1;
+    this.genMap();
+    $('topbar').classList.add('on');
+    this.updateTopbar();this.renderMap();show('screen-map');
+  },
+  floorLabel(){return `${this.act+1}-${this.row}`},
+  heal(n){if(n<=0)return;this.hp=Math.min(this.maxHp,this.hp+n);SFX.heal();this.updateTopbar()},
+  eventDamage(n){
+    if(this.hasRelic('sakeflask'))n=Math.floor(n/2);
+    this.hp-=n;SFX.hurt();this.updateTopbar();
+    if(this.hp<=0)this.gameOver();
+  },
+  hasRelic(k){return this.relics.includes(k)},
+  addRelic(k){
+    this.relics.push(k);
+    if(k==='necklace'){this.maxHp+=10;this.hp=Math.min(this.maxHp,this.hp+10)}
+    if(k==='headband')this.permStr+=1;
+    if(k==='sage_cloak'){this.maxHp+=18;this.hp+=18}
+    if(k==='kyuubi_seal'){this.maxHp-=8;this.hp=Math.min(this.hp,this.maxHp)}
+    this.updateTopbar();
+  },
+  relicData(k){return RELICS[k]||BOSS_RELICS[k]},
+  randomRelic(){const p=Object.keys(RELICS).filter(k=>!this.hasRelic(k));return p.length?pick(p):null},
+  randomCard(minR=1){
+    let tier;
+    if(minR===1){const r=Math.random();tier=r<.62?1:(r<.92?2:3)}
+    else if(minR===2){const r=Math.random();tier=r<.7?2:3}
+    else tier=3;
+    const pool=Object.keys(CARDS).filter(k=>CARDS[k].r===tier);
+    return mkCard(pick(pool));
+  },
+  addPotion(k){
+    if(this.potions.length>=2){toast('秘药栏已满(最多 2 瓶)');return false}
+    this.potions.push(k);this.updateTopbar();return true;
+  },
+  updateTopbar(){
+    $('t-hp').textContent=`${this.hp}/${this.maxHp}`;
+    $('t-gold').textContent=this.gold;
+    $('t-floor').textContent=`📍 ${ACTS[this.act].name.slice(0,3)} · ${this.row}/8 层`;
+    $('t-deck').textContent=this.deck.length;
+    $('relicbar').innerHTML=this.relics.map(k=>{const r=this.relicData(k);
+      return `<div class="relic-i" onclick="toast('<b>${esc(r.n)}</b><br>${esc(r.d)}')">${r.ic}</div>`}).join('');
+    let ph='';
+    for(let i=0;i<2;i++){
+      const k=this.potions[i];
+      ph+=k?`<div class="potion-i" onclick="G.potionMenu(${i})">${POTIONS[k].ic}</div>`
+          :`<div class="potion-i empty">·</div>`;
+    }
+    $('potionbar').innerHTML=ph;
+  },
+  potionMenu(i){
+    const k=this.potions[i];if(!k)return;
+    const p=POTIONS[k];
+    const inCombat=$('screen-combat').classList.contains('active')&&this.enemies&&this.enemies.some(e=>e.hp>0);
+    const ov=$('overlay');
+    ov.innerHTML=`<div style="margin:auto;text-align:center" class="center">
+      <div style="font-size:54px">${p.ic}</div>
+      <div class="sec-t" style="font-size:20px;letter-spacing:.15em">${p.n}</div>
+      <div class="sec-s">${p.d}</div>
+      ${inCombat?`<button class="btn" onclick="G.usePotion(${i})">使 用</button>`:
+        `<div class="sec-s">只能在战斗中使用</div>`}
+      <button class="btn ghost small" onclick="G.discardPotion(${i})">丢弃</button>
+      <button class="btn ghost small" onclick="G.closeOverlay()">返回</button>
+    </div>`;
+    ov.classList.add('on');
+  },
+  discardPotion(i){this.potions.splice(i,1);this.updateTopbar();this.closeOverlay()},
+  usePotion(i){
+    const k=this.potions[i];if(!k)return;
+    this.potions.splice(i,1);this.closeOverlay();SFX.potion();
+    if(k==='heisyo')this.heal(12);
+    if(k==='smokeball'){this.block+=10;this.fxText(this.playerEl(),'+10','blk')}
+    if(k==='bakukunai'){this.enemies.filter(e=>e.hp>0).forEach(e=>this.dealDamage(e,9,true));if(this.checkWin())return}
+    if(k==='chakrapill')this.energy+=2;
+    if(k==='antidote'){this.poison=0;this.weak=0;this.vuln=0}
+    if(k==='strpill')this.str+=2;
+    this.updateTopbar();this.renderCombat();
+  },
+
+  /* ---------- StS式路线图 ---------- */
+  genMap(){
+    const ROWS=7,COLS=5,PATHS=4;
+    const nodes={};   // "r-c" -> {r,c,t,edges:Set}
+    const key=(r,c)=>r+'-'+c;
+    for(let p=0;p<PATHS;p++){
+      let c=rnd(0,COLS-1);
+      let prev=null;
+      for(let r=1;r<=ROWS;r++){
+        if(r>1)c=Math.max(0,Math.min(COLS-1,c+rnd(-1,1)));
+        const k=key(r,c);
+        if(!nodes[k])nodes[k]={r,c,t:null,edges:new Set(),from:new Set()};
+        if(prev){nodes[prev].edges.add(k);nodes[k].from.add(prev)}
+        prev=k;
+      }
+      nodes[prev].edges.add('boss');
+    }
+    nodes['boss']={r:ROWS+1,c:(COLS-1)/2,t:'boss',edges:new Set(),from:new Set()};
+    // 类型分配
+    Object.values(nodes).forEach(n=>{
+      if(n.t)return;
+      if(n.r===1){n.t='fight';return}
+      if(n.r===ROWS){n.t='rest';return}
+      const roll=Math.random();
+      if(n.r>=3&&roll<0.15)n.t='elite';
+      else if(roll<0.36)n.t='event';
+      else if(roll<0.48)n.t='shop';
+      else if(roll<0.58&&n.r>=4)n.t='rest';
+      else n.t='fight';
+    });
+    // 每行保底一个战斗(除第7行)
+    for(let r=2;r<ROWS;r++){
+      const row=Object.values(nodes).filter(n=>n.r===r);
+      if(row.length&&!row.some(n=>n.t==='fight'||n.t==='elite'))row[0].t='fight';
+    }
+    this.nodes=nodes;
+  },
+  renderMap(){
+    $('act-banner').textContent=`— ${ACTS[this.act].name} —`;
+    $('map-title').textContent=ACTS[this.act].sub;
+    const ICON={fight:'⚔️',elite:'💀',rest:'🔥',event:'❓',shop:'🏪',boss:'☠️'};
+    const LBL={fight:'战斗',elite:'精英',rest:'篝火',event:'奇遇',shop:'商店',boss:'首领'};
+    const W=500,ROWH=86,PAD=46;
+    const H=PAD*2+8*ROWH;
+    const X=c=>60+c*((W-120)/4);
+    const Y=r=>H-PAD-(r-1)*ROWH;
+    const cur=this.curCol>=0?this.nodes[this.row+'-'+this.curCol]:null;
+    const avail=new Set();
+    if(!cur){Object.values(this.nodes).forEach(n=>{if(n.r===1)avail.add(n.r+'-'+n.c)})}
+    else cur.edges.forEach(k=>avail.add(k));
+    let edges='',nds='';
+    Object.entries(this.nodes).forEach(([k,n])=>{
+      n.edges.forEach(k2=>{
+        const m=this.nodes[k2];
+        const lit=(cur&&k===this.row+'-'+this.curCol&&avail.has(k2));
+        edges+=`<path class="medge ${lit?'lit':''}" d="M${X(n.c)} ${Y(n.r)-0} L${X(m.c)} ${Y(m.r)}"/>`;
+      });
+    });
+    Object.entries(this.nodes).forEach(([k,n])=>{
+      const isCur=cur&&k===this.row+'-'+this.curCol;
+      const isAvail=avail.has(k);
+      const isDone=n.r<this.row||(n.r===this.row&&!isCur);
+      const R=n.t==='boss'?26:18;
+      const cls=`mnode ${isAvail?'avail':''} ${isCur?'cur':''} ${isDone&&!isAvail?'done':''}`;
+      const click=isAvail?`onclick="G.enterNode('${k}')"`:'';
+      nds+=`<g class="${cls}" ${click}>
+        ${isAvail?`<circle class="pulse" cx="${X(n.c)}" cy="${Y(n.r)}" r="${R}"/>`:''}
+        <circle class="bg" cx="${X(n.c)}" cy="${Y(n.r)}" r="${R}"/>
+        <text x="${X(n.c)}" y="${Y(n.r)-2}">${ICON[n.t]}</text>
+        <text class="lbl" x="${X(n.c)}" y="${Y(n.r)+R+9}">${LBL[n.t]}</text>
+      </g>`;
+    });
+    $('map-wrap').innerHTML=`<svg id="map-svg" viewBox="0 0 ${W} ${H}">${edges}${nds}</svg>`;
+    // 自动滚到当前位置附近
+    const sc=$('screen-map');
+    requestAnimationFrame(()=>{sc.scrollTop=sc.scrollHeight*(1-(this.row+1.6)/9)});
+  },
+  enterNode(k){
+    const n=this.nodes[k];if(!n)return;
+    this.row=n.r;this.curCol=n.c;
+    this.updateTopbar();SFX.card();
+    if(n.t==='fight')this.startCombat('fight');
+    else if(n.t==='elite')this.startCombat('elite');
+    else if(n.t==='boss')this.startCombat('boss');
+    else if(n.t==='rest')this.openRest();
+    else if(n.t==='shop')this.openShop();
+    else if(n.t==='event')this.openEvent();
+  },
+  backToMap(){
+    this.updateTopbar();this.renderMap();show('screen-map');
+  },
+
+  /* ---------- 牌堆/卡组查看 ---------- */
+  viewDeck(){this.viewCards('我的卡组',this.deck)},
+  viewPile(which){
+    if(which==='draw')this.viewCards('抽牌堆(顺序已隐藏)',shuffle([...this.drawPile]));
+    else this.viewCards('弃牌堆',this.discardPile);
+  },
+  viewCards(title,cards){
+    const ov=$('overlay');
+    ov.innerHTML=`<div class="sec-t" style="font-size:19px">${title} · ${cards.length} 张</div><div class="divider"></div>
+      <div class="cgrid">${cards.map(c=>`<div style="position:relative;width:112px;height:156px">${cardHTML(c,'static')}</div>`).join('')||'<div class="sec-s">(空)</div>'}</div>
+      <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button>`;
+    ov.classList.add('on');
+  },
+  pickFromDeck(title,filter,onPick,allowCancel=true){
+    const list=this.deck.map((c,i)=>({c,i})).filter(x=>filter(x.c));
+    if(!list.length){toast('没有符合条件的卡牌');return this.backToMap()}
+    const ov=$('overlay');
+    ov.innerHTML=`<div class="sec-t" style="font-size:19px">${title}</div><div class="divider"></div>
+      <div class="cgrid">${list.map(x=>`<div style="position:relative;width:112px;height:156px" onclick="G._dp(${x.i})">${cardHTML(x.c,'static')}</div>`).join('')}</div>
+      ${allowCancel?'<button class="btn ghost" onclick="G.closeOverlay()">返 回</button>':''}`;
+    this._onDp=onPick;ov.classList.add('on');
+  },
+  _dp(i){const c=this.deck[i];this.closeOverlay();this._onDp(c,i)},
+  closeOverlay(){$('overlay').classList.remove('on');$('overlay').innerHTML=''},
+};
+</script>
+<script>
+/* ====================== 战斗系统 ====================== */
+Object.assign(G,{
+  startCombat(kind){
+    this.combatKind=kind;
+    const A=ACTS[this.act];
+    const mk=key=>{
+      const d=ENEMIES[key];
+      const e={key,n:d.n,sp:d.sp,maxHp:rnd(d.hp[0],d.hp[1]),
+        moves:d.moves,special:d.special||null,phase2:d.phase2||null,phase2done:false,
+        mi:rnd(0,d.moves.length-1),tc:0,block:0,str:0,weak:0,vuln:0,
+        elite:d.elite||0,boss:d.boss||0};
+      e.hp=e.maxHp;return e;
+    };
+    if(kind==='boss')this.enemies=A.boss.map(mk);
+    else if(kind==='elite')this.enemies=pick(A.elites).map(mk);
+    else{
+      const dbl=this.row>=3&&Math.random()<0.45;
+      this.enemies=[mk(pick(A.pool))];
+      if(dbl)this.enemies.push(mk(pick(A.pool)));
+      const bonus=Math.floor(this.row*0.9)+(this.act*5);
+      this.enemies.forEach(e=>{e.maxHp+=bonus;e.hp+=bonus});
+    }
+    // 玩家战斗态
+    this.block=0;this.str=this.permStr;this.dex=0;this.weak=0;this.vuln=0;this.poison=0;
+    this.clones=this.hasRelic('contract')?1:0;
+    this.nindoBlk=0;this.rampStr=0;
+    this.turn=0;this.picked=null;this.busy=false;
+    this.drawPile=shuffle(this.deck.map(c=>({...c})));
+    this.discardPile=[];this.hand=[];this.exhaustPile=[];
+    if(this.hasRelic('kunaibag'))this.block+=5;
+    if(this.hasRelic('sage_cloak'))this.block+=8;
+    $('stage').className='act'+(this.act+1);
+    $('combat-log').textContent=kind==='boss'?`${A.bossName}:「让我见识一下你的实力吧……」`:'战斗开始!';
+    show('screen-combat');
+    this.startTurn();
+  },
+  playerEl(){return document.querySelector('#player-side .frame')},
+  enemyEl(i){return document.querySelector(`[data-ei="${i}"] .frame`)},
+
+  /* ----- 回合 ----- */
+  startTurn(){
+    this.turn++;this.stats.turns++;
+    if(this.turn>1)this.block=0;
+    this.energy=3
+      +(this.hasRelic('scroll')?1:0)
+      +(this.turn===1&&this.hasRelic('hiraishin')?1:0);
+    this.firstAtk=true;this.firstSkl=true;
+    if(this.nindoBlk)this.block+=this.nindoBlk;
+    if(this.rampStr)this.str+=this.rampStr;
+    if(this.hasRelic('cells'))this.hp=Math.min(this.maxHp,this.hp+1);
+    if(this.poison>0){
+      this.hp-=this.poison;this.fxText(this.playerEl(),'-'+this.poison);SFX.hurt();
+      this.poison--;
+      if(this.hp<=0){this.updateTopbar();return this.gameOver()}
+    }
+    this.draw(5+(this.turn===1&&this.hasRelic('book')?2:0));
+    this.enemies.forEach(e=>{if(e.hp>0)this.rollIntent(e)});
+    this.banner('第 '+this.turn+' 回合 · 我方行动');SFX.turn();
+    $('endturn').classList.remove('enemyturn');
+    this.updateTopbar();this.renderCombat();
+  },
+  rollIntent(e){
+    e.tc++;
+    if(e.special&&e.tc%e.special.every===0)e.intent=e.special.move;
+    else{e.intent=e.moves[e.mi%e.moves.length];e.mi++}
+  },
+  draw(n){
+    for(let i=0;i<n;i++){
+      if(this.hand.length>=10)break;
+      if(!this.drawPile.length){
+        if(!this.discardPile.length)break;
+        this.drawPile=shuffle(this.discardPile);this.discardPile=[];
+      }
+      this.hand.push(this.drawPile.pop());
+    }
+  },
+  banner(txt){
+    const b=$('turn-banner');b.textContent=txt;
+    b.classList.remove('go');void b.offsetWidth;b.classList.add('go');
+  },
+
+  /* ----- 出牌交互 ----- */
+  clickCard(i){
+    if(this.busy)return;
+    const c=this.hand[i];if(!c)return;
+    if(c.unplayable){toast('「'+c.n+'」无法打出——这是诅咒');return}
+    if(c.c>this.energy){toast('查克拉不足');SFX.blk();return}
+    const alive=this.enemies.filter(e=>e.hp>0);
+    const needsTarget=c.t==='atk'&&!c.aoe;
+    if(this.picked===i){
+      if(needsTarget){
+        if(alive.length===1)return this.playCardAt(i,alive[0]);
+        return toast('点击一个敌人作为目标');
+      }
+      return this.playCardAt(i,null);
+    }
+    this.picked=i;SFX.card();
+    $('target-hint').classList.toggle('on',needsTarget&&alive.length>1);
+    this.renderCombat();
+    if(!needsTarget)toast('再次点击该卡打出');
+  },
+  clickEnemy(i){
+    if(this.busy)return;
+    const e=this.enemies[i];if(!e||e.hp<=0)return;
+    if(this.picked!==null){
+      const c=this.hand[this.picked];
+      if(c&&c.t==='atk'&&!c.aoe)return this.playCardAt(this.picked,e);
+    }
+  },
+  clickStage(ev){
+    if(ev.target.closest('.unit')||ev.target.closest('.card'))return;
+    if(this.picked!==null){this.picked=null;$('target-hint').classList.remove('on');this.renderCombat()}
+  },
+  playCardAt(idx,target){
+    const c=this.hand[idx];if(!c||c.c>this.energy)return;
+    this.picked=null;$('target-hint').classList.remove('on');
+    this.hand.splice(idx,1);
+    this.stats.cards++;
+    this.execCard(c,target);
+    if(c.t==='pwr'||c.ex)this.exhaustPile.push(c);
+    else this.discardPile.push(c);
+    if(this.checkWin())return;
+    this.updateTopbar();this.renderCombat();
+  },
+  calc(base,att,def){
+    let d=base+(att.str||0);
+    if(att.weak>0)d=Math.floor(d*0.75);
+    if(def.vuln>0)d=Math.floor(d*1.5);
+    return Math.max(0,d);
+  },
+  dealDamage(e,raw,pure=false){
+    let d=raw;
+    const blocked=Math.min(e.block,d);
+    e.block-=blocked;d-=blocked;
+    e.hp-=d;
+    this.stats.dmg+=d;
+    const el=this.enemyEl(this.enemies.indexOf(e));
+    if(el){
+      this.fxSlash(el);
+      if(blocked&&!d)this.fxText(el,'格挡!','blk');
+      else this.fxText(el,'-'+d);
+      el.closest('.unit').classList.add('hitfx');
+      setTimeout(()=>el.closest('.unit')&&el.closest('.unit').classList.remove('hitfx'),320);
+    }
+    SFX.atk();
+    if(e.hp<=0)this.handleDeath(e);
+  },
+  handleDeath(e){
+    if(e.boss&&e.phase2&&!e.phase2done){
+      e.phase2done=true;
+      const p=e.phase2;
+      e.n=p.n;e.sp=p.sp;e.hp=Math.floor(e.maxHp*p.hpRatio);
+      e.str+=p.str;e.moves=p.moves;e.special=p.special;e.mi=0;e.tc=0;
+      this.rollIntent(e);
+      this.banner('禁 术 · 解 放');SFX.lose();
+      $('stage').classList.add('shake');setTimeout(()=>$('stage').classList.remove('shake'),400);
+      toast('大蛇丸蜕下人皮,化作巨蛇之躯——战斗进入第二阶段!');
+      return;
+    }
+    if(e.hp<=0)this.stats.kills++;
+  },
+  execCard(c,target){
+    this.energy-=c.c;
+    let bonus=0;
+    if(c.t==='atk'&&this.firstAtk){
+      if(this.hasRelic('fuuma'))bonus+=4;
+      if(this.hasRelic('kyuubi_seal'))bonus+=6;
+      this.firstAtk=false;
+    }
+    if(c.t==='skl'&&this.firstSkl){
+      if(this.hasRelic('bell')){this.block+=3;this.fxText(this.playerEl(),'+3','blk')}
+      this.firstSkl=false;
+    }
+    const me={str:this.str,weak:this.weak};
+    const vBonus=this.hasRelic('sharingan')?1:0;
+    if(c.dmg){
+      const ts=c.aoe?this.enemies.filter(e=>e.hp>0):[target];
+      ts.forEach(t=>{
+        if(!t)return;
+        for(let h=0;h<c.hits;h++){
+          if(t.hp<=0)break;
+          this.dealDamage(t,this.calc(c.dmg+bonus,me,t));
+        }
+        if(c.vuln&&t.hp>0)t.vuln+=c.vuln+vBonus;
+      });
+    }
+    if(c.tvuln){const ts=c.aoe||!target?this.enemies.filter(e=>e.hp>0):[target];ts.forEach(t=>t.vuln+=c.tvuln+vBonus)}
+    if(c.tweak||c.weak){
+      const w=(c.tweak||0)+(c.weak||0);
+      const ts=(c.t==='atk'&&target&&!c.aoe)?[target]:this.enemies.filter(e=>e.hp>0);
+      ts.forEach(t=>t.weak+=w);
+    }
+    if(c.blk){const b=c.blk+this.dex;this.block+=b;this.fxText(this.playerEl(),'+'+b,'blk');SFX.blk()}
+    if(c.draw)this.draw(c.draw);
+    if(c.heal){this.heal(c.heal);this.fxText(this.playerEl(),'+'+c.heal,'heal')}
+    if(c.self){this.hp-=c.self;this.fxText(this.playerEl(),'-'+c.self);if(this.hp<=0){this.updateTopbar();return this.gameOver()}}
+    if(c.energy)this.energy+=c.energy;
+    if(c.clone)this.clones+=c.clone;
+    if(c.str)this.str+=c.str;
+    if(c.dex)this.dex+=c.dex;
+    if(c.nindo)this.nindoBlk+=c.nindo;
+    if(c.ramp)this.rampStr+=c.ramp;
+    $('combat-log').textContent=`使出「${c.n.replace('⁺','')}」!`;
+  },
+  checkWin(){
+    if(this.enemies.every(e=>e.hp<=0)){
+      this.busy=true;
+      this.renderCombat();
+      setTimeout(()=>this.winCombat(),650);
+      return true;
+    }
+    return false;
+  },
+  endTurn(){
+    if(this.busy)return;
+    this.busy=true;this.picked=null;$('target-hint').classList.remove('on');
+    if(this.clones){const b=this.clones*3;this.block+=b;this.fxText(this.playerEl(),'+'+b,'blk')}
+    this.discardPile.push(...this.hand);this.hand=[];
+    $('endturn').classList.add('enemyturn');
+    this.banner('敌 方 行 动');
+    this.renderCombat();
+    const acts=this.enemies.filter(e=>e.hp>0);
+    let i=0;
+    const step=()=>{
+      if(this.hp<=0)return this.gameOver();
+      if(i>=acts.length){
+        this.enemies.forEach(e=>{if(e.weak)e.weak--;if(e.vuln)e.vuln--});
+        if(this.weak)this.weak--;if(this.vuln)this.vuln--;
+        this.busy=false;
+        return this.startTurn();
+      }
+      const e=acts[i++];
+      if(e.hp<=0)return step();
+      e.block=0;
+      const m=e.intent,ei=this.enemies.indexOf(e);
+      const uEl=document.querySelector(`[data-ei="${ei}"]`);
+      if(uEl)uEl.classList.add('lunge-l');
+      setTimeout(()=>{
+        if(uEl)uEl.classList.remove('lunge-l');
+        if(m){
+          if(m.a){
+            let total=0;
+            for(let h=0;h<(m.hits||1);h++){
+              let d=this.calc(m.a,e,{vuln:this.vuln});
+              const blocked=Math.min(this.block,d);this.block-=blocked;d-=blocked;
+              this.hp-=d;total+=d;
+            }
+            if(total>0){
+              this.fxText(this.playerEl(),'-'+total);SFX.hurt();
+              const pu=document.querySelector('#player-side .unit');
+              if(pu){pu.classList.add('hitfx');setTimeout(()=>pu.classList.remove('hitfx'),320)}
+              if(total>=12){$('stage').classList.add('shake');setTimeout(()=>$('stage').classList.remove('shake'),400)}
+            }else{this.fxBlock(this.playerEl());SFX.blk()}
+          }
+          if(m.b)e.block+=m.b;
+          if(m.str)e.str+=m.str;
+          if(m.heal)e.hp=Math.min(e.maxHp,e.hp+m.heal);
+          if(m.weak)this.weak+=m.weak;
+          if(m.vulnP)this.vuln+=m.vulnP;
+          if(m.poison)this.poison+=m.poison;
+          $('combat-log').textContent=`${e.n} 使出「${m.txt}」`;
+        }
+        this.updateTopbar();this.renderCombat();
+        setTimeout(step,460);
+      },200);
+    };
+    setTimeout(step,650);
+  },
+
+  /* ----- 特效 ----- */
+  fxText(anchor,txt,cls=''){
+    if(!anchor)return;
+    const r=anchor.getBoundingClientRect(),a=$('app').getBoundingClientRect();
+    const f=document.createElement('div');
+    f.className='fdmg '+cls;f.textContent=txt;
+    f.style.left=(r.left-a.left+r.width/2-16+rnd(-14,14))+'px';
+    f.style.top=(r.top-a.top+rnd(0,16))+'px';
+    $('app').appendChild(f);setTimeout(()=>f.remove(),900);
+  },
+  fxSlash(anchor){
+    if(!anchor)return;
+    const r=anchor.getBoundingClientRect(),a=$('app').getBoundingClientRect();
+    const f=document.createElement('div');f.className='slashfx';
+    f.style.left=(r.left-a.left+r.width/2-45)+'px';
+    f.style.top=(r.top-a.top+r.height/2-45)+'px';
+    $('app').appendChild(f);setTimeout(()=>f.remove(),420);
+  },
+  fxBlock(anchor){
+    if(!anchor)return;
+    const r=anchor.getBoundingClientRect(),a=$('app').getBoundingClientRect();
+    const f=document.createElement('div');f.className='blockfx';f.textContent='🛡️';
+    f.style.left=(r.left-a.left+r.width/2-17)+'px';
+    f.style.top=(r.top-a.top+r.height/2-22)+'px';
+    $('app').appendChild(f);setTimeout(()=>f.remove(),560);
+  },
+
+  /* ----- 渲染 ----- */
+  intentHTML(e){
+    const m=e.intent;if(!m)return '…';
+    let p=[];
+    if(m.a){
+      const d=this.calc(m.a,e,{vuln:this.vuln});
+      p.push(`⚔️<b>${d}${(m.hits||1)>1?'×'+m.hits:''}</b>`);
+    }
+    if(m.b)p.push(`<span class="ib">🛡️${m.b}</span>`);
+    if(m.str)p.push('💪');
+    if(m.heal)p.push('💚');
+    if(m.weak)p.push('🌀');
+    if(m.vulnP)p.push('💢');
+    if(m.poison)p.push('☠️');
+    return p.join(' ');
+  },
+  stTags(o,isPlayer){
+    const T=[];
+    const add=(name,val,buff)=>T.push(`<span class="stag ${buff?'buff':'debuff'}" onclick="event.stopPropagation();toast('<b>${name}</b>:${esc(KW[name]||'')}')">${name}${val}</span>`);
+    if(o.str)add('力量',o.str,o.str>0);
+    if(o.weak)add('虚弱',o.weak,false);
+    if(o.vuln)add('易伤',o.vuln,false);
+    if(isPlayer){
+      if(this.dex)add('身法',this.dex,true);
+      if(this.clones)add('影分身',this.clones,true);
+      if(this.nindoBlk)add('忍道',this.nindoBlk,true);
+      if(this.rampStr)add('九尾',this.rampStr,true);
+      if(this.poison)add('中毒',this.poison,false);
+    }
+    return T.join('');
+  },
+  renderCombat(){
+    // 玩家
+    $('player-side').innerHTML=`<div class="unit player" onclick="G.clickStage(event)">
+      <div class="frame"><div class="face">🦊</div></div>
+      <div class="uname">漩涡鸣人 ${this.block?`<span class="ub">🛡️${this.block}</span>`:''}</div>
+      <div class="hpbar pb"><i style="width:${Math.max(0,this.hp/this.maxHp*100)}%"></i></div>
+      <div class="hptx">${Math.max(0,this.hp)} / ${this.maxHp}</div>
+      <div class="strow">${this.stTags({str:this.str,weak:this.weak,vuln:this.vuln},true)}</div>
+    </div>`;
+    // 敌人
+    $('enemy-side').innerHTML=this.enemies.map((e,i)=>{
+      const dead=e.hp<=0;
+      const pickedAtk=this.picked!==null&&this.hand[this.picked]&&this.hand[this.picked].t==='atk'&&!this.hand[this.picked].aoe;
+      return `<div class="unit ${dead?'dead':''} ${e.elite?'elite':''} ${e.boss?'boss':''} ${!dead?'targetable':''} ${pickedAtk&&!dead?'target-glow':''}" data-ei="${i}" onclick="G.clickEnemy(${i})">
+        <div class="intent">${dead?'':this.intentHTML(e)+' <span style="opacity:.65;font-size:11px">'+(e.intent?e.intent.txt:'')+'</span>'}</div>
+        <div class="frame"><div class="face">${e.sp}</div></div>
+        <div class="uname">${e.n} ${e.block?`<span class="ub">🛡️${e.block}</span>`:''}</div>
+        <div class="hpbar"><i style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></i></div>
+        <div class="hptx">${Math.max(0,e.hp)} / ${e.maxHp}</div>
+        <div class="strow">${this.stTags(e)}</div>
+      </div>`;
+    }).join('');
+    // 手牌(扇形)
+    const hand=$('hand');
+    const W=hand.clientWidth||300;
+    const n=this.hand.length;
+    const cardW=window.innerWidth<620?100:112;
+    const gap=n>1?Math.min(cardW*0.82,(W-cardW-10)/(n-1)):0;
+    const startX=(W-(cardW+gap*(n-1)))/2;
+    hand.innerHTML=this.hand.map((c,i)=>{
+      const mid=(n-1)/2;
+      const rot=n>1?(i-mid)*Math.min(4.5,26/n):0;
+      const ty=Math.abs(i-mid)*Math.min(3.5,16/n);
+      const cls=['inhand'];
+      if(c.c>this.energy&&!c.unplayable)cls.push('noafford');
+      if(c.unplayable)cls.push('noafford');
+      if(this.picked===i)cls.push('picked');
+      const st=`left:${startX+i*gap}px;bottom:6px;transform:rotate(${rot}deg) translateY(${ty}px);z-index:${10+i}`;
+      return `<div onclick="event.stopPropagation();G.clickCard(${i})" style="display:contents">${cardHTML(c,cls.join(' '),st)}</div>`;
+    }).join('');
+    // 信息
+    $('n-energy').textContent=this.energy;
+    $('orb').classList.toggle('zero',this.energy===0);
+    $('n-draw').textContent=this.drawPile.length;
+    $('n-discard').textContent=this.discardPile.length;
+  },
+});
+window.addEventListener('resize',()=>{if($('screen-combat').classList.contains('active')&&G.hand)G.renderCombat()});
+document.addEventListener('click',e=>{
+  if(!$('screen-combat').classList.contains('active'))return;
+  if(e.target.closest('#stage')&&!e.target.closest('.unit'))G.clickStage(e);
+});
+</script>
+<script>
+/* ====================== 奖励 / 篝火 / 商店 / 事件 / 结算 ====================== */
+Object.assign(G,{
+  winCombat(){
+    const kind=this.combatKind;
+    if(this.hasRelic('ramen'))this.heal(3);
+    if(kind==='elite')this.stats.elites++;
+    SFX.win();
+    if(kind==='boss')return this.bossReward();
+    let gold=kind==='elite'?rnd(50,70):rnd(20,34);
+    if(this.hasRelic('dice'))gold=Math.floor(gold*1.4);
+    this.gold+=gold;SFX.gold();this.updateTopbar();
+    let html=`<div class="ritem noclick">🪙 缴获 ${gold} 金币</div>`;
+    if(kind==='elite'){
+      const r=this.randomRelic();
+      if(r){this.addRelic(r);html+=`<div class="ritem noclick">${RELICS[r].ic} 获得忍具「${RELICS[r].n}」<br><span style="color:var(--paper-dim);font-size:12.5px">${RELICS[r].d}</span></div>`}
+    }
+    if(Math.random()<(kind==='elite'?0.75:0.4)){
+      const pk=pick(Object.keys(POTIONS));
+      this._pendingPotion=pk;
+      html+=`<div class="ritem" id="potion-take" onclick="G.takePotion()">${POTIONS[pk].ic} 拾取秘药「${POTIONS[pk].n}」— ${POTIONS[pk].d}</div>`;
+    }
+    html+=`<div class="sec-s" style="margin-top:10px">领悟新忍术 — 选择一张加入卡组(可跳过)</div>`;
+    const minR=kind==='elite'?2:1;
+    const cs=[this.randomCard(minR),this.randomCard(minR),this.randomCard(minR)];
+    this._choices=cs;
+    html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>`;
+    html+=`<button class="btn ghost" onclick="G.backToMap()">跳过,继续前进</button>`;
+    $('reward-list').innerHTML=html;
+    show('screen-reward');
+  },
+  takePotion(){
+    if(this._pendingPotion&&this.addPotion(this._pendingPotion)){
+      SFX.potion();toast(`收下「${POTIONS[this._pendingPotion].n}」`);
+      const el=$('potion-take');if(el){el.classList.add('noclick');el.style.opacity=.4}
+      this._pendingPotion=null;
+    }
+  },
+  takeCard(i){
+    const c=this._choices[i];if(!c)return;
+    this.deck.push(c);this._choices=[];
+    SFX.card();toast(`「${c.n}」加入卡组`);
+    this.backToMap();
+  },
+  bossReward(){
+    const isFinal=this.act>=ACTS.length-1;
+    if(isFinal)return this.victory();
+    const gold=rnd(90,110);this.gold+=gold;
+    const healAmt=Math.floor(this.maxHp*0.4);this.heal(healAmt);
+    this.updateTopbar();
+    let html=`<div class="sec-s" style="font-size:14px">再不斩的断刀深深插进泥土。雾气散开,通往音忍据点的路出现了。</div>
+      <div class="ritem noclick">🪙 缴获 ${gold} 金币 · 💚 休整回复 ${healAmt} 点生命</div>
+      <div class="sec-s" style="margin-top:12px;color:var(--gold)">◆ 选择一件首领忍具 ◆</div>
+      <div class="cgrid">${Object.entries(BOSS_RELICS).filter(([k])=>!this.hasRelic(k)).map(([k,r])=>
+        `<div class="shop-relic" onclick="G.takeBossRelic('${k}')"><div class="ric">${r.ic}</div><div class="rname">${r.n}</div><div class="rdesc">${r.d}</div></div>`).join('')}</div>
+      <div class="sec-s" style="margin-top:6px">并领悟一张稀有忍术</div>`;
+    const cs=[this.randomCard(2),this.randomCard(2),this.randomCard(2)];
+    this._choices=cs;this._bossPicked=false;this._cardPicked=false;
+    html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
+      <button class="btn" onclick="G.toNextAct()">进入第二章 →</button>`;
+    $('reward-list').innerHTML=html;
+    show('screen-reward');
+  },
+  takeBossRelic(k){
+    if(this._bossPicked)return toast('只能选择一件首领忍具');
+    this._bossPicked=true;this.addRelic(k);SFX.gold();
+    toast(`获得「${BOSS_RELICS[k].n}」`);
+  },
+  takeBossCard(i){
+    if(this._cardPicked)return toast('只能领悟一张');
+    const c=this._choices[i];if(!c)return;
+    this._cardPicked=true;this.deck.push(c);SFX.card();
+    toast(`「${c.n}」加入卡组`);
+  },
+  toNextAct(){this.startAct(this.act+1)},
+
+  /* ---------- 篝火 ---------- */
+  openRest(){
+    const pct=this.hasRelic('medkit')?0.5:0.3;
+    const amt=Math.floor(this.maxHp*pct);
+    $('screen-rest').innerHTML=`
+      <div class="sec-t">🔥 篝 火</div>
+      <div class="sec-s">队伍在树影间短暂休整,火光摇曳</div>
+      <div class="divider"></div>
+      <div class="center">
+        <div class="ritem" onclick="G.restHeal(${amt})">🍙 打坐调息<br><span style="color:var(--paper-dim);font-size:12.5px">回复 ${amt} 点生命(${Math.round(pct*100)}%)</span></div>
+        <div class="ritem" onclick="G.restUpgrade()">📜 修炼忍术<br><span style="color:var(--paper-dim);font-size:12.5px">永久升级一张卡牌</span></div>
+      </div>`;
+    show('screen-rest');
+  },
+  restHeal(amt){this.heal(amt);toast(`回复了 ${amt} 点生命`);this.backToMap()},
+  restUpgrade(){
+    this.pickFromDeck('选择要升级的忍术',c=>!c.upgraded&&c.t!=='curse',(c)=>{
+      upgradeCard(c);SFX.heal();toast(`「${c.n}」修炼成功!`);this.backToMap();
+    });
+  },
+
+  /* ---------- 商店 ---------- */
+  openShop(){
+    this.shopCards=[this.randomCard(1),this.randomCard(1),this.randomCard(2)];
+    this.shopPrices=this.shopCards.map(c=>c.r>=3?165:(c.r===2?110:60));
+    this.shopRelic=this.randomRelic();
+    this.shopPotion=pick(Object.keys(POTIONS));
+    this.removeUsed=false;
+    this.renderShop();show('screen-shop');
+  },
+  renderShop(){
+    const aff=p=>this.gold>=p?'':'cant';
+    let h=`<div class="sec-t">🏪 行商的帐篷</div>
+      <div class="sec-s">「呵呵,小兄弟,木叶的货可不便宜……看看?」 · 你的金币:<b style="color:var(--gold)">${this.gold}</b></div>
+      <div class="divider"></div>
+      <div class="cgrid">`;
+    h+=this.shopCards.map((c,i)=>{
+      if(!c)return `<div style="width:112px;text-align:center;color:var(--paper-dim);padding-top:60px">已售出</div>`;
+      return `<div onclick="G.buyCard(${i})"><div style="position:relative;width:112px;height:156px">${cardHTML(c,'static')}</div>
+        <div class="price ${aff(this.shopPrices[i])}">🪙 ${this.shopPrices[i]}</div></div>`;
+    }).join('');
+    h+=`</div><div class="cgrid">`;
+    if(this.shopRelic){const r=RELICS[this.shopRelic];
+      h+=`<div class="shop-relic" onclick="G.buyRelic()"><div class="ric">${r.ic}</div><div class="rname">${r.n}</div><div class="rdesc">${r.d}</div><div class="price ${aff(150)}">🪙 150</div></div>`}
+    if(this.shopPotion){const p=POTIONS[this.shopPotion];
+      h+=`<div class="shop-relic" onclick="G.buyPotion()" style="border-color:var(--chakra)"><div class="ric">${p.ic}</div><div class="rname" style="color:var(--chakra)">${p.n}</div><div class="rdesc">${p.d}</div><div class="price ${aff(45)}">🪙 45</div></div>`}
+    h+=`<div class="shop-relic ${this.removeUsed?'sold':''}" onclick="G.buyRemove()"><div class="ric">🗑️</div><div class="rname">删卡服务</div><div class="rdesc">从卡组中永久移除一张卡牌</div><div class="price ${aff(75)}">🪙 75</div></div>`;
+    h+=`</div><div class="center" style="margin-top:18px"><button class="btn ghost" onclick="G.backToMap()">离开商店</button></div>`;
+    $('screen-shop').innerHTML=h;
+  },
+  buyCard(i){
+    const c=this.shopCards[i];if(!c)return;
+    if(this.gold<this.shopPrices[i])return toast('金币不足');
+    this.gold-=this.shopPrices[i];this.deck.push(c);this.shopCards[i]=null;
+    SFX.gold();toast(`购入「${c.n}」`);this.updateTopbar();this.renderShop();
+  },
+  buyRelic(){
+    if(!this.shopRelic)return;
+    if(this.gold<150)return toast('金币不足');
+    this.gold-=150;const r=this.shopRelic;this.shopRelic=null;
+    this.addRelic(r);SFX.gold();toast(`获得「${RELICS[r].n}」`);this.renderShop();
+  },
+  buyPotion(){
+    if(!this.shopPotion)return;
+    if(this.gold<45)return toast('金币不足');
+    if(!this.addPotion(this.shopPotion))return;
+    this.gold-=45;this.shopPotion=null;
+    SFX.gold();this.updateTopbar();this.renderShop();
+  },
+  buyRemove(){
+    if(this.removeUsed)return;
+    if(this.gold<75)return toast('金币不足');
+    this.pickFromDeck('选择要移除的卡牌',()=>true,(c,idx)=>{
+      this.gold-=75;this.removeUsed=true;this.deck.splice(idx,1);
+      SFX.card();toast(`移除了「${c.n}」`);this.updateTopbar();this.renderShop();show('screen-shop');
+    });
+  },
+
+  /* ---------- 奇遇 ---------- */
+  openEvent(){
+    const ev=pick(EVENTS);this._event=ev;
+    $('event-box').innerHTML=`<div class="eic">${ev.ic}</div>
+      <div class="sec-t" style="font-size:19px;letter-spacing:.18em">${ev.title}</div>
+      <p>${ev.text}</p>
+      <div class="eopts">${ev.opts.map((o,i)=>{
+        const ok=!o.cond||o.cond(this);
+        return `<button class="btn ghost" ${ok?'':'disabled'} onclick="G.eventChoice(${i})">${o.t}</button>`}).join('')}</div>`;
+    show('screen-event');
+  },
+  eventChoice(i){
+    const r=this._event.opts[i].f(this);
+    this.updateTopbar();
+    if(this.hp<=0)return;
+    if(this.pendingRemove){
+      this.pendingRemove=false;
+      return this.pickFromDeck('选择要移除的卡牌',()=>true,(c,idx)=>{
+        this.deck.splice(idx,1);toast(`移除了「${c.n}」`);this.backToMap();
+      },false);
+    }
+    $('event-box').innerHTML=`<div class="eic">${this._event.ic}</div>
+      <p>${r}</p><button class="btn" onclick="G.backToMap()">继续前进</button>`;
+  },
+
+  /* ---------- 结算 ---------- */
+  statHTML(){
+    return `<div class="statline">
+      <span>总伤害 <b>${this.stats.dmg}</b></span><span>击败敌人 <b>${this.stats.kills}</b></span>
+      <span>出牌 <b>${this.stats.cards}</b></span><span>历经回合 <b>${this.stats.turns}</b></span>
+      <span>精英战 <b>${this.stats.elites}</b></span><span>卡组 <b>${this.deck.length}</b> 张</span>
+      <span>忍具 <b>${this.relics.length}</b> 件</span></div>`;
+  },
+  gameOver(){
+    if(this._ended)return;this._ended=true;
+    setTimeout(()=>this._ended=false,500);
+    this.hp=0;this.updateTopbar();SFX.lose();
+    $('end-content').innerHTML=`
+      <div style="font-size:60px">⚰️</div>
+      <div class="title-main" style="font-size:40px;color:#e05a5a;background:none;-webkit-background-clip:unset;filter:none">任 务 失 败</div>
+      <p style="color:var(--paper-dim);text-align:center;line-height:2">你倒在了 ${ACTS[this.act].name} · 第 ${this.row} 层。<br>但忍者的意志不会就此熄灭。</p>
+      ${this.statHTML()}
+      <button class="btn" style="margin-top:14px" onclick="G.newRun()">卷土重来</button>`;
+    show('screen-end');
+  },
+  victory(){
+    SFX.win();this.updateTopbar();
+    $('end-content').innerHTML=`
+      <div class="uzu-wrap" style="margin:0 auto"><div class="uzu"></div><div class="uzu u2"></div><div class="uzu-core">🍥</div></div>
+      <div class="title-main" style="font-size:40px">任 务 完 成</div>
+      <p style="text-align:center;line-height:2.1;font-size:14.5px">八岐大蛇轰然倒下,大蛇丸化作一缕青烟遁入黑暗。<br>
+      音忍据点土崩瓦解,木叶的灯火依旧明亮。<br>
+      <b style="color:var(--naruto);font-size:17px">「这就是——我的忍道!」</b></p>
+      ${this.statHTML()}
+      <button class="btn" style="margin-top:14px" onclick="G.newRun()">开启新的轮回</button>`;
+    show('screen-end');
+  },
+});
+window.G=G;window.CARDS=CARDS;window.RELICS=RELICS;window.BOSS_RELICS=BOSS_RELICS;window.POTIONS=POTIONS;window.ENEMIES=ENEMIES;window.ACTS=ACTS;window.mkCard=mkCard;window.upgradeCard=upgradeCard;
+</script>
+</body>
+</html>
