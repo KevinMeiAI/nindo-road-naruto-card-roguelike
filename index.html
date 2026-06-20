@@ -11,7 +11,7 @@
   --naruto:#ff7a1a; --chakra:#54b8f0; --seal:#c03022;
   --gold:#e0a83e; --hp:#e04848; --block:#86c5ea;
   --atk:#e06548; --skl:#52b3a4; --pwr:#a87fd6; --curse:#6b6b6b;
-  --card-w:136px; --card-h:190px;
+  --card-w:144px; --card-h:206px; --card-art-h:84px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overscroll-behavior:none}
@@ -235,7 +235,7 @@ button{font-family:inherit}
 .card.noafford{opacity:.62}
 .card .nm{font-size:12px;font-weight:800;text-align:center;color:#f4e8c5;line-height:1.05;min-height:18px;
   padding:0 13px 2px;text-shadow:0 1px 2px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card .art{height:58px;display:flex;align-items:center;justify-content:center;font-size:27px;overflow:hidden;
+.card .art{height:var(--card-art-h);display:flex;align-items:center;justify-content:center;font-size:27px;overflow:hidden;
   background:radial-gradient(ellipse at center, color-mix(in srgb,var(--cc) 22%,transparent), rgba(0,0,0,.22) 78%);
   margin:1px 0 3px;border:1px solid rgba(236,220,180,.18);border-radius:5px;
   filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
@@ -301,11 +301,10 @@ button{font-family:inherit}
   *{animation-duration:.001s!important;transition-duration:.001s!important}
 }
 @media (max-width:620px){
-  :root{--card-w:112px;--card-h:166px}
+  :root{--card-w:120px;--card-h:176px;--card-art-h:68px}
   #screen-title{justify-content:flex-start;padding-top:22px}
   .char-grid{grid-template-columns:1fr;max-width:340px}
   .char-card{min-height:150px}
-  .card .art{height:48px}
   .card .nm{min-height:16px;padding-left:11px;padding-right:11px}
   .card .tband{font-size:7px;padding:1px 8px}
   .card .ds{font-size:9px;line-height:1.2}
@@ -444,10 +443,10 @@ const CARDS = {
   taijutsu:{n:"体术连击",t:"atk",c:1,r:0,ic:"👊",d:"造成 <b>6</b> 点伤害",dmg:6,up:{d:"造成 <b>9</b> 点伤害",dmg:9}},
   kawarimi:{n:"替身术",t:"skl",c:1,r:0,ic:"🪵",d:"获得 <b>5</b> 点格挡",blk:5,up:{d:"获得 <b>8</b> 点格挡",blk:8}},
   rasengan:{n:"螺旋丸",t:"atk",c:2,r:0,ic:"🌀",art:"assets/card-art/rasengan.jpg",d:"造成 <b>12</b> 点伤害",dmg:12,chars:["naruto"],up:{n:"大玉螺旋丸",d:"造成 <b>17</b> 点伤害",dmg:17}},
-  lion_combo:{n:"狮子连弹",t:"atk",c:1,r:0,ic:"🦁",d:"造成 <b>7</b> 点伤害",dmg:7,chars:["sasuke"],up:{d:"造成 <b>10</b> 点伤害",dmg:10}},
-  chidori_seed:{n:"千鸟雏形",t:"atk",c:1,r:0,ic:"⚡",d:"造成 <b>6</b> 点伤害,施加 <b>1</b> 层易伤",dmg:6,vuln:1,chars:["sasuke"],up:{d:"造成 <b>8</b> 点伤害,施加 <b>2</b> 层易伤",dmg:8,vuln:2}},
-  power_punch:{n:"怪力拳",t:"atk",c:1,r:0,ic:"💥",d:"造成 <b>8</b> 点伤害",dmg:8,chars:["sakura"],up:{d:"造成 <b>11</b> 点伤害",dmg:11}},
-  palm_heal:{n:"掌仙术",t:"skl",c:1,r:0,ic:"💚",d:"获得 <b>5</b> 点格挡,回复 <b>2</b> 点生命",blk:5,heal:2,chars:["sakura"],up:{d:"获得 <b>7</b> 点格挡,回复 <b>3</b> 点生命",blk:7,heal:3}},
+  lion_combo:{n:"狮子连弹",t:"atk",c:1,r:0,ic:"🦁",art:"assets/card-art/lion_combo.jpg",d:"造成 <b>7</b> 点伤害",dmg:7,chars:["sasuke"],up:{d:"造成 <b>10</b> 点伤害",dmg:10}},
+  chidori_seed:{n:"千鸟雏形",t:"atk",c:1,r:0,ic:"⚡",art:"assets/card-art/chidori_seed.jpg",d:"造成 <b>6</b> 点伤害,施加 <b>1</b> 层易伤",dmg:6,vuln:1,chars:["sasuke"],up:{d:"造成 <b>8</b> 点伤害,施加 <b>2</b> 层易伤",dmg:8,vuln:2}},
+  power_punch:{n:"怪力拳",t:"atk",c:1,r:0,ic:"💥",art:"assets/card-art/power_punch.jpg",d:"造成 <b>8</b> 点伤害",dmg:8,chars:["sakura"],up:{d:"造成 <b>11</b> 点伤害",dmg:11}},
+  palm_heal:{n:"掌仙术",t:"skl",c:1,r:0,ic:"💚",art:"assets/card-art/palm_heal.jpg",d:"获得 <b>5</b> 点格挡,回复 <b>2</b> 点生命",blk:5,heal:2,chars:["sakura"],up:{d:"获得 <b>7</b> 点格挡,回复 <b>3</b> 点生命",blk:7,heal:3}},
   /* —— 普通 —— */
   kunai:{n:"苦无投掷",t:"atk",c:0,r:1,ic:"🗡️",d:"造成 <b>3</b> 点伤害",dmg:3,up:{d:"造成 <b>5</b> 点伤害",dmg:5}},
   renda:{n:"木叶旋风",t:"atk",c:1,r:1,ic:"🌪️",d:"造成 <b>3</b>×<b>2</b> 点伤害",dmg:3,hits:2,up:{d:"造成 <b>4</b>×<b>2</b> 点伤害",dmg:4}},
