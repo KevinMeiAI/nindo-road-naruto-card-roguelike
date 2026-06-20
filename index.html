@@ -729,13 +729,24 @@ const G={
   },
   relicData(k){return RELICS[k]||BOSS_RELICS[k]},
   randomRelic(){const p=Object.keys(RELICS).filter(k=>!this.hasRelic(k));return p.length?pick(p):null},
-  randomCard(minR=1){
+  randomCard(minR=1,excludeKeys=[]){
     let tier;
     if(minR===1){const r=Math.random();tier=r<.62?1:(r<.92?2:3)}
     else if(minR===2){const r=Math.random();tier=r<.7?2:3}
     else tier=3;
-    const pool=Object.keys(CARDS).filter(k=>CARDS[k].r===tier);
+    const exclude=new Set(excludeKeys);
+    let pool=Object.keys(CARDS).filter(k=>CARDS[k].r===tier&&!exclude.has(k));
+    if(!pool.length)pool=Object.keys(CARDS).filter(k=>CARDS[k].r>=minR&&CARDS[k].r<=3&&!exclude.has(k));
+    if(!pool.length)pool=Object.keys(CARDS).filter(k=>CARDS[k].r===tier);
     return mkCard(pick(pool));
+  },
+  randomCards(count,minR=1){
+    const used=new Set(),cards=[];
+    for(let i=0;i<count;i++){
+      const c=this.randomCard(minR,used);
+      cards.push(c);used.add(c.key);
+    }
+    return cards;
   },
   addPotion(k){
     if(this.potions.length>=2){toast('秘药栏已满(最多 2 瓶)');return false}
@@ -1325,7 +1336,7 @@ Object.assign(G,{
     }
     html+=`<div class="sec-s" style="margin-top:10px">领悟新忍术 — 选择一张加入卡组(可跳过)</div>`;
     const minR=kind==='elite'?2:1;
-    const cs=[this.randomCard(minR),this.randomCard(minR),this.randomCard(minR)];
+    const cs=this.randomCards(3,minR);
     this._choices=cs;
     html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>`;
     html+=`<button class="btn ghost" onclick="G.backToMap()">跳过,继续前进</button>`;
@@ -1358,7 +1369,7 @@ Object.assign(G,{
       <div class="cgrid">${Object.entries(BOSS_RELICS).filter(([k])=>!this.hasRelic(k)).map(([k,r])=>
         `<div class="shop-relic" onclick="G.takeBossRelic('${k}')"><div class="ric">${r.ic}</div><div class="rname">${r.n}</div><div class="rdesc">${r.d}</div></div>`).join('')}</div>
       <div class="sec-s" style="margin-top:6px">并领悟一张稀有忍术</div>`;
-    const cs=[this.randomCard(2),this.randomCard(2),this.randomCard(2)];
+    const cs=this.randomCards(3,2);
     this._choices=cs;this._bossPicked=false;this._cardPicked=false;
     html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
       <button class="btn" onclick="G.toNextAct()">进入${next.name.split(' · ')[0]} →</button>`;
@@ -1405,7 +1416,8 @@ Object.assign(G,{
 
   /* ---------- 商店 ---------- */
   openShop(){
-    this.shopCards=[this.randomCard(1),this.randomCard(1),this.randomCard(2)];
+    this.shopCards=this.randomCards(2,1);
+    this.shopCards.push(this.randomCard(2,this.shopCards.map(c=>c.key)));
     this.shopPrices=this.shopCards.map(c=>c.r>=3?165:(c.r===2?110:60));
     this.shopRelic=this.randomRelic();
     this.shopPotion=pick(Object.keys(POTIONS));
