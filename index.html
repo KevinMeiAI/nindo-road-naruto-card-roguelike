@@ -876,30 +876,33 @@ const G={
     }
     return cards;
   },
-  randomCardsByTiers(tiers){
+  maybeUpgradeRewardCard(c,chance){
+    if(c&&!c.upgraded&&c.t!=='curse'&&Math.random()<chance)upgradeCard(c);
+    return c;
+  },
+  rewardUpgradeChance(kind){
+    return kind==='fight'?0.03:0.05;
+  },
+  randomCardsByTiers(tiers,upgradeChance=0){
     const used=new Set(),cards=[];
     tiers.forEach(t=>{
       const c=this.randomCardOfTier(t,used,1);
-      cards.push(c);used.add(c.key);
+      cards.push(this.maybeUpgradeRewardCard(c,upgradeChance));used.add(c.key);
     });
     return cards;
   },
   combatRewardTiers(kind){
     if(kind==='elite'){
-      const tiers=[2,1,1];
-      if(Math.random()<0.35)tiers[1]=2;
-      if(Math.random()<0.12)tiers[2]=3;
+      const tiers=[0,0,0].map(()=>Math.random()<0.15?3:2);
       return shuffle(tiers);
     }
-    const tiers=[1,1,1];
-    if(this.row<=1)return tiers;
-    const r=Math.random();
-    if(r<0.22)tiers[2]=2;
-    else if(r<0.25)tiers[2]=3;
-    return shuffle(tiers);
+    return [0,0,0].map(()=>{
+      const r=Math.random();
+      return r<0.82?1:(r<0.98?2:3);
+    });
   },
   combatRewardCards(kind){
-    return this.randomCardsByTiers(this.combatRewardTiers(kind));
+    return this.randomCardsByTiers(this.combatRewardTiers(kind),this.rewardUpgradeChance(kind));
   },
   addPotion(k){
     if(this.potions.length>=2){toast('秘药栏已满(最多 2 瓶)');return false}
@@ -1674,7 +1677,7 @@ Object.assign(G,{
       <div class="sec-s" style="margin-top:12px;color:var(--gold)">◆ 首领战利品 ◆</div>
       ${relicHtml}
       <div class="sec-s" style="margin-top:10px">领悟一张稀有忍术 — 可跳过</div>`;
-    const cs=this.randomCards(3,2);
+    const cs=this.randomCards(3,2).map(c=>this.maybeUpgradeRewardCard(c,this.rewardUpgradeChance('boss')));
     this._choices=cs;this._cardPicked=false;
     html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
       <button class="btn" onclick="G.toNextAct()">进入${next.name.split(' · ')[0]} →</button>`;
