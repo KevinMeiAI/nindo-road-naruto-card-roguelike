@@ -118,6 +118,10 @@ button{font-family:inherit}
   radial-gradient(ellipse 100% 60% at 50% 105%, rgba(64,30,72,.5), transparent),
   radial-gradient(ellipse 60% 40% at 20% 0%, rgba(192,48,34,.08), transparent),
   linear-gradient(180deg,#150d16,#0c080d)}
+#stage.act3{background:
+  radial-gradient(ellipse 100% 60% at 50% 105%, rgba(70,42,28,.48), transparent),
+  radial-gradient(ellipse 60% 40% at 80% 0%, rgba(224,168,62,.08), transparent),
+  linear-gradient(180deg,#17110b,#090806)}
 #stage::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 6px)}
 #stage.shake{animation:shake .35s}
@@ -381,6 +385,11 @@ const CARDS = {
   shunshin:{n:"瞬身术",t:"skl",c:0,r:1,ic:"⚡",d:"抽 <b>2</b> 张牌",draw:2,up:{d:"抽 <b>3</b> 张牌",draw:3}},
   guard:{n:"铁壁防御",t:"skl",c:2,r:1,ic:"🛡️",d:"获得 <b>11</b> 点格挡",blk:11,up:{d:"获得 <b>15</b> 点格挡",blk:15}},
   sharingan_copy:{n:"看破",t:"skl",c:1,r:1,ic:"👁️",d:"获得 <b>3</b> 点格挡,施加 <b>1</b> 层虚弱",blk:3,tweak:1,up:{d:"获得 <b>5</b> 点格挡,施加 <b>2</b> 层虚弱",blk:5,tweak:2}},
+  kage_shuriken:{n:"影手里剑",t:"atk",c:2,r:1,ic:"✴️",d:"造成 <b>13</b> 点伤害",dmg:13,up:{d:"造成 <b>17</b> 点伤害",dmg:17}},
+  kawazu_tataki:{n:"蛙组手",t:"atk",c:1,r:1,ic:"🐸",d:"造成 <b>7</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:7,tweak:1,up:{d:"造成 <b>9</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:9,tweak:2}},
+  bunshin_feint:{n:"分身佯攻",t:"skl",c:1,r:1,ic:"👥",d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>1</b> 层虚弱",blk:6,weak:1,up:{d:"获得 <b>8</b> 点格挡,对所有敌人施加 <b>1</b> 层虚弱",blk:8}},
+  chakra_step:{n:"查克拉步",t:"skl",c:0,r:1,ic:"🔵",d:"获得 <b>2</b> 点格挡,抽 <b>1</b> 张牌",blk:2,draw:1,up:{d:"获得 <b>4</b> 点格挡,抽 <b>1</b> 张牌",blk:4}},
+  wire_trap:{n:"钢丝陷阱",t:"skl",c:1,r:1,ic:"🧵",d:"获得 <b>4</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:4,tvuln:1,up:{d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>2</b> 层易伤",blk:6,tvuln:2}},
   /* —— 稀有 —— */
   kagebunshin:{n:"影分身之术",t:"skl",c:1,r:2,ic:"👥",d:"获得 <b>1</b> 层影分身",clone:1,up:{d:"获得 <b>2</b> 层影分身",clone:2}},
   chidori:{n:"千鸟",t:"atk",c:1,r:2,ic:"⚡",d:"造成 <b>11</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:11,self:2,up:{n:"雷切",d:"造成 <b>15</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:15}},
@@ -392,12 +401,23 @@ const CARDS = {
   chakra_focus:{n:"查克拉炼成",t:"skl",c:0,r:2,ic:"🔵",d:"获得 <b>2</b> 点查克拉。<b>消耗</b>",energy:2,ex:1,up:{d:"获得 <b>3</b> 点查克拉。<b>消耗</b>",energy:3}},
   sennin:{n:"仙人模式",t:"pwr",c:3,r:2,ic:"🐸",d:"力量 +<b>2</b>,身法 +<b>2</b>",str:2,dex:2,up:{c:2}},
   nindo:{n:"我的忍道",t:"pwr",c:1,r:2,ic:"🍥",d:"每回合开始获得 <b>3</b> 点格挡",nindo:3,up:{d:"每回合开始获得 <b>5</b> 点格挡",nindo:5}},
+  hosenka:{n:"火遁·凤仙火",t:"atk",c:1,r:2,ic:"🔥",d:"造成 <b>2</b>×<b>3</b> 点伤害,施加 <b>1</b> 层易伤",dmg:2,hits:3,vuln:1,up:{d:"造成 <b>3</b>×<b>3</b> 点伤害,施加 <b>1</b> 层易伤",dmg:3}},
+  shadow_bind:{n:"影缚术",t:"skl",c:1,r:2,ic:"🕳️",d:"对所有敌人施加 <b>2</b> 层虚弱,抽 <b>1</b> 张牌",weak:2,draw:1,up:{d:"对所有敌人施加 <b>3</b> 层虚弱,抽 <b>1</b> 张牌",weak:3}},
+  doton_wall:{n:"土遁·土流壁",t:"skl",c:1,r:2,ic:"🪨",d:"获得 <b>9</b> 点格挡",blk:9,up:{d:"获得 <b>12</b> 点格挡,抽 <b>1</b> 张牌",blk:12,draw:1}},
+  sage_kata:{n:"仙术体术",t:"atk",c:2,r:2,ic:"🐸",d:"造成 <b>15</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:15,tweak:2,up:{d:"造成 <b>19</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:19}},
+  chakra_surge:{n:"查克拉奔流",t:"skl",c:0,r:2,ic:"💧",d:"获得 <b>1</b> 点查克拉,抽 <b>1</b> 张牌。<b>消耗</b>",energy:1,draw:1,ex:1,up:{d:"获得 <b>2</b> 点查克拉,抽 <b>1</b> 张牌。<b>消耗</b>",energy:2}},
+  seal_reinforce:{n:"封印加固",t:"pwr",c:1,r:2,ic:"🈲",d:"身法 +<b>1</b>,每回合开始获得 <b>2</b> 点格挡",dex:1,nindo:2,up:{d:"身法 +<b>1</b>,每回合开始获得 <b>3</b> 点格挡",nindo:3}},
+  odama_chain:{n:"大玉连弹",t:"atk",c:2,r:2,ic:"🌀",d:"造成 <b>6</b>×<b>3</b> 点伤害",dmg:6,hits:3,up:{d:"造成 <b>8</b>×<b>3</b> 点伤害",dmg:8}},
   /* —— 传说 —— */
   fuuton:{n:"风遁·螺旋手里剑",t:"atk",c:3,r:3,ic:"🌀",d:"造成 <b>26</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:26,self:4,ex:1,up:{d:"造成 <b>34</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:34}},
   kyuubi:{n:"九尾查克拉",t:"pwr",c:2,r:3,ic:"🦊",d:"每回合开始力量 +<b>1</b>",ramp:1,up:{c:1}},
   tajuu:{n:"多重影分身",t:"skl",c:2,r:3,ic:"👥",d:"获得 <b>3</b> 层影分身。<b>消耗</b>",clone:3,ex:1,up:{d:"获得 <b>4</b> 层影分身。<b>消耗</b>",clone:4}},
   senpou:{n:"仙法·超大玉螺旋丸",t:"atk",c:3,r:3,ic:"💥",d:"造成 <b>32</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:32,tweak:2,up:{d:"造成 <b>40</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:40}},
   bijuudama:{n:"尾兽玉",t:"atk",c:3,r:3,ic:"⚫",d:"对<b>所有</b>敌人造成 <b>22</b> 点伤害,自身受 <b>6</b> 点伤害。<b>消耗</b>",dmg:22,aoe:1,self:6,ex:1,up:{d:"对<b>所有</b>敌人造成 <b>30</b> 点伤害,自身受 <b>6</b> 点伤害。<b>消耗</b>",dmg:30}},
+  gamabunta:{n:"通灵术·蛤蟆文太",t:"skl",c:3,r:3,ic:"🐸",d:"获得 <b>22</b> 点格挡,对所有敌人施加 <b>3</b> 层虚弱。<b>消耗</b>",blk:22,weak:3,ex:1,up:{d:"获得 <b>28</b> 点格挡,对所有敌人施加 <b>3</b> 层虚弱。<b>消耗</b>",blk:28}},
+  kyuubi_cloak:{n:"九尾外衣",t:"pwr",c:2,r:3,ic:"🦊",d:"力量 +<b>1</b>,每回合开始力量 +<b>1</b>,自身受 <b>3</b> 点伤害",str:1,ramp:1,self:3,up:{c:1}},
+  senjutsu_focus:{n:"仙术凝神",t:"pwr",c:2,r:3,ic:"🌿",d:"身法 +<b>2</b>,每回合开始获得 <b>3</b> 点格挡",dex:2,nindo:3,up:{d:"身法 +<b>3</b>,每回合开始获得 <b>4</b> 点格挡",dex:3,nindo:4}},
+  rasen_barrage:{n:"螺旋丸连弹",t:"atk",c:3,r:3,ic:"🌀",d:"造成 <b>13</b>×<b>3</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:13,hits:3,self:4,ex:1,up:{d:"造成 <b>16</b>×<b>3</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:16}},
   /* —— 诅咒 —— */
   jyuin:{n:"咒印之痕",t:"curse",c:0,r:9,ic:"🕸️",d:"无法打出。占据手牌。",unplayable:1},
 };
@@ -419,11 +439,21 @@ const RELICS = {
   dice:{ic:"🎲",n:"纲手的赌骰",d:"战斗金币收益 +40%"},
   bell:{ic:"🔔",n:"双铃铛",d:"每回合打出的第 1 张技能牌获得 3 点格挡"},
   sakeflask:{ic:"🍶",n:"自来也的酒壶",d:"奇遇中受到的伤害减半(向下取整)"},
+  flak_jacket:{ic:"🦺",n:"中忍护甲",d:"每场战斗开始时获得 6 点格挡"},
+  chakra_bead:{ic:"🔵",n:"查克拉珠",d:"每场战斗第 1 回合力量 +1"},
+  seal_tag:{ic:"🏷️",n:"封印符包",d:"你施加的虚弱层数 +1"},
+  chakra_thread:{ic:"🧵",n:"查克拉线",d:"每回合打出的第 1 张技能牌额外抽 1 张牌"},
+  mission_pass:{ic:"📄",n:"A级任务书",d:"战斗金币收益 +20%"},
+  anbu_mask:{ic:"🎭",n:"暗部面具",d:"精英和首领战开始时力量 +1"},
+  scrollcase:{ic:"🧾",n:"忍术卷轴筒",d:"获得时随机升级一张可升级卡牌"},
+  slug_charm:{ic:"🐌",n:"蛞蝓护符",d:"战斗胜利后若生命低于一半,回复 5 点生命"},
 };
 const BOSS_RELICS = {
   scroll:{ic:"📜",n:"卷轴·通灵奥义",d:"每回合查克拉上限 +1"},
   sage_cloak:{ic:"🧥",n:"仙人袍",d:"最大生命 +18,每场战斗开始获得 8 点格挡"},
   kyuubi_seal:{ic:"🦊",n:"九尾封印·钥",d:"每回合打出的第 1 张攻击牌伤害 +6,最大生命 -8"},
+  forbidden_scroll:{ic:"📕",n:"禁术卷轴",d:"最大生命 -10,每回合多抽 1 张牌"},
+  hokage_cloak:{ic:"🧥",n:"火影披风",d:"最大生命 +12,战斗开始力量 +1、身法 +1"},
 };
 
 const POTIONS = {
@@ -433,6 +463,9 @@ const POTIONS = {
   chakrapill:{ic:"🔵",n:"查克拉丸",d:"本回合查克拉 +2"},
   antidote:{ic:"🟢",n:"解毒丸",d:"清除自身中毒、虚弱、易伤"},
   strpill:{ic:"🔴",n:"士气丸",d:"本场战斗力量 +2"},
+  clonepill:{ic:"👥",n:"影分身丸",d:"本场战斗获得 1 层影分身"},
+  sealpaper:{ic:"🏷️",n:"封印爆符",d:"对所有敌人施加 2 层虚弱和 2 层易伤"},
+  dexpill:{ic:"🟦",n:"轻身丸",d:"本场战斗身法 +2"},
 };
 
 /* 敌人:moves循环;a伤害 hits b格挡 str weak vuln poison heal txt
@@ -467,16 +500,40 @@ const ENEMIES = {
       moves:[{a:11,hits:2,txt:"八岐大蛇·双首"},{a:13,poison:2,txt:"猛毒蛇崩"},{b:15,heal:10,txt:"不死再生"},{str:3,txt:"禁术暴走"}],
       special:{every:3,move:{a:26,txt:"八岐大蛇·灭!"}}},
   },
+  /* 第三章:晓之阴影 */
+  zetsu:{n:"白绝分身",sp:"🌱",hp:[50,60],moves:[{a:10,txt:"木遁缠绕"},{b:10,heal:5,txt:"孢子再生"},{a:7,weak:1,txt:"孢子侵蚀"}]},
+  iwa_bomber:{n:"岩隐爆破兵",sp:"💣",hp:[48,58],moves:[{a:14,txt:"爆破黏土"},{a:8,hits:2,txt:"连环爆符"},{str:1,b:8,txt:"埋设陷阱"}]},
+  ame_hunter:{n:"雨隐追兵",sp:"☔",hp:[52,64],moves:[{a:11,weak:1,txt:"雨针追击"},{b:12,txt:"雨幕防御"},{a:9,poison:2,txt:"毒雨千本"}]},
+  puppet_master:{n:"砂隐傀儡师",sp:"🪆",hp:[54,66],moves:[{b:14,txt:"傀儡护阵"},{a:6,hits:3,txt:"机关连射"},{a:10,vulnP:1,txt:"毒刃破绽"}]},
+  chakra_leech:{n:"查克拉掠夺者",sp:"🦇",hp:[46,56],moves:[{a:10,txt:"吸取查克拉"},{a:6,weak:1,b:8,txt:"暗影汲取"},{str:2,txt:"查克拉暴涨"}]},
+  kisame:{n:"干柿鬼鲛",sp:"🦈",hp:[112,112],elite:1,
+    moves:[{a:15,txt:"鲛肌斩击"},{b:14,str:1,txt:"水牢鲛舞"},{a:7,hits:3,txt:"水遁·五食鲛"}],
+    special:{every:4,move:{a:18,weak:2,txt:"大爆水冲波!"}}},
+  deidara:{n:"迪达拉",sp:"🕊️",hp:[96,96],elite:1,
+    moves:[{a:12,hits:2,txt:"黏土飞鸟"},{a:18,txt:"C2龙"},{b:10,str:1,txt:"艺术准备"}],
+    special:{every:3,move:{a:25,txt:"C3十八号!"}}},
+  itachi:{n:"宇智波鼬",sp:"🩸",hp:[178,178],boss:1,
+    moves:[{a:14,weak:1,txt:"幻术·写轮眼"},{a:10,hits:2,txt:"苦无连闪"},{b:16,txt:"乌鸦分身"},{a:12,vulnP:1,txt:"月读压迫"}],
+    special:{every:4,move:{a:24,weak:2,txt:"月读!"}},
+    phase2:{n:"须佐能乎·鼬",sp:"🛡️",hpRatio:0.58,str:2,
+      moves:[{a:16,txt:"十拳剑"},{b:20,txt:"八咫镜"},{a:9,hits:3,txt:"勾玉连射"},{str:2,b:10,txt:"须佐威压"}],
+      special:{every:3,move:{a:30,vulnP:1,txt:"天照!"}}},
+  },
 };
 
 /* 章节配置 */
 const ACTS=[
   {name:"第一章 · 木叶外围",sub:"波之国边境的雾气中,杀气若隐若现",
    pool:["otonin","snake","nukenin","puppet","kiri"],
-   elites:[["oni1","oni2"],["haku"]],boss:["zabuza"],bossName:"桃地再不斩"},
+   elites:[["oni1","oni2"],["haku"]],boss:["zabuza"],bossName:"桃地再不斩",
+   clearText:"再不斩的断刀深深插进泥土。雾气散开,通往音忍据点的路出现了。"},
   {name:"第二章 · 音忍据点",sub:"咒印的气息越来越浓,大蛇丸就在最深处",
    pool:["oto_elite","spider","jirobo","twins","twins2"],
-   elites:[["kimimaro"],["twins","twins2"]],boss:["orochimaru"],bossName:"大蛇丸"},
+   elites:[["kimimaro"],["twins","twins2"]],boss:["orochimaru"],bossName:"大蛇丸",
+   clearText:"大蛇丸的蛇影遁入地底,残破卷轴上却露出晓组织的暗号。新的追踪开始了。"},
+  {name:"第三章 · 晓之阴影",sub:"黑底红云在夜色中翻涌,真正的试炼才刚开始",
+   pool:["zetsu","iwa_bomber","ame_hunter","puppet_master","chakra_leech"],
+   elites:[["kisame"],["deidara"]],boss:["itachi"],bossName:"宇智波鼬"},
 ];
 
 const EVENTS = [
@@ -510,6 +567,51 @@ const EVENTS = [
    opts:[
      {t:"🎲 押 30 金币(50% 赢 90,50% 血本无归)",cond:g=>g.gold>=30,f:g=>{g.gold-=30;if(Math.random()<0.5){g.gold+=90;return "骰子停住——你赢了!男人肉痛地数出 90 金币。"}return "骰子停住……男人笑着收走了你的钱:「下次再来啊。」"}},
      {t:"🚶 赌博有害(离开)",f:g=>"男人耸耸肩,继续吆喝下一个路人。"},
+   ]},
+  {ic:"📘",title:"卡卡西特训",text:"卡卡西合上亲热天堂,露出一只写轮眼:「只练一招,但要练到能活下来。」",
+   opts:[
+     {t:"📘 复盘战术(随机升级 1 张卡牌)",f:g=>{const cs=g.deck.filter(c=>!c.upgraded&&c.t!=='curse');if(!cs.length)return "卡卡西看了半天:「你已经没有能临时突破的招式了。」";const c=pick(cs);upgradeCard(c);return `卡卡西指出了破绽,「${c.n}」升级了。`}},
+     {t:"💥 实战演练(受 7 点伤害,获得随机稀有卡)",f:g=>{g.eventDamage(7);if(g.hp<=0)return null;const c=g.randomCard(2);g.deck.push(c);return `你被雷切的余波震退,却领悟了「${c.n}」。`}},
+     {t:"🚶 今天先到这里",f:g=>"卡卡西点点头:「能判断何时撤退,也是忍者的素质。」"},
+   ]},
+  {ic:"🐸",title:"妙木山试炼",text:"深作仙人要求你坐在蛤蟆油前一动不动。空气里满是自然能量的低鸣。",
+   opts:[
+     {t:"🌿 进入静坐(最大生命 +5,随机升级 1 张技能牌)",f:g=>{g.maxHp+=5;g.hp+=5;const cs=g.deck.filter(c=>!c.upgraded&&c.t==='skl');if(cs.length)upgradeCard(pick(cs));return "你没有变成石像,反而让查克拉流动更稳定。"}},
+     {t:"🐸 强行吸收(获得 1 张随机传说卡,受 10 点伤害)",f:g=>{g.eventDamage(10);if(g.hp<=0)return null;const c=g.randomCard(3);g.deck.push(c);return `自然能量几乎吞没意识,你强行记住了「${c.n}」。`}},
+   ]},
+  {ic:"🖤",title:"黑市卷轴",text:"戴斗笠的商人摊开黑色卷轴:「木叶禁售,但你看起来很需要。」",
+   opts:[
+     {t:"🪙 买下卷轴(花 60 金币,获得随机稀有卡)",cond:g=>g.gold>=60,f:g=>{g.gold-=60;const c=g.randomCard(2);g.deck.push(c);return `你买下卷轴,学会了「${c.n}」。`}},
+     {t:"😈 偷偷拓印(获得随机稀有卡 + 咒印之痕)",f:g=>{const c=g.randomCard(2);g.deck.push(c);g.deck.push(mkCard('jyuin'));return `拓印成功,「${c.n}」入手,但卷轴上的咒文也缠上了你。`}},
+     {t:"🚶 不和黑市交易",f:g=>"你记下商人的脸,决定以后再处理。"},
+   ]},
+  {ic:"🏥",title:"医疗班营地",text:"前线医疗班正在转移伤员,有人认出了你的护额,示意你坐下处理伤势。",
+   opts:[
+     {t:"🩹 接受治疗(回复 22 点生命)",f:g=>{g.heal(22);return "绿色查克拉覆盖伤口,疼痛明显缓和。"}},
+     {t:"🕸️ 清理咒印(移除 1 张诅咒)",cond:g=>g.deck.some(c=>c.t==='curse'),f:g=>{const i=g.deck.findIndex(c=>c.t==='curse');const c=g.deck.splice(i,1)[0];return `医疗忍者切断了「${c.n}」的查克拉残留。`}},
+     {t:"🍙 留下兵粮丸(获得随机秘药)",f:g=>{const p=pick(Object.keys(POTIONS));if(g.addPotion(p))return `医疗班塞给你一份「${POTIONS[p].n}」。`;return "你的秘药栏已经满了,只能把补给留给伤员。"}},
+   ]},
+  {ic:"🏞️",title:"终末之谷",text:"巨像之间水声轰鸣。你想起两个名字,也想起力量与羁绊从来不是同一条路。",
+   opts:[
+     {t:"🍥 坚持自己的忍道(获得「我的忍道」)",f:g=>{g.deck.push(mkCard('nindo'));return "你握紧护额,把动摇压回心底。"}},
+     {t:"🦊 借用九尾力量(获得「九尾外衣」,受 8 点伤害)",f:g=>{g.eventDamage(8);if(g.hp<=0)return null;g.deck.push(mkCard('kyuubi_cloak'));return "赤红查克拉覆上皮肤,力量滚烫得像火。"}},
+   ]},
+  {ic:"🏜️",title:"砂隐求援",text:"砂隐忍者被傀儡残骸困住,请求你护送他们穿过峡谷。",
+   opts:[
+     {t:"🛡️ 护送他们(受 6 点伤害,获得随机忍具)",f:g=>{g.eventDamage(6);if(g.hp<=0)return null;const r=g.randomRelic();if(!r){g.gold+=60;return "他们没有更多忍具,只好凑出 60 金币作为谢礼。"}g.addRelic(r);return `砂隐忍者把「${RELICS[r].n}」交给了你。`}},
+     {t:"🪙 提供物资(花 40 金币,最大生命 +6)",cond:g=>g.gold>=40,f:g=>{g.gold-=40;g.maxHp+=6;g.hp+=6;return "你分出补给,也换来一套沙漠呼吸法。"}},
+     {t:"🚶 任务优先",f:g=>"你留下路线情报,继续追踪自己的目标。"},
+   ]},
+  {ic:"💰",title:"地下换金所",text:"昏暗小屋里贴满通缉令。老板抬眼:「卖情报,买命,都可以。」",
+   opts:[
+     {t:"💰 出售情报(+70 金币,最大生命 -4)",f:g=>{g.gold+=70;g.maxHp-=4;g.hp=Math.min(g.hp,g.maxHp);return "情报换来沉甸甸的钱袋,也让你暴露了一点行踪。"}},
+     {t:"📦 买一件来路不明的忍具(花 140 金币)",cond:g=>g.gold>=140,f:g=>{g.gold-=140;const r=g.randomRelic();if(!r){g.gold+=100;return "货架已经空了,老板退回 100 金币。"}g.addRelic(r);return `你拿走了「${RELICS[r].n}」,没有追问来源。`}},
+     {t:"🚶 离开",f:g=>"这里的空气让人不舒服。"},
+   ]},
+  {ic:"🐦",title:"情报乌鸦",text:"一只乌鸦落在树枝上,脚环里夹着密信。它没有飞走,像是在等你选择。",
+   opts:[
+     {t:"📨 读取密信(获得随机卡牌并当场升级它)",f:g=>{const c=g.randomCard(1);upgradeCard(c);g.deck.push(c);return `密信里记着一套战法,你获得了「${c.n}」。`}},
+     {t:"🍙 喂它兵粮丸(花 20 金币,获得随机秘药)",cond:g=>g.gold>=20,f:g=>{const p=pick(Object.keys(POTIONS));if(g.addPotion(p)){g.gold-=20;return `乌鸦叼回一瓶「${POTIONS[p].n}」。`}return "乌鸦飞了一圈,发现你已经塞不下更多秘药。"}},
    ]},
 ];
 </script>
@@ -617,6 +719,12 @@ const G={
     if(k==='headband')this.permStr+=1;
     if(k==='sage_cloak'){this.maxHp+=18;this.hp+=18}
     if(k==='kyuubi_seal'){this.maxHp-=8;this.hp=Math.min(this.hp,this.maxHp)}
+    if(k==='forbidden_scroll'){this.maxHp-=10;this.hp=Math.min(this.hp,this.maxHp)}
+    if(k==='hokage_cloak'){this.maxHp+=12;this.hp+=12}
+    if(k==='scrollcase'){
+      const up=this.deck.filter(c=>!c.upgraded&&c.t!=='curse');
+      if(up.length)upgradeCard(pick(up));
+    }
     this.updateTopbar();
   },
   relicData(k){return RELICS[k]||BOSS_RELICS[k]},
@@ -674,6 +782,9 @@ const G={
     if(k==='chakrapill')this.energy+=2;
     if(k==='antidote'){this.poison=0;this.weak=0;this.vuln=0}
     if(k==='strpill')this.str+=2;
+    if(k==='clonepill')this.clones+=1;
+    if(k==='sealpaper')this.enemies.filter(e=>e.hp>0).forEach(e=>{e.weak+=2;e.vuln+=2});
+    if(k==='dexpill')this.dex+=2;
     this.updateTopbar();this.renderCombat();
   },
 
@@ -827,6 +938,9 @@ Object.assign(G,{
     this.discardPile=[];this.hand=[];this.exhaustPile=[];
     if(this.hasRelic('kunaibag'))this.block+=5;
     if(this.hasRelic('sage_cloak'))this.block+=8;
+    if(this.hasRelic('flak_jacket'))this.block+=6;
+    if(this.hasRelic('anbu_mask')&&(kind==='elite'||kind==='boss'))this.str+=1;
+    if(this.hasRelic('hokage_cloak')){this.str+=1;this.dex+=1}
     $('stage').className='act'+(this.act+1);
     $('combat-log').textContent=kind==='boss'?`${A.bossName}:「让我见识一下你的实力吧……」`:'战斗开始!';
     show('screen-combat');
@@ -843,6 +957,7 @@ Object.assign(G,{
       +(this.hasRelic('scroll')?1:0)
       +(this.turn===1&&this.hasRelic('hiraishin')?1:0);
     this.firstAtk=true;this.firstSkl=true;
+    if(this.turn===1&&this.hasRelic('chakra_bead'))this.str+=1;
     if(this.nindoBlk)this.block+=this.nindoBlk;
     if(this.rampStr)this.str+=this.rampStr;
     if(this.hasRelic('cells'))this.hp=Math.min(this.maxHp,this.hp+1);
@@ -851,7 +966,7 @@ Object.assign(G,{
       this.poison--;
       if(this.hp<=0){this.updateTopbar();return this.gameOver()}
     }
-    this.draw(5+(this.turn===1&&this.hasRelic('book')?2:0));
+    this.draw(5+(this.turn===1&&this.hasRelic('book')?2:0)+(this.hasRelic('forbidden_scroll')?1:0));
     this.enemies.forEach(e=>{if(e.hp>0)this.rollIntent(e)});
     this.banner('第 '+this.turn+' 回合 · 我方行动');SFX.turn();
     $('endturn').classList.remove('enemyturn');
@@ -969,10 +1084,12 @@ Object.assign(G,{
     }
     if(c.t==='skl'&&this.firstSkl){
       if(this.hasRelic('bell')){this.block+=3;this.fxText(this.playerEl(),'+3','blk')}
+      if(this.hasRelic('chakra_thread'))this.draw(1);
       this.firstSkl=false;
     }
     const me={str:this.str,weak:this.weak};
     const vBonus=this.hasRelic('sharingan')?1:0;
+    const wBonus=this.hasRelic('seal_tag')?1:0;
     if(c.dmg){
       const ts=c.aoe?this.enemies.filter(e=>e.hp>0):[target];
       ts.forEach(t=>{
@@ -986,7 +1103,7 @@ Object.assign(G,{
     }
     if(c.tvuln){const ts=c.aoe||!target?this.enemies.filter(e=>e.hp>0):[target];ts.forEach(t=>t.vuln+=c.tvuln+vBonus)}
     if(c.tweak||c.weak){
-      const w=(c.tweak||0)+(c.weak||0);
+      const w=(c.tweak||0)+(c.weak||0)+wBonus;
       const ts=(c.t==='atk'&&target&&!c.aoe)?[target]:this.enemies.filter(e=>e.hp>0);
       ts.forEach(t=>t.weak+=w);
     }
@@ -1186,11 +1303,15 @@ Object.assign(G,{
   winCombat(){
     const kind=this.combatKind;
     if(this.hasRelic('ramen'))this.heal(3);
+    if(this.hasRelic('slug_charm')&&this.hp<this.maxHp/2)this.heal(5);
     if(kind==='elite')this.stats.elites++;
     SFX.win();
     if(kind==='boss')return this.bossReward();
     let gold=kind==='elite'?rnd(50,70):rnd(20,34);
-    if(this.hasRelic('dice'))gold=Math.floor(gold*1.4);
+    let goldMul=1;
+    if(this.hasRelic('dice'))goldMul+=0.4;
+    if(this.hasRelic('mission_pass'))goldMul+=0.2;
+    gold=Math.floor(gold*goldMul);
     this.gold+=gold;SFX.gold();this.updateTopbar();
     let html=`<div class="ritem noclick">🪙 缴获 ${gold} 金币</div>`;
     if(kind==='elite'){
@@ -1227,10 +1348,11 @@ Object.assign(G,{
   bossReward(){
     const isFinal=this.act>=ACTS.length-1;
     if(isFinal)return this.victory();
+    const A=ACTS[this.act],next=ACTS[this.act+1];
     const gold=rnd(90,110);this.gold+=gold;
     const healAmt=Math.floor(this.maxHp*0.4);this.heal(healAmt);
     this.updateTopbar();
-    let html=`<div class="sec-s" style="font-size:14px">再不斩的断刀深深插进泥土。雾气散开,通往音忍据点的路出现了。</div>
+    let html=`<div class="sec-s" style="font-size:14px">${A.clearText||`${A.bossName}败退,通往${next.name}的路出现了。`}</div>
       <div class="ritem noclick">🪙 缴获 ${gold} 金币 · 💚 休整回复 ${healAmt} 点生命</div>
       <div class="sec-s" style="margin-top:12px;color:var(--gold)">◆ 选择一件首领忍具 ◆</div>
       <div class="cgrid">${Object.entries(BOSS_RELICS).filter(([k])=>!this.hasRelic(k)).map(([k,r])=>
@@ -1239,7 +1361,7 @@ Object.assign(G,{
     const cs=[this.randomCard(2),this.randomCard(2),this.randomCard(2)];
     this._choices=cs;this._bossPicked=false;this._cardPicked=false;
     html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
-      <button class="btn" onclick="G.toNextAct()">进入第二章 →</button>`;
+      <button class="btn" onclick="G.toNextAct()">进入${next.name.split(' · ')[0]} →</button>`;
     $('reward-list').innerHTML=html;
     show('screen-reward');
   },
@@ -1389,8 +1511,8 @@ Object.assign(G,{
     $('end-content').innerHTML=`
       <div class="uzu-wrap" style="margin:0 auto"><div class="uzu"></div><div class="uzu u2"></div><div class="uzu-core">🍥</div></div>
       <div class="title-main" style="font-size:40px">任 务 完 成</div>
-      <p style="text-align:center;line-height:2.1;font-size:14.5px">八岐大蛇轰然倒下,大蛇丸化作一缕青烟遁入黑暗。<br>
-      音忍据点土崩瓦解,木叶的灯火依旧明亮。<br>
+      <p style="text-align:center;line-height:2.1;font-size:14.5px">须佐能乎的光芒在黎明前消散,黑底红云退入远方。<br>
+      你带着情报回到木叶,新的道路仍在脚下延伸。<br>
       <b style="color:var(--naruto);font-size:17px">「这就是——我的忍道!」</b></p>
       ${this.statHTML()}
       <button class="btn" style="margin-top:14px" onclick="G.newRun()">开启新的轮回</button>`;
