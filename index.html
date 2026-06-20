@@ -11,6 +11,7 @@
   --naruto:#ff7a1a; --chakra:#54b8f0; --seal:#c03022;
   --gold:#e0a83e; --hp:#e04848; --block:#86c5ea;
   --atk:#e06548; --skl:#52b3a4; --pwr:#a87fd6; --curse:#6b6b6b;
+  --card-w:136px; --card-h:190px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overscroll-behavior:none}
@@ -213,12 +214,12 @@ button{font-family:inherit}
   box-shadow:0 0 16px rgba(84,184,240,.55),inset 0 -4px 8px rgba(0,0,0,.3)}
 #orb small{font-size:8.5px;font-weight:400;opacity:.9;letter-spacing:.1em}
 #orb.zero{filter:grayscale(.8);box-shadow:none}
-#hand{flex:1;position:relative;height:172px}
+#hand{flex:1;position:relative;height:calc(var(--card-h) + 24px)}
 #endturn{min-width:74px;padding:12px 10px;font-size:14px;letter-spacing:.1em;border-radius:6px}
 #endturn.enemyturn{filter:grayscale(1);pointer-events:none}
 
 /* 卡牌 */
-.card{width:112px;height:156px;border-radius:9px;position:absolute;cursor:pointer;
+.card{width:var(--card-w);height:var(--card-h);border-radius:10px;position:absolute;cursor:pointer;
   background:linear-gradient(168deg,#2e2615 0%,#1b1509 70%);
   border:2px solid var(--cc,#777);
   box-shadow:0 4px 10px rgba(0,0,0,.55);
@@ -233,7 +234,7 @@ button{font-family:inherit}
 .card.noafford .gem{background:radial-gradient(circle at 35% 30%,#e08585,#7a1d1d)}
 .card.noafford{opacity:.62}
 .card .nm{font-size:12px;font-weight:800;text-align:center;color:#f4e8c5;line-height:1.05;min-height:18px;
-  padding:0 12px 2px;text-shadow:0 1px 2px #000}
+  padding:0 13px 2px;text-shadow:0 1px 2px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card .art{height:58px;display:flex;align-items:center;justify-content:center;font-size:27px;overflow:hidden;
   background:radial-gradient(ellipse at center, color-mix(in srgb,var(--cc) 22%,transparent), rgba(0,0,0,.22) 78%);
   margin:1px 0 3px;border:1px solid rgba(236,220,180,.18);border-radius:5px;
@@ -242,10 +243,14 @@ button{font-family:inherit}
 .card .tband{align-self:center;font-size:7.6px;text-align:center;color:var(--paper);letter-spacing:.18em;
   border:1px solid rgba(236,220,180,.2);border-radius:999px;padding:1px 9px;margin-bottom:2px;
   background:linear-gradient(180deg,color-mix(in srgb,var(--cc) 34%,#1b1509),#21190d)}
-.card .ds{font-size:10.5px;text-align:center;flex:1;display:flex;align-items:center;justify-content:center;
-  line-height:1.4;color:var(--paper);font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding:1px}
-.card .ds b{color:var(--naruto);font-size:12px}
-.card .rar{position:absolute;bottom:4px;right:6px;font-size:8px;color:var(--gold);letter-spacing:.1em}
+.card .ds{font-size:10.4px;text-align:left;flex:1;display:block;
+  line-height:1.36;color:var(--paper);font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  padding:4px 5px 1px;overflow:hidden;writing-mode:horizontal-tb;text-orientation:mixed;
+  word-break:normal;overflow-wrap:break-word;line-break:strict}
+.card .ds.middesc{font-size:9.8px;line-height:1.3}
+.card .ds.longdesc{font-size:9.2px;line-height:1.24;padding-top:3px}
+.card .ds b{color:var(--naruto);font-size:1em;line-height:inherit;font-weight:900;vertical-align:baseline}
+.card .rar{min-height:10px;align-self:flex-end;font-size:8px;color:var(--gold);letter-spacing:.1em;line-height:1}
 .card.atk{--cc:var(--atk)}.card.skl{--cc:var(--skl)}.card.pwr{--cc:var(--pwr)}.card.curse{--cc:var(--curse)}
 .card.upg .nm{color:#8ee08e}
 .card.r2{box-shadow:0 4px 10px rgba(0,0,0,.55),0 0 11px rgba(224,168,62,.3)}
@@ -296,14 +301,21 @@ button{font-family:inherit}
   *{animation-duration:.001s!important;transition-duration:.001s!important}
 }
 @media (max-width:620px){
+  :root{--card-w:112px;--card-h:166px}
   #screen-title{justify-content:flex-start;padding-top:22px}
   .char-grid{grid-template-columns:1fr;max-width:340px}
   .char-card{min-height:150px}
-  .card{width:100px;height:144px}
+  .card .art{height:48px}
+  .card .nm{min-height:16px;padding-left:11px;padding-right:11px}
+  .card .tband{font-size:7px;padding:1px 8px}
+  .card .ds{font-size:9px;line-height:1.2}
+  .card .ds.middesc{font-size:8.5px;line-height:1.16}
+  .card .ds.longdesc{font-size:8px;line-height:1.12}
+  .card .ds b{font-size:1em}
   .frame{width:82px;height:82px}.frame .face{font-size:42px}
   .unit.boss .frame{width:100px;height:100px}.unit.boss .frame .face{font-size:54px}
   #player-side{min-width:120px;width:30%}
-  #hand{height:160px}
+  #hand{height:calc(var(--card-h) + 18px)}
 }
 </style>
 </head>
@@ -785,15 +797,29 @@ function upgradeCard(c){
   const up=CARDS[c.key].up||{};Object.assign(c,up);c.upgraded=true;
   c.n=(up.n||CARDS[c.key].n)+"⁺";
 }
+function cardNameSize(name){
+  const len=[...String(name).replace(/[⁺+]/g,'')].length;
+  if(len<=4)return 13;
+  if(len<=6)return 12;
+  if(len<=7)return 11;
+  if(len<=9)return 10;
+  return 9.5;
+}
+function cardDescClass(desc){
+  const len=String(desc).replace(/<[^>]+>/g,'').replace(/[，。,.、\s]/g,'').length;
+  if(len>30)return ' longdesc';
+  if(len>22)return ' middesc';
+  return '';
+}
 function cardHTML(c,extra="",style=""){
   const desc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
   const art=c.art?`<img src="${esc(c.art)}" alt="">`:c.ic;
   return `<div oncontextmenu="event.preventDefault();event.stopPropagation();G.previewUpgrade('${c.key}',${c.upgraded?1:0});return false" class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
     <div class="gem">${c.unplayable?'✕':c.c}</div>
-    <div class="nm">${c.n}</div>
+    <div class="nm" style="font-size:${cardNameSize(c.n)}px">${c.n}</div>
     <div class="art">${art}</div>
     <div class="tband">${TYPE_LABEL[c.t]}</div>
-    <div class="ds">${desc}</div>
+    <div class="ds${cardDescClass(desc)}">${desc}</div>
     ${RAR_LABEL[c.r]?`<div class="rar">◆ ${RAR_LABEL[c.r]}</div>`:''}
   </div>`;
 }
@@ -1131,7 +1157,7 @@ const G={
   viewCards(title,cards){
     const ov=$('overlay');
     ov.innerHTML=`<div class="sec-t" style="font-size:19px">${title} · ${cards.length} 张</div><div class="divider"></div>
-      <div class="cgrid">${cards.map(c=>`<div style="position:relative;width:112px;height:156px">${cardHTML(c,'static')}</div>`).join('')||'<div class="sec-s">(空)</div>'}</div>
+      <div class="cgrid">${cards.map(c=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div>`).join('')||'<div class="sec-s">(空)</div>'}</div>
       <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button>`;
     ov.classList.add('on');
   },
@@ -1140,7 +1166,7 @@ const G={
     if(!list.length){toast('没有符合条件的卡牌');return onEmpty?onEmpty():undefined}
     const ov=$('overlay');
     ov.innerHTML=`<div class="sec-t" style="font-size:19px">${title}</div><div class="divider"></div>
-      <div class="cgrid">${list.map(x=>`<div style="position:relative;width:112px;height:156px" onclick="G._dp(${x.i})">${cardHTML(x.c,'static')}</div>`).join('')}</div>
+      <div class="cgrid">${list.map(x=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G._dp(${x.i})">${cardHTML(x.c,'static')}</div>`).join('')}</div>
       ${allowCancel?'<button class="btn ghost" onclick="G.closeOverlay()">返 回</button>':''}`;
     this._onDp=onPick;ov.classList.add('on');
   },
@@ -1154,19 +1180,19 @@ const G={
       ov.innerHTML=`<div class="center">
         <div class="sec-t" style="font-size:19px">升级预览</div><div class="divider"></div>
         <div class="sec-s">这张卡没有可预览的升级效果。</div>
-        <div style="position:relative;width:112px;height:156px;margin:0 auto">${cardHTML(mkCard(key,!!isUpgraded),'static')}</div>
+        <div style="position:relative;width:var(--card-w);height:var(--card-h);margin:0 auto">${cardHTML(mkCard(key,!!isUpgraded),'static')}</div>
         <button class="btn ghost" onclick="G.closeUpgradePreview()">关 闭</button></div>`;
     }else if(isUpgraded){
       ov.innerHTML=`<div class="center">
         <div class="sec-t" style="font-size:19px">已升级效果</div><div class="divider"></div>
-        <div style="position:relative;width:112px;height:156px;margin:0 auto">${cardHTML(mkCard(key,true),'static')}</div>
+        <div style="position:relative;width:var(--card-w);height:var(--card-h);margin:0 auto">${cardHTML(mkCard(key,true),'static')}</div>
         <button class="btn ghost" onclick="G.closeUpgradePreview()">关 闭</button></div>`;
     }else{
       ov.innerHTML=`<div class="center">
         <div class="sec-t" style="font-size:19px">升级预览</div><div class="divider"></div>
         <div class="cgrid">
-          <div><div class="sec-s">当前</div><div style="position:relative;width:112px;height:156px">${cardHTML(mkCard(key,false),'static')}</div></div>
-          <div><div class="sec-s">升级后</div><div style="position:relative;width:112px;height:156px">${cardHTML(mkCard(key,true),'static')}</div></div>
+          <div><div class="sec-s">当前</div><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(mkCard(key,false),'static')}</div></div>
+          <div><div class="sec-s">升级后</div><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(mkCard(key,true),'static')}</div></div>
         </div>
         <button class="btn ghost" onclick="G.closeUpgradePreview()">关 闭</button></div>`;
     }
@@ -1632,7 +1658,7 @@ Object.assign(G,{
     const hand=$('hand');
     const W=hand.clientWidth||300;
     const n=this.hand.length;
-    const cardW=window.innerWidth<620?100:112;
+    const cardW=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-w'))||126;
     const gap=n>1?Math.min(cardW*0.82,(W-cardW-10)/(n-1)):0;
     const startX=(W-(cardW+gap*(n-1)))/2;
     hand.innerHTML=this.hand.map((c,i)=>{
@@ -1643,7 +1669,7 @@ Object.assign(G,{
       if(c.c>this.energy&&!c.unplayable)cls.push('noafford');
       if(c.unplayable)cls.push('noafford');
       if(this.picked===i)cls.push('picked');
-      const st=`left:${startX+i*gap}px;bottom:6px;transform:rotate(${rot}deg) translateY(${ty}px);z-index:${10+i}`;
+      const st=`left:${startX+i*gap}px;bottom:16px;transform:rotate(${rot}deg) translateY(${ty}px);z-index:${10+i}`;
       return `<div onclick="event.stopPropagation();G.clickCard(${i})" style="display:contents">${cardHTML(c,cls.join(' '),st)}</div>`;
     }).join('');
     // 信息
@@ -1689,7 +1715,7 @@ Object.assign(G,{
     html+=`<div class="sec-s" style="margin-top:10px">领悟新忍术 — 选择一张加入卡组(可跳过)</div>`;
     const cs=this.combatRewardCards(kind);
     this._choices=cs;this._cardPicked=false;
-    html+=`<div class="cgrid" id="card-reward-grid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
+    html+=`<div class="cgrid" id="card-reward-grid">${cs.map((c,i)=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
       <div class="sec-s" id="card-reward-status"></div>`;
     html+=`<button class="btn ghost" onclick="G.backToMap()">跳过,继续前进</button>`;
     $('reward-list').innerHTML=html;
@@ -1734,7 +1760,7 @@ Object.assign(G,{
       <div class="sec-s" style="margin-top:10px">领悟一张稀有忍术 — 可跳过</div>`;
     const cs=this.randomCards(3,2).map(c=>this.maybeUpgradeRewardCard(c,this.rewardUpgradeChance('boss')));
     this._choices=cs;this._cardPicked=false;
-    html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
+    html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
       <button class="btn" onclick="G.toNextAct()">进入${next.name.split(' · ')[0]} →</button>`;
     $('reward-list').innerHTML=html;
     show('screen-reward');
@@ -1792,8 +1818,8 @@ Object.assign(G,{
     $('overlay').innerHTML=`<div class="center">
       <div class="sec-t" style="font-size:19px">确认修炼</div><div class="divider"></div>
       <div class="cgrid">
-        <div><div class="sec-s">当前</div><div style="position:relative;width:112px;height:156px">${cardHTML(c,'static')}</div></div>
-        <div><div class="sec-s">升级后</div><div style="position:relative;width:112px;height:156px">${cardHTML(mkCard(c.key,true),'static')}</div></div>
+        <div><div class="sec-s">当前</div><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div></div>
+        <div><div class="sec-s">升级后</div><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(mkCard(c.key,true),'static')}</div></div>
       </div>
       <button class="btn" onclick="G.applyRestUpgrade()">确认升级</button>
       <button class="btn ghost small" onclick="G.closeOverlay()">重新选择</button>
@@ -1824,8 +1850,8 @@ Object.assign(G,{
       <div class="divider"></div>
       <div class="cgrid">`;
     h+=this.shopCards.map((c,i)=>{
-      if(!c)return `<div style="width:112px;text-align:center;color:var(--paper-dim);padding-top:60px">已售出</div>`;
-      return `<div onclick="G.buyCard(${i})"><div style="position:relative;width:112px;height:156px">${cardHTML(c,'static')}</div>
+      if(!c)return `<div style="width:var(--card-w);text-align:center;color:var(--paper-dim);padding-top:60px">已售出</div>`;
+      return `<div onclick="G.buyCard(${i})"><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div>
         <div class="price ${aff(this.shopPrices[i])}">🪙 ${this.shopPrices[i]}</div></div>`;
     }).join('');
     h+=`</div><div class="cgrid">`;
