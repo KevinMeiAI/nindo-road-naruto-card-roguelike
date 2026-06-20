@@ -463,9 +463,9 @@ const POTIONS = {
   chakrapill:{ic:"🔵",n:"查克拉丸",d:"本回合查克拉 +2"},
   antidote:{ic:"🟢",n:"解毒丸",d:"清除自身中毒、虚弱、易伤"},
   strpill:{ic:"🔴",n:"士气丸",d:"本场战斗力量 +2"},
-  clonepill:{ic:"👥",n:"影分身丸",d:"本场战斗获得 1 层影分身"},
+  clonepill:{ic:"👥",n:"影分身丸",d:"本场战斗获得 1 层影分身(回合结束 +3 格挡)"},
   sealpaper:{ic:"🏷️",n:"封印爆符",d:"对所有敌人施加 2 层虚弱和 2 层易伤"},
-  dexpill:{ic:"🟦",n:"轻身丸",d:"本场战斗身法 +2"},
+  dexpill:{ic:"🟦",n:"轻身丸",d:"本场战斗身法 +2(你获得格挡的卡牌数值 +2)"},
 };
 
 /* 敌人:moves循环;a伤害 hits b格挡 str weak vuln poison heal txt
@@ -679,12 +679,13 @@ function upgradeCard(c){
   c.n=(up.n||CARDS[c.key].n)+"⁺";
 }
 function cardHTML(c,extra="",style=""){
-  return `<div class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
+  const desc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
+  return `<div oncontextmenu="event.preventDefault();event.stopPropagation();G.previewUpgrade('${c.key}',${c.upgraded?1:0});return false" class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
     <div class="gem">${c.unplayable?'✕':c.c}</div>
     <div class="tband">${TYPE_LABEL[c.t]}</div>
     <div class="art">${c.ic}</div>
     <div class="nm">${c.n}</div>
-    <div class="ds">${c.d}</div>
+    <div class="ds">${desc}</div>
     ${RAR_LABEL[c.r]?`<div class="rar">◆ ${RAR_LABEL[c.r]}</div>`:''}
   </div>`;
 }
@@ -975,6 +976,32 @@ const G={
     this._onDp=onPick;ov.classList.add('on');
   },
   _dp(i){const c=this.deck[i];this.closeOverlay();this._onDp(c,i)},
+  previewUpgrade(key,isUpgraded=false){
+    const base=CARDS[key];if(!base)return;
+    const canUp=base.up&&Object.keys(base.up).length;
+    const ov=$('overlay');
+    if(!canUp){
+      ov.innerHTML=`<div class="center">
+        <div class="sec-t" style="font-size:19px">升级预览</div><div class="divider"></div>
+        <div class="sec-s">这张卡没有可预览的升级效果。</div>
+        <div style="position:relative;width:112px;height:156px;margin:0 auto">${cardHTML(mkCard(key,!!isUpgraded),'static')}</div>
+        <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button></div>`;
+    }else if(isUpgraded){
+      ov.innerHTML=`<div class="center">
+        <div class="sec-t" style="font-size:19px">已升级效果</div><div class="divider"></div>
+        <div style="position:relative;width:112px;height:156px;margin:0 auto">${cardHTML(mkCard(key,true),'static')}</div>
+        <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button></div>`;
+    }else{
+      ov.innerHTML=`<div class="center">
+        <div class="sec-t" style="font-size:19px">升级预览</div><div class="divider"></div>
+        <div class="cgrid">
+          <div><div class="sec-s">当前</div><div style="position:relative;width:112px;height:156px">${cardHTML(mkCard(key,false),'static')}</div></div>
+          <div><div class="sec-s">升级后</div><div style="position:relative;width:112px;height:156px">${cardHTML(mkCard(key,true),'static')}</div></div>
+        </div>
+        <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button></div>`;
+    }
+    ov.classList.add('on');
+  },
   closeOverlay(){$('overlay').classList.remove('on');$('overlay').innerHTML=''},
 };
 </script>
@@ -1113,6 +1140,49 @@ Object.assign(G,{
     if(att.weak>0)d=Math.floor(d*0.75);
     if(def.vuln>0)d=Math.floor(d*1.5);
     return Math.max(0,d);
+  },
+  combatActive(){
+    return $('screen-combat').classList.contains('active')&&this.enemies&&this.hand;
+  },
+  cardAttackBonus(c){
+    if(!this.combatActive()||c.t!=='atk'||!this.firstAtk)return 0;
+    return (this.hasRelic('fuuma')?4:0)+(this.hasRelic('kyuubi_seal')?6:0);
+  },
+  cardDamageText(c){
+    const bonus=this.cardAttackBonus(c);
+    const me={str:this.str||0,weak:this.weak||0};
+    const alive=(this.enemies||[]).filter(e=>e.hp>0);
+    const targets=c.aoe?alive:[alive[0]||{vuln:0}];
+    const vals=[...new Set((targets.length?targets:[{vuln:0}]).map(t=>this.calc(c.dmg+bonus,me,t)))].sort((a,b)=>a-b);
+    return vals.length>1?`${vals[0]}-${vals[vals.length-1]}`:`${vals[0]||0}`;
+  },
+  cardDesc(c){
+    if(!this.combatActive())return c.d;
+    if(c.unplayable)return c.d;
+    const parts=[];
+    if(c.dmg){
+      const d=this.cardDamageText(c);
+      const dmg=c.hits>1?`<b>${d}</b>×<b>${c.hits}</b>`:`<b>${d}</b>`;
+      parts.push(`${c.aoe?'对<b>所有</b>敌人':''}造成 ${dmg} 点伤害`);
+    }
+    if(c.blk)parts.push(`获得 <b>${Math.max(0,c.blk+(this.dex||0))}</b> 点格挡`);
+    if(c.draw)parts.push(`抽 <b>${c.draw}</b> 张牌`);
+    if(c.energy)parts.push(`获得 <b>${c.energy}</b> 点查克拉`);
+    if(c.heal)parts.push(`回复 <b>${c.heal}</b> 点生命`);
+    if(c.str)parts.push(`力量 +<b>${c.str}</b>`);
+    if(c.dex)parts.push(`身法 +<b>${c.dex}</b>`);
+    if(c.clone)parts.push(`获得 <b>${c.clone}</b> 层影分身`);
+    if(c.nindo)parts.push(`每回合开始获得 <b>${c.nindo}</b> 点格挡`);
+    if(c.ramp)parts.push(`每回合开始力量 +<b>${c.ramp}</b>`);
+    const vBonus=this.hasRelic('sharingan')?1:0;
+    const wBonus=this.hasRelic('seal_tag')?1:0;
+    const vuln=(c.vuln||0)+(c.tvuln||0);
+    const weak=(c.tweak||0)+(c.weak||0);
+    if(vuln)parts.push(`施加 <b>${vuln+vBonus}</b> 层易伤`);
+    if(weak)parts.push(`施加 <b>${weak+wBonus}</b> 层虚弱`);
+    if(c.self)parts.push(`自身受 <b>${c.self}</b> 点伤害`);
+    if(c.ex)parts.push('<b>消耗</b>');
+    return parts.length?parts.join(', '):c.d;
   },
   dealDamage(e,raw,pure=false){
     let d=raw;
