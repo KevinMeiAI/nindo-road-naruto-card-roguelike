@@ -1570,6 +1570,7 @@ Object.assign(G,{
     if(this.hasRelic('slug_charm')&&this.hp<this.maxHp/2)this.heal(5);
     if(kind==='elite')this.stats.elites++;
     SFX.win();
+    this._pendingPotion=null;this._cardPicked=false;
     if(kind==='boss')return this.bossReward();
     let gold=kind==='elite'?rnd(50,70):rnd(20,34);
     let goldMul=1;
@@ -1590,8 +1591,9 @@ Object.assign(G,{
     html+=`<div class="sec-s" style="margin-top:10px">领悟新忍术 — 选择一张加入卡组(可跳过)</div>`;
     const minR=kind==='elite'?2:1;
     const cs=this.randomCards(3,minR);
-    this._choices=cs;
-    html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>`;
+    this._choices=cs;this._cardPicked=false;
+    html+=`<div class="cgrid" id="card-reward-grid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
+      <div class="sec-s" id="card-reward-status"></div>`;
     html+=`<button class="btn ghost" onclick="G.backToMap()">跳过,继续前进</button>`;
     $('reward-list').innerHTML=html;
     show('screen-reward');
@@ -1601,13 +1603,19 @@ Object.assign(G,{
       SFX.potion();toast(`收下「${POTIONS[this._pendingPotion].n}」`);
       const el=$('potion-take');if(el){el.classList.add('noclick');el.style.opacity=.4}
       this._pendingPotion=null;
+      if(this._cardPicked)this.backToMap();
     }
   },
   takeCard(i){
+    if(this._cardPicked)return toast('只能领悟一张');
     const c=this._choices[i];if(!c)return;
-    this.deck.push(c);this._choices=[];
+    this.deck.push(c);this._cardPicked=true;this._choices=[];
     SFX.card();toast(`「${c.n}」加入卡组`);
-    this.backToMap();
+    const grid=$('card-reward-grid');
+    if(grid){grid.classList.add('sold');grid.style.pointerEvents='none'}
+    const status=$('card-reward-status');
+    if(status)status.textContent=this._pendingPotion?'已选择卡牌,还可以拾取秘药':'已选择卡牌';
+    if(!this._pendingPotion)this.backToMap();
   },
   bossReward(){
     const isFinal=this.act>=ACTS.length-1;
