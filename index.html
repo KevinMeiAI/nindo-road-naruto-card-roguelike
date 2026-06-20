@@ -858,9 +858,14 @@ const G={
     else if(minR===2){const r=Math.random();tier=r<.7?2:3}
     else tier=3;
     const exclude=new Set(excludeKeys);
+    return this.randomCardOfTier(tier,exclude,minR);
+  },
+  randomCardOfTier(tier,excludeKeys=[],minR=1){
+    const exclude=new Set(excludeKeys);
     let pool=Object.keys(CARDS).filter(k=>CARDS[k].r===tier&&!exclude.has(k)&&this.cardAllowed(k));
     if(!pool.length)pool=Object.keys(CARDS).filter(k=>CARDS[k].r>=minR&&CARDS[k].r<=3&&!exclude.has(k)&&this.cardAllowed(k));
     if(!pool.length)pool=Object.keys(CARDS).filter(k=>CARDS[k].r===tier&&this.cardAllowed(k));
+    if(!pool.length)pool=Object.keys(CARDS).filter(k=>CARDS[k].r>=1&&CARDS[k].r<=3&&this.cardAllowed(k));
     return mkCard(pick(pool));
   },
   randomCards(count,minR=1){
@@ -870,6 +875,31 @@ const G={
       cards.push(c);used.add(c.key);
     }
     return cards;
+  },
+  randomCardsByTiers(tiers){
+    const used=new Set(),cards=[];
+    tiers.forEach(t=>{
+      const c=this.randomCardOfTier(t,used,1);
+      cards.push(c);used.add(c.key);
+    });
+    return cards;
+  },
+  combatRewardTiers(kind){
+    if(kind==='elite'){
+      const tiers=[2,1,1];
+      if(Math.random()<0.35)tiers[1]=2;
+      if(Math.random()<0.12)tiers[2]=3;
+      return shuffle(tiers);
+    }
+    const tiers=[1,1,1];
+    if(this.row<=1)return tiers;
+    const r=Math.random();
+    if(r<0.22)tiers[2]=2;
+    else if(r<0.25)tiers[2]=3;
+    return shuffle(tiers);
+  },
+  combatRewardCards(kind){
+    return this.randomCardsByTiers(this.combatRewardTiers(kind));
   },
   addPotion(k){
     if(this.potions.length>=2){toast('秘药栏已满(最多 2 瓶)');return false}
@@ -1599,8 +1629,7 @@ Object.assign(G,{
       html+=`<div class="ritem" id="potion-take" onclick="G.takePotion()">${POTIONS[pk].ic} 拾取秘药「${POTIONS[pk].n}」— ${POTIONS[pk].d}</div>`;
     }
     html+=`<div class="sec-s" style="margin-top:10px">领悟新忍术 — 选择一张加入卡组(可跳过)</div>`;
-    const minR=kind==='elite'?2:1;
-    const cs=this.randomCards(3,minR);
+    const cs=this.combatRewardCards(kind);
     this._choices=cs;this._cardPicked=false;
     html+=`<div class="cgrid" id="card-reward-grid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
       <div class="sec-s" id="card-reward-status"></div>`;
