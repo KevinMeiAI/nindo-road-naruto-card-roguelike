@@ -539,6 +539,7 @@ const ACTS=[
 const MAP_RULES={
   rows:10,cols:6,paths:5,
   noEliteBefore:3,maxElitePerRoute:3,maxUnknownPerRoute:4,
+  guaranteedRestFrom:3,guaranteedRestTo:9,
   weights:{fight:42,unknown:26,shop:11,rest:13,elite:8},
   unknown:{event:.58,fight:.25,shop:.10,chest:.07},
   potionDrop:{fight:.4,elite:.75},
@@ -839,6 +840,8 @@ const G={
     };
     starts.forEach(k=>walk(k));
     const chestRow=rnd(4,ROWS-2);
+    let restRow=rnd(C.guaranteedRestFrom,Math.min(C.guaranteedRestTo,ROWS-1));
+    while(restRow===chestRow)restRow=rnd(C.guaranteedRestFrom,Math.min(C.guaranteedRestTo,ROWS-1));
     const routeCount=(route,t)=>route.filter(k=>nodes[k]&&nodes[k].t===t).length;
     const routesWith=k=>routes.filter(r=>r.includes(k));
     const hasIncomingType=(n,t)=>[...n.from].some(k=>nodes[k]&&nodes[k].t===t);
@@ -852,6 +855,7 @@ const G={
     const canUse=(k,t)=>{
       const n=nodes[k];
       if(t==='elite'&&n.r<=C.noEliteBefore)return false;
+      if(t==='rest'&&(n.r===chestRow||n.r===restRow-1||n.r===restRow+1))return false;
       if(t==='rest'&&hasIncomingType(n,'rest'))return false;
       if(t==='elite'&&routesWith(k).some(r=>routeCount(r,'elite')>=C.maxElitePerRoute))return false;
       if(t==='unknown'&&routesWith(k).some(r=>routeCount(r,'unknown')>=C.maxUnknownPerRoute))return false;
@@ -862,11 +866,12 @@ const G={
       row.forEach(([k,n])=>{
         if(r===1){n.t='fight';return}
         if(r===chestRow){n.t='chest';return}
+        if(r===restRow){n.t='rest';return}
         const first=weightedType();
         const choices=[first,'fight','unknown','shop','rest','elite'];
         n.t=choices.find(t=>canUse(k,t))||'fight';
       });
-      if(r!==chestRow&&!row.some(([,n])=>n.t==='fight'||n.t==='elite')){
+      if(r!==chestRow&&r!==restRow&&!row.some(([,n])=>n.t==='fight'||n.t==='elite')){
         const f=row.find(([k])=>canUse(k,'fight'));
         if(f)f[1].t='fight';
       }
@@ -875,7 +880,7 @@ const G={
       const restSpot=shuffle(Object.entries(nodes).filter(([k,n])=>k!=='boss'&&n.r>2&&n.r!==chestRow&&!hasNeighborType(n,'rest')))[0];
       if(restSpot)restSpot[1].t='rest';
     }
-    this.mapRows=ROWS;this.mapChestRow=chestRow;this.mapRoutes=routes;
+    this.mapRows=ROWS;this.mapChestRow=chestRow;this.mapRestRow=restRow;this.mapRoutes=routes;
     this.nodes=nodes;
   },
   renderMap(){
@@ -885,8 +890,9 @@ const G={
     const LBL={fight:'战斗',elite:'精英',rest:'篝火',unknown:'未知',event:'奇遇',shop:'商店',chest:'宝箱',boss:'首领'};
     const W=500,ROWH=86,PAD=46;
     const rows=this.mapRows||7;
+    const cols=MAP_RULES.cols||5;
     const H=PAD*2+(rows+1)*ROWH;
-    const X=c=>60+c*((W-120)/4);
+    const X=c=>60+c*((W-120)/(cols-1));
     const Y=r=>H-PAD-(r-1)*ROWH;
     const cur=this.curCol>=0?this.nodes[this.row+'-'+this.curCol]:null;
     const avail=new Set();
