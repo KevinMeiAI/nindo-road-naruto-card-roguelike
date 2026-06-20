@@ -717,7 +717,7 @@ const EVENTS = [
    opts:[
      {t:"🩹 接受治疗(回复 22 点生命)",f:g=>{g.heal(22);return "绿色查克拉覆盖伤口,疼痛明显缓和。"}},
      {t:"🕸️ 清理咒印(移除 1 张诅咒)",cond:g=>g.deck.some(c=>c.t==='curse'),f:g=>{const i=g.deck.findIndex(c=>c.t==='curse');const c=g.deck.splice(i,1)[0];return `医疗忍者切断了「${c.n}」的查克拉残留。`}},
-     {t:"🍙 留下兵粮丸(获得随机秘药)",f:g=>{const p=g.randomPotionKey();if(g.addPotion(p))return `医疗班塞给你一份「${POTIONS[p].n}」。`;return "你的秘药栏已经满了,只能把补给留给伤员。"}},
+     {t:"🍙 交出兵粮丸(换取随机秘药)",cond:g=>g.potions.includes('heisyo'),f:g=>{const i=g.potions.indexOf('heisyo');if(i<0)return "你身上没有兵粮丸可以留下。";g.potions.splice(i,1);const p=g.randomPotionKey(['heisyo']);g.addPotion(p);return `你留下兵粮丸,医疗班回赠一份「${POTIONS[p].n}」。`}},
    ]},
   {ic:"🏞️",title:"终末之谷",text:"巨像之间水声轰鸣。你想起两个名字,也想起力量与羁绊从来不是同一条路。",
    opts:[
@@ -837,8 +837,9 @@ const G={
     const ch=POTIONS[k]&&POTIONS[k].chars;
     return !ch||ch.includes(this.character||'naruto');
   },
-  randomPotionKey(){
-    const pool=Object.keys(POTIONS).filter(k=>this.potionAllowed(k));
+  randomPotionKey(excludeKeys=[]){
+    const exclude=new Set(excludeKeys);
+    const pool=Object.keys(POTIONS).filter(k=>!exclude.has(k)&&this.potionAllowed(k));
     return pick(pool);
   },
   characterEventCard(kind){
