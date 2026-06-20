@@ -781,9 +781,9 @@ const G={
       <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button>`;
     ov.classList.add('on');
   },
-  pickFromDeck(title,filter,onPick,allowCancel=true){
+  pickFromDeck(title,filter,onPick,allowCancel=true,onEmpty=null){
     const list=this.deck.map((c,i)=>({c,i})).filter(x=>filter(x.c));
-    if(!list.length){toast('没有符合条件的卡牌');return this.backToMap()}
+    if(!list.length){toast('没有符合条件的卡牌');return onEmpty?onEmpty():undefined}
     const ov=$('overlay');
     ov.innerHTML=`<div class="sec-t" style="font-size:19px">${title}</div><div class="divider"></div>
       <div class="cgrid">${list.map(x=>`<div style="position:relative;width:112px;height:156px" onclick="G._dp(${x.i})">${cardHTML(x.c,'static')}</div>`).join('')}</div>
@@ -821,7 +821,7 @@ Object.assign(G,{
     this.block=0;this.str=this.permStr;this.dex=0;this.weak=0;this.vuln=0;this.poison=0;
     this.clones=this.hasRelic('contract')?1:0;
     this.nindoBlk=0;this.rampStr=0;
-    this.turn=0;this.picked=null;this.busy=false;
+    this.turn=0;this.picked=null;this.busy=false;this.combatEnded=false;
     this.drawPile=shuffle(this.deck.map(c=>({...c})));
     this.discardPile=[];this.hand=[];this.exhaustPile=[];
     if(this.hasRelic('kunaibag'))this.block+=5;
@@ -914,6 +914,7 @@ Object.assign(G,{
     this.hand.splice(idx,1);
     this.stats.cards++;
     this.execCard(c,target);
+    if(this.hp<=0||this.combatEnded)return;
     if(c.t==='pwr'||c.ex)this.exhaustPile.push(c);
     else this.discardPile.push(c);
     if(this.checkWin())return;
@@ -927,8 +928,9 @@ Object.assign(G,{
   },
   dealDamage(e,raw,pure=false){
     let d=raw;
-    const blocked=Math.min(e.block,d);
-    e.block-=blocked;d-=blocked;
+    const blocked=pure?0:Math.min(e.block,d);
+    if(!pure)e.block-=blocked;
+    d-=blocked;
     e.hp-=d;
     this.stats.dmg+=d;
     const el=this.enemyEl(this.enemies.indexOf(e));
@@ -1000,8 +1002,9 @@ Object.assign(G,{
     $('combat-log').textContent=`使出「${c.n.replace('⁺','')}」!`;
   },
   checkWin(){
+    if(this.hp<=0||this.combatEnded)return false;
     if(this.enemies.every(e=>e.hp<=0)){
-      this.busy=true;
+      this.busy=true;this.combatEnded=true;
       this.renderCombat();
       setTimeout(()=>this.winCombat(),650);
       return true;
@@ -1009,10 +1012,12 @@ Object.assign(G,{
     return false;
   },
   endTurn(){
-    if(this.busy)return;
+    if(this.busy||this.combatEnded)return;
     this.busy=true;this.picked=null;$('target-hint').classList.remove('on');
     if(this.clones){const b=this.clones*3;this.block+=b;this.fxText(this.playerEl(),'+'+b,'blk')}
     this.discardPile.push(...this.hand);this.hand=[];
+    if(this.weak)this.weak--;
+    if(this.vuln)this.vuln--;
     $('endturn').classList.add('enemyturn');
     this.banner('敌 方 行 动');
     this.renderCombat();
@@ -1022,7 +1027,6 @@ Object.assign(G,{
       if(this.hp<=0)return this.gameOver();
       if(i>=acts.length){
         this.enemies.forEach(e=>{if(e.weak)e.weak--;if(e.vuln)e.vuln--});
-        if(this.weak)this.weak--;if(this.vuln)this.vuln--;
         this.busy=false;
         return this.startTurn();
       }
