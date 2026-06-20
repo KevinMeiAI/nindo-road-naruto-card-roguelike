@@ -585,6 +585,7 @@ const G={
   /* ---------- 新开局 ---------- */
   newRun(){
     SFX.ac();
+    this._ended=false;this.combatEnded=false;
     this.maxHp=80;this.hp=80;this.gold=120;
     this.act=0;this.row=0;this.curCol=-1;
     this.relics=[];this.potions=['heisyo'];this.pendingRemove=false;
@@ -1253,7 +1254,11 @@ Object.assign(G,{
     this._cardPicked=true;this.deck.push(c);SFX.card();
     toast(`「${c.n}」加入卡组`);
   },
-  toNextAct(){this.startAct(this.act+1)},
+  toNextAct(){
+    if(!this._bossPicked)return toast('先选择一件首领忍具');
+    if(!this._cardPicked)return toast('先领悟一张稀有忍术');
+    this.startAct(this.act+1);
+  },
 
   /* ---------- 篝火 ---------- */
   openRest(){
@@ -1352,7 +1357,7 @@ Object.assign(G,{
       this.pendingRemove=false;
       return this.pickFromDeck('选择要移除的卡牌',()=>true,(c,idx)=>{
         this.deck.splice(idx,1);toast(`移除了「${c.n}」`);this.backToMap();
-      },false);
+      },false,()=>this.backToMap());
     }
     $('event-box').innerHTML=`<div class="eic">${this._event.ic}</div>
       <p>${r}</p><button class="btn" onclick="G.backToMap()">继续前进</button>`;
@@ -1368,6 +1373,7 @@ Object.assign(G,{
   },
   gameOver(){
     if(this._ended)return;this._ended=true;
+    this.combatEnded=true;this.busy=true;
     setTimeout(()=>this._ended=false,500);
     this.hp=0;this.updateTopbar();SFX.lose();
     $('end-content').innerHTML=`
