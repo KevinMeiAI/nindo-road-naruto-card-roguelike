@@ -222,22 +222,26 @@ button{font-family:inherit}
   background:linear-gradient(168deg,#2e2615 0%,#1b1509 70%);
   border:2px solid var(--cc,#777);
   box-shadow:0 4px 10px rgba(0,0,0,.55);
-  display:flex;flex-direction:column;padding:7px 7px 5px;
+  display:flex;flex-direction:column;padding:6px 7px 5px;
   transition:transform .16s,box-shadow .16s,left .25s;
   transform-origin:bottom center}
 .card.inhand:hover{z-index:30!important}
-.card .gem{position:absolute;top:-9px;left:-9px;width:25px;height:25px;border-radius:50%;
+.card .gem{position:absolute;top:-7px;left:-7px;width:25px;height:25px;border-radius:50%;z-index:2;
   background:radial-gradient(circle at 35% 30%,#8fd4f7,#1d5a80);
   border:1.5px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;
   font-size:13.5px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
 .card.noafford .gem{background:radial-gradient(circle at 35% 30%,#e08585,#7a1d1d)}
 .card.noafford{opacity:.62}
-.card .tband{font-size:8.5px;text-align:center;color:var(--paper-dim);letter-spacing:.18em;
-  border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:3px}
-.card .art{height:40px;display:flex;align-items:center;justify-content:center;font-size:27px;
-  background:radial-gradient(ellipse at center, color-mix(in srgb,var(--cc) 22%,transparent), transparent 75%);
-  margin:2px 0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
-.card .nm{font-size:12.5px;font-weight:700;text-align:center;color:var(--cc);line-height:1.15;min-height:15px}
+.card .nm{font-size:12px;font-weight:800;text-align:center;color:#f4e8c5;line-height:1.05;min-height:18px;
+  padding:0 12px 2px;text-shadow:0 1px 2px #000}
+.card .art{height:58px;display:flex;align-items:center;justify-content:center;font-size:27px;overflow:hidden;
+  background:radial-gradient(ellipse at center, color-mix(in srgb,var(--cc) 22%,transparent), rgba(0,0,0,.22) 78%);
+  margin:1px 0 3px;border:1px solid rgba(236,220,180,.18);border-radius:5px;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.card .art img{width:100%;height:100%;object-fit:cover;display:block}
+.card .tband{align-self:center;font-size:7.6px;text-align:center;color:var(--paper);letter-spacing:.18em;
+  border:1px solid rgba(236,220,180,.2);border-radius:999px;padding:1px 9px;margin-bottom:2px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--cc) 34%,#1b1509),#21190d)}
 .card .ds{font-size:10.5px;text-align:center;flex:1;display:flex;align-items:center;justify-content:center;
   line-height:1.4;color:var(--paper);font-family:"PingFang SC","Microsoft YaHei",sans-serif;padding:1px}
 .card .ds b{color:var(--naruto);font-size:12px}
@@ -427,7 +431,7 @@ const CHARACTER_EVENT_CARDS = {
 const CARDS = {
   taijutsu:{n:"体术连击",t:"atk",c:1,r:0,ic:"👊",d:"造成 <b>6</b> 点伤害",dmg:6,up:{d:"造成 <b>9</b> 点伤害",dmg:9}},
   kawarimi:{n:"替身术",t:"skl",c:1,r:0,ic:"🪵",d:"获得 <b>5</b> 点格挡",blk:5,up:{d:"获得 <b>8</b> 点格挡",blk:8}},
-  rasengan:{n:"螺旋丸",t:"atk",c:2,r:0,ic:"🌀",d:"造成 <b>12</b> 点伤害",dmg:12,chars:["naruto"],up:{n:"大玉螺旋丸",d:"造成 <b>17</b> 点伤害",dmg:17}},
+  rasengan:{n:"螺旋丸",t:"atk",c:2,r:0,ic:"🌀",art:"assets/card-art/rasengan.jpg",d:"造成 <b>12</b> 点伤害",dmg:12,chars:["naruto"],up:{n:"大玉螺旋丸",d:"造成 <b>17</b> 点伤害",dmg:17}},
   lion_combo:{n:"狮子连弹",t:"atk",c:1,r:0,ic:"🦁",d:"造成 <b>7</b> 点伤害",dmg:7,chars:["sasuke"],up:{d:"造成 <b>10</b> 点伤害",dmg:10}},
   chidori_seed:{n:"千鸟雏形",t:"atk",c:1,r:0,ic:"⚡",d:"造成 <b>6</b> 点伤害,施加 <b>1</b> 层易伤",dmg:6,vuln:1,chars:["sasuke"],up:{d:"造成 <b>8</b> 点伤害,施加 <b>2</b> 层易伤",dmg:8,vuln:2}},
   power_punch:{n:"怪力拳",t:"atk",c:1,r:0,ic:"💥",d:"造成 <b>8</b> 点伤害",dmg:8,chars:["sakura"],up:{d:"造成 <b>11</b> 点伤害",dmg:11}},
@@ -458,7 +462,7 @@ const CARDS = {
   chakra_step:{n:"查克拉步",t:"skl",c:0,r:1,ic:"🔵",d:"获得 <b>2</b> 点格挡,抽 <b>1</b> 张牌",blk:2,draw:1,up:{d:"获得 <b>4</b> 点格挡,抽 <b>1</b> 张牌",blk:4}},
   wire_trap:{n:"钢丝陷阱",t:"skl",c:1,r:1,ic:"🧵",d:"获得 <b>4</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:4,tvuln:1,all:1,up:{d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>2</b> 层易伤",blk:6,tvuln:2}},
   /* —— 稀有 —— */
-  kagebunshin:{n:"影分身之术",t:"skl",c:1,r:0,ic:"👥",d:"获得 <b>2</b> 层影分身",clone:2,chars:["naruto"],up:{d:"获得 <b>3</b> 层影分身",clone:3}},
+  kagebunshin:{n:"影分身之术",t:"skl",c:1,r:0,ic:"👥",art:"assets/card-art/kagebunshin.jpg",d:"获得 <b>2</b> 层影分身",clone:2,chars:["naruto"],up:{d:"获得 <b>3</b> 层影分身",clone:3}},
   chidori:{n:"千鸟",t:"atk",c:1,r:2,ic:"⚡",d:"造成 <b>11</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:11,self:2,chars:["sasuke"],up:{n:"雷切",d:"造成 <b>15</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:15}},
   rasenrenwan:{n:"螺旋连丸",t:"atk",c:2,r:1,ic:"🌀",d:"造成 <b>7</b>×<b>2</b> 点伤害",dmg:7,hits:2,chars:["naruto"],up:{d:"造成 <b>9</b>×<b>2</b> 点伤害",dmg:9}},
   gamado:{n:"通灵术·蛤蟆防壁",t:"skl",c:2,r:1,ic:"🐸",d:"获得 <b>12</b> 点格挡",blk:12,chars:["naruto"],up:{d:"获得 <b>16</b> 点格挡",blk:16}},
@@ -769,6 +773,7 @@ const SFX={
 function mkCard(key,upgraded=false){
   const b=CARDS[key];
   const c={key,n:b.n,t:b.t,c:b.c,r:b.r,ic:b.ic,d:b.d,upgraded:false,
+    art:b.art||"",
     dmg:b.dmg||0,hits:b.hits||1,blk:b.blk||0,draw:b.draw||0,vuln:b.vuln||0,tvuln:b.tvuln||0,
     weak:b.weak||0,tweak:b.tweak||0,clone:b.clone||0,aoe:b.aoe||0,self:b.self||0,heal:b.heal||0,
     str:b.str||0,dex:b.dex||0,nindo:b.nindo||0,ramp:b.ramp||0,energy:b.energy||0,cleanse:b.cleanse||0,
@@ -782,11 +787,12 @@ function upgradeCard(c){
 }
 function cardHTML(c,extra="",style=""){
   const desc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
+  const art=c.art?`<img src="${esc(c.art)}" alt="">`:c.ic;
   return `<div oncontextmenu="event.preventDefault();event.stopPropagation();G.previewUpgrade('${c.key}',${c.upgraded?1:0});return false" class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
     <div class="gem">${c.unplayable?'✕':c.c}</div>
-    <div class="tband">${TYPE_LABEL[c.t]}</div>
-    <div class="art">${c.ic}</div>
     <div class="nm">${c.n}</div>
+    <div class="art">${art}</div>
+    <div class="tband">${TYPE_LABEL[c.t]}</div>
     <div class="ds">${desc}</div>
     ${RAR_LABEL[c.r]?`<div class="rar">◆ ${RAR_LABEL[c.r]}</div>`:''}
   </div>`;
