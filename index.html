@@ -362,7 +362,7 @@ const KW = {
   "易伤":"受到的攻击伤害提高 50%,每回合减少 1 层",
   "虚弱":"造成的攻击伤害降低 25%,每回合减少 1 层",
   "中毒":"每回合开始受到等同层数的伤害,随后减少 1 层",
-  "影分身":"每回合结束,按层数 ×3 获得格挡",
+  "影分身":"每回合结束,按层数 ×3 获得格挡;受到未被格挡的攻击伤害后减少 1 层",
   "忍道":"每回合开始获得等量格挡",
   "九尾":"每回合开始获得等量力量",
   "消耗":"打出后从本场战斗中移除,不进入弃牌堆",
@@ -463,7 +463,7 @@ const POTIONS = {
   chakrapill:{ic:"🔵",n:"查克拉丸",d:"本回合查克拉 +2"},
   antidote:{ic:"🟢",n:"解毒丸",d:"清除自身中毒、虚弱、易伤"},
   strpill:{ic:"🔴",n:"士气丸",d:"本场战斗力量 +2"},
-  clonepill:{ic:"👥",n:"影分身丸",d:"本场战斗获得 1 层影分身(回合结束 +3 格挡)"},
+  clonepill:{ic:"👥",n:"影分身丸",d:"本场战斗获得 1 层影分身(回合结束 +3 格挡,受伤后 -1 层)"},
   sealpaper:{ic:"🏷️",n:"封印爆符",d:"对所有敌人施加 2 层虚弱和 2 层易伤"},
   dexpill:{ic:"🟦",n:"轻身丸",d:"本场战斗身法 +2(你获得格挡的卡牌数值 +2)"},
 };
@@ -1308,6 +1308,7 @@ Object.assign(G,{
             }
             if(total>0){
               this.fxText(this.playerEl(),'-'+total);SFX.hurt();
+              if(this.clones>0){this.clones--;this.fxText(this.playerEl(),'影分身-1','blk')}
               const pu=document.querySelector('#player-side .unit');
               if(pu){pu.classList.add('hitfx');setTimeout(()=>pu.classList.remove('hitfx'),320)}
               if(total>=12){$('stage').classList.add('shake');setTimeout(()=>$('stage').classList.remove('shake'),400)}
