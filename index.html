@@ -744,6 +744,10 @@ const G={
     const p=shuffle(Object.keys(RELICS).filter(k=>!this.hasRelic(k)));
     return p.slice(0,count);
   },
+  randomBossRelics(count){
+    const p=shuffle(Object.keys(BOSS_RELICS).filter(k=>!this.hasRelic(k)));
+    return p.slice(0,count);
+  },
   randomCard(minR=1,excludeKeys=[]){
     let tier;
     if(minR===1){const r=Math.random();tier=r<.62?1:(r<.92?2:3)}
@@ -1494,24 +1498,24 @@ Object.assign(G,{
     const A=ACTS[this.act],next=ACTS[this.act+1];
     const gold=rnd(90,110);this.gold+=gold;
     const healAmt=Math.floor(this.maxHp*0.4);this.heal(healAmt);
+    const bossRelics=this.randomBossRelics(rnd(1,2));
+    bossRelics.forEach(k=>this.addRelic(k));
     this.updateTopbar();
+    const relicHtml=bossRelics.length
+      ? bossRelics.map(k=>`<div class="ritem noclick">${BOSS_RELICS[k].ic} 获得首领忍具「${BOSS_RELICS[k].n}」<br><span style="color:var(--paper-dim);font-size:12.5px">${BOSS_RELICS[k].d}</span></div>`).join('')
+      : '<div class="ritem noclick">🪙 首领忍具已经收集齐全,额外缴获 120 金币</div>';
+    if(!bossRelics.length){this.gold+=120;this.updateTopbar()}
     let html=`<div class="sec-s" style="font-size:14px">${A.clearText||`${A.bossName}败退,通往${next.name}的路出现了。`}</div>
       <div class="ritem noclick">🪙 缴获 ${gold} 金币 · 💚 休整回复 ${healAmt} 点生命</div>
-      <div class="sec-s" style="margin-top:12px;color:var(--gold)">◆ 选择一件首领忍具 ◆</div>
-      <div class="cgrid">${Object.entries(BOSS_RELICS).filter(([k])=>!this.hasRelic(k)).map(([k,r])=>
-        `<div class="shop-relic" onclick="G.takeBossRelic('${k}')"><div class="ric">${r.ic}</div><div class="rname">${r.n}</div><div class="rdesc">${r.d}</div></div>`).join('')}</div>
-      <div class="sec-s" style="margin-top:6px">并领悟一张稀有忍术</div>`;
+      <div class="sec-s" style="margin-top:12px;color:var(--gold)">◆ 首领战利品 ◆</div>
+      ${relicHtml}
+      <div class="sec-s" style="margin-top:10px">领悟一张稀有忍术 — 可跳过</div>`;
     const cs=this.randomCards(3,2);
-    this._choices=cs;this._bossPicked=false;this._cardPicked=false;
+    this._choices=cs;this._cardPicked=false;
     html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:112px;height:156px" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
       <button class="btn" onclick="G.toNextAct()">进入${next.name.split(' · ')[0]} →</button>`;
     $('reward-list').innerHTML=html;
     show('screen-reward');
-  },
-  takeBossRelic(k){
-    if(this._bossPicked)return toast('只能选择一件首领忍具');
-    this._bossPicked=true;this.addRelic(k);SFX.gold();
-    toast(`获得「${BOSS_RELICS[k].n}」`);
   },
   takeBossCard(i){
     if(this._cardPicked)return toast('只能领悟一张');
@@ -1520,8 +1524,6 @@ Object.assign(G,{
     toast(`「${c.n}」加入卡组`);
   },
   toNextAct(){
-    if(!this._bossPicked)return toast('先选择一件首领忍具');
-    if(!this._cardPicked)return toast('先领悟一张稀有忍术');
     this.startAct(this.act+1);
   },
 
@@ -1560,8 +1562,27 @@ Object.assign(G,{
   restHeal(amt){this.heal(amt);toast(`回复了 ${amt} 点生命`);this.backToMap()},
   restUpgrade(){
     this.pickFromDeck('选择要升级的忍术',c=>!c.upgraded&&c.t!=='curse',(c)=>{
-      upgradeCard(c);SFX.heal();toast(`「${c.n}」修炼成功!`);this.backToMap();
+      this.confirmRestUpgrade(c);
     });
+  },
+  confirmRestUpgrade(c){
+    this._upgradeCard=c;
+    $('overlay').innerHTML=`<div class="center">
+      <div class="sec-t" style="font-size:19px">确认修炼</div><div class="divider"></div>
+      <div class="cgrid">
+        <div><div class="sec-s">当前</div><div style="position:relative;width:112px;height:156px">${cardHTML(c,'static')}</div></div>
+        <div><div class="sec-s">升级后</div><div style="position:relative;width:112px;height:156px">${cardHTML(mkCard(c.key,true),'static')}</div></div>
+      </div>
+      <button class="btn" onclick="G.applyRestUpgrade()">确认升级</button>
+      <button class="btn ghost small" onclick="G.closeOverlay()">重新选择</button>
+    </div>`;
+    $('overlay').classList.add('on');
+  },
+  applyRestUpgrade(){
+    const c=this._upgradeCard;
+    if(!c||c.upgraded)return this.closeOverlay();
+    upgradeCard(c);this._upgradeCard=null;this.closeOverlay();
+    SFX.heal();toast(`「${c.n}」修炼成功!`);this.backToMap();
   },
 
   /* ---------- 商店 ---------- */
