@@ -1130,17 +1130,18 @@ const G={
     const base=CARDS[key];if(!base)return;
     const canUp=base.up&&Object.keys(base.up).length;
     const ov=$('overlay');
+    if(!this._previewReturnOverlay)this._previewReturnOverlay=ov.classList.contains('on')?{html:ov.innerHTML}:null;
     if(!canUp){
       ov.innerHTML=`<div class="center">
         <div class="sec-t" style="font-size:19px">升级预览</div><div class="divider"></div>
         <div class="sec-s">这张卡没有可预览的升级效果。</div>
         <div style="position:relative;width:112px;height:156px;margin:0 auto">${cardHTML(mkCard(key,!!isUpgraded),'static')}</div>
-        <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button></div>`;
+        <button class="btn ghost" onclick="G.closeUpgradePreview()">关 闭</button></div>`;
     }else if(isUpgraded){
       ov.innerHTML=`<div class="center">
         <div class="sec-t" style="font-size:19px">已升级效果</div><div class="divider"></div>
         <div style="position:relative;width:112px;height:156px;margin:0 auto">${cardHTML(mkCard(key,true),'static')}</div>
-        <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button></div>`;
+        <button class="btn ghost" onclick="G.closeUpgradePreview()">关 闭</button></div>`;
     }else{
       ov.innerHTML=`<div class="center">
         <div class="sec-t" style="font-size:19px">升级预览</div><div class="divider"></div>
@@ -1148,11 +1149,17 @@ const G={
           <div><div class="sec-s">当前</div><div style="position:relative;width:112px;height:156px">${cardHTML(mkCard(key,false),'static')}</div></div>
           <div><div class="sec-s">升级后</div><div style="position:relative;width:112px;height:156px">${cardHTML(mkCard(key,true),'static')}</div></div>
         </div>
-        <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button></div>`;
+        <button class="btn ghost" onclick="G.closeUpgradePreview()">关 闭</button></div>`;
     }
     ov.classList.add('on');
   },
-  closeOverlay(){$('overlay').classList.remove('on');$('overlay').innerHTML=''},
+  closeUpgradePreview(){
+    const ov=$('overlay'),ret=this._previewReturnOverlay;
+    this._previewReturnOverlay=null;
+    if(ret&&ret.html){ov.innerHTML=ret.html;ov.classList.add('on');return}
+    this.closeOverlay();
+  },
+  closeOverlay(){this._previewReturnOverlay=null;$('overlay').classList.remove('on');$('overlay').innerHTML=''},
 };
 </script>
 <script>
