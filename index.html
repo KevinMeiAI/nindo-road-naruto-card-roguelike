@@ -120,19 +120,17 @@ button{font-family:inherit}
 
 /* ============ 战斗 ============ */
 #screen-combat{padding:0;overflow:hidden}
-#stage{--combat-side-w:clamp(260px,30vw,520px);flex:1;position:relative;display:flex;align-items:stretch;justify-content:center;min-height:230px;overflow:hidden}
-#stage.act1{background:
-  radial-gradient(ellipse 100% 60% at 50% 105%, rgba(38,66,32,.55), transparent),
-  radial-gradient(ellipse 60% 40% at 80% 0%, rgba(84,184,240,.07), transparent),
-  linear-gradient(180deg,#12150c,#0d0f08)}
-#stage.act2{background:
-  radial-gradient(ellipse 100% 60% at 50% 105%, rgba(64,30,72,.5), transparent),
-  radial-gradient(ellipse 60% 40% at 20% 0%, rgba(192,48,34,.08), transparent),
-  linear-gradient(180deg,#150d16,#0c080d)}
-#stage.act3{background:
-  radial-gradient(ellipse 100% 60% at 50% 105%, rgba(70,42,28,.48), transparent),
-  radial-gradient(ellipse 60% 40% at 80% 0%, rgba(224,168,62,.08), transparent),
-  linear-gradient(180deg,#17110b,#090806)}
+#stage{--combat-side-w:clamp(260px,30vw,520px);flex:1;position:relative;display:flex;align-items:stretch;justify-content:center;min-height:230px;overflow:hidden;
+  background-size:cover;background-position:center bottom;background-repeat:no-repeat}
+#stage.act1{background-image:
+  linear-gradient(180deg,rgba(2,5,8,.34),rgba(2,5,8,.04) 52%,rgba(0,0,0,.2)),
+  url("assets/backgrounds/act1-forest.jpg")}
+#stage.act2{background-image:
+  linear-gradient(180deg,rgba(3,2,8,.38),rgba(3,2,8,.06) 54%,rgba(0,0,0,.24)),
+  url("assets/backgrounds/act2-hideout.jpg")}
+#stage.act3{background-image:
+  linear-gradient(180deg,rgba(4,2,4,.36),rgba(4,2,4,.03) 55%,rgba(0,0,0,.24)),
+  url("assets/backgrounds/act3-ruins.jpg")}
 #stage::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 6px)}
 #stage.shake{animation:shake .35s}
@@ -147,27 +145,30 @@ button{font-family:inherit}
   background:rgba(0,0,0,.45);padding:1px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
 .unit .intent b{color:#ff6b5b;font-size:14.5px}
 .unit .intent .ib{color:var(--block)}
-.frame{width:96px;height:96px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;
+.frame{position:relative;display:flex;align-items:flex-end;justify-content:center;
+  background:none;border:0;box-shadow:none;transition:transform .15s,filter .15s;overflow:visible}
+.frame.sprite-frame{width:190px;height:250px}
+.frame.emoji-frame{width:96px;height:96px;border-radius:50%;align-items:center;
   background:radial-gradient(circle at 38% 30%, var(--f1,#3a3322), var(--f2,#171208) 75%);
   border:2.5px solid var(--fc,#8a7c5a);
-  box-shadow:0 6px 16px rgba(0,0,0,.55), inset 0 0 18px rgba(0,0,0,.5);
-  transition:transform .15s}
+  box-shadow:0 6px 16px rgba(0,0,0,.55), inset 0 0 18px rgba(0,0,0,.5)}
 .frame .face{font-size:50px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
-.frame .sprite{width:72px;height:72px;object-fit:contain;display:block;filter:drop-shadow(0 4px 5px rgba(0,0,0,.65))}
-.unit.player .frame .sprite{width:78px;height:78px}
-.frame::before{content:"";position:absolute;inset:-7px;border-radius:50%;
+.frame .sprite{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;
+  filter:drop-shadow(0 10px 8px rgba(0,0,0,.7))}
+.frame.emoji-frame::before{content:"";position:absolute;inset:-7px;border-radius:50%;
   border:1.5px dashed color-mix(in srgb, var(--fc) 55%, transparent)}
-.unit.player .frame{--fc:var(--naruto);--f1:#4a3014;--f2:#1c1006;box-shadow:0 6px 16px rgba(0,0,0,.55),0 0 22px rgba(255,122,26,.25)}
-.unit.elite .frame{--fc:var(--pwr);--f1:#33203f;--f2:#150c1a}
-.unit.boss .frame{--fc:var(--seal);width:118px;height:118px;--f1:#3f1820;--f2:#170709;
+.unit.player .frame.sprite-frame{width:205px;height:255px}
+.unit.elite .frame.sprite-frame{width:210px;height:265px}
+.unit.boss .frame.sprite-frame{width:250px;height:310px}
+.unit.player .frame.emoji-frame{--fc:var(--naruto);--f1:#4a3014;--f2:#1c1006;box-shadow:0 6px 16px rgba(0,0,0,.55),0 0 22px rgba(255,122,26,.25)}
+.unit.elite .frame.emoji-frame{--fc:var(--pwr);--f1:#33203f;--f2:#150c1a}
+.unit.boss .frame.emoji-frame{--fc:var(--seal);width:118px;height:118px;--f1:#3f1820;--f2:#170709;
   box-shadow:0 6px 16px rgba(0,0,0,.6),0 0 30px rgba(192,48,34,.35)}
 .unit.boss .frame .face{font-size:64px}
-.unit.boss .frame .sprite{width:90px;height:90px}
 .unit.targetable .frame{cursor:pointer}
-.unit.target-glow .frame{border-color:var(--naruto);
-  box-shadow:0 0 0 4px rgba(255,122,26,.25),0 0 26px rgba(255,122,26,.7);cursor:pointer;
+.unit.target-glow .frame{filter:drop-shadow(0 0 10px rgba(255,122,26,.95)) drop-shadow(0 0 22px rgba(255,122,26,.55));cursor:pointer;
   animation:tglow 1s infinite}
-@keyframes tglow{50%{box-shadow:0 0 0 7px rgba(255,122,26,.12),0 0 36px rgba(255,122,26,.95)}}
+@keyframes tglow{50%{filter:drop-shadow(0 0 12px rgba(255,122,26,1)) drop-shadow(0 0 34px rgba(255,122,26,.8))}}
 .unit.lunge .frame{animation:lunge .32s}
 @keyframes lunge{30%{transform:translateX(26px) scale(1.05)}}
 .unit.lunge-l .frame{animation:lungeL .32s}
@@ -315,10 +316,12 @@ button{font-family:inherit}
   .card .ds.middesc{font-size:8.5px;line-height:1.16}
   .card .ds.longdesc{font-size:8px;line-height:1.12}
   .card .ds b{font-size:1em}
-  .frame{width:82px;height:82px}.frame .face{font-size:42px}
-  .frame .sprite{width:62px;height:62px}.unit.player .frame .sprite{width:66px;height:66px}
-  .unit.boss .frame{width:100px;height:100px}.unit.boss .frame .face{font-size:54px}
-  .unit.boss .frame .sprite{width:76px;height:76px}
+  .frame.sprite-frame{width:118px;height:154px}.frame .face{font-size:42px}
+  .frame.emoji-frame{width:82px;height:82px}
+  .unit.player .frame.sprite-frame{width:128px;height:160px}
+  .unit.elite .frame.sprite-frame{width:130px;height:166px}
+  .unit.boss .frame.sprite-frame{width:150px;height:190px}.unit.boss .frame .face{font-size:54px}
+  .unit.boss .frame.emoji-frame{width:100px;height:100px}
   #player-side{min-width:120px}
   #hand{height:calc(var(--card-h) + 18px)}
 }
@@ -427,7 +430,7 @@ const KW = {
 
 const CHARACTERS = {
   naruto:{
-    n:"漩涡鸣人",face:"🦊",sprite:"assets/sprites/naruto.svg",hp:80,gold:120,
+    n:"漩涡鸣人",face:"🦊",sprite:"assets/sprites/naruto.png",hp:80,gold:120,
     deck:["taijutsu","taijutsu","taijutsu","taijutsu","kawarimi","kawarimi","kawarimi","kawarimi","rasengan","kagebunshin"]
   },
   sasuke:{
@@ -588,7 +591,7 @@ const ENEMIES = {
     special:{every:4,move:{b:5,str:1,txt:"音叉共鸣"}}},
   snake:{n:"大蛇",sp:"🐍",hp:[19,25],moves:[{a:5,poison:2,txt:"毒牙"},{a:8,txt:"绞缠"},{b:5,poison:1,txt:"喷吐毒雾"}],
     special:{every:3,move:{b:4,poison:3,txt:"毒雾盘踞"}}},
-  nukenin:{n:"叛忍",sp:"👹",sprite:"assets/sprites/nukenin.svg",hp:[32,38],moves:[{a:10,txt:"斩击"},{str:1,txt:"怒气积蓄"},{a:6,b:5,txt:"攻防一体"}],
+  nukenin:{n:"叛忍",sp:"👹",sprite:"assets/sprites/nukenin.png",hp:[32,38],moves:[{a:10,txt:"斩击"},{str:1,txt:"怒气积蓄"},{a:6,b:5,txt:"攻防一体"}],
     grow:{every:4,str:1}},
   puppet:{n:"战傀儡",sp:"🪆",hp:[28,34],moves:[{b:9,txt:"机关展开"},{a:9,txt:"暗器齐射"},{a:5,weak:1,txt:"麻痹毒针"}],
     grow:{every:3,b:5}},
@@ -830,6 +833,9 @@ function cardHTML(c,extra="",style=""){
 }
 function unitPortrait(icon,sprite,name=""){
   return sprite?`<img class="sprite" src="${esc(sprite)}" alt="${esc(name)}">`:`<div class="face">${icon}</div>`;
+}
+function unitFrame(icon,sprite,name=""){
+  return `<div class="frame ${sprite?'sprite-frame':'emoji-frame'}">${unitPortrait(icon,sprite,name)}</div>`;
 }
 
 /* ====================== 游戏主体 ====================== */
@@ -1644,7 +1650,7 @@ Object.assign(G,{
     const C=this.char();
     // 玩家
     $('player-side').innerHTML=`<div class="unit player" onclick="G.clickStage(event)">
-      <div class="frame">${unitPortrait(C.face,C.sprite,C.n)}</div>
+      ${unitFrame(C.face,C.sprite,C.n)}
       <div class="uname">${C.n} ${this.block?`<span class="ub">🛡️${this.block}</span>`:''}</div>
       <div class="hpbar pb"><i style="width:${Math.max(0,this.hp/this.maxHp*100)}%"></i></div>
       <div class="hptx">${Math.max(0,this.hp)} / ${this.maxHp}</div>
@@ -1656,7 +1662,7 @@ Object.assign(G,{
       const pickedTarget=this.picked!==null&&this.hand[this.picked]&&this.cardNeedsTarget(this.hand[this.picked]);
       return `<div class="unit ${dead?'dead':''} ${e.elite?'elite':''} ${e.boss?'boss':''} ${!dead?'targetable':''} ${pickedTarget&&!dead?'target-glow':''}" data-ei="${i}" onclick="G.clickEnemy(${i})">
         <div class="intent">${dead?'':this.intentHTML(e)+' <span style="opacity:.65;font-size:11px">'+(e.intent?e.intent.txt:'')+'</span>'}</div>
-        <div class="frame">${unitPortrait(e.sp,e.sprite,e.n)}</div>
+        ${unitFrame(e.sp,e.sprite,e.n)}
         <div class="uname">${e.n} ${e.block?`<span class="ub">🛡️${e.block}</span>`:''}</div>
         <div class="hpbar"><i style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></i></div>
         <div class="hptx">${Math.max(0,e.hp)} / ${e.maxHp}</div>
