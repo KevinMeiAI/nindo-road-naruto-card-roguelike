@@ -120,7 +120,7 @@ button{font-family:inherit}
 
 /* ============ 战斗 ============ */
 #screen-combat{padding:0;overflow:hidden}
-#stage{--combat-side-w:clamp(260px,30vw,520px);flex:1;position:relative;display:flex;align-items:stretch;justify-content:center;min-height:230px;overflow:hidden;
+#stage{--combat-player-w:clamp(240px,30vw,520px);--combat-enemy-w:clamp(300px,34vw,620px);flex:1;position:relative;display:flex;align-items:stretch;justify-content:center;min-height:230px;overflow:hidden;
   background-size:cover;background-position:center bottom;background-repeat:no-repeat}
 #stage.act1{background-image:
   linear-gradient(180deg,rgba(2,5,8,.34),rgba(2,5,8,.04) 52%,rgba(0,0,0,.2)),
@@ -136,13 +136,17 @@ button{font-family:inherit}
 #stage.shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:none}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(4px,-2px)}}
 
-#player-side{flex:0 1 var(--combat-side-w);min-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:10px 4px 14px;z-index:2}
-#enemy-side{flex:0 1 var(--combat-side-w);display:flex;align-items:flex-end;justify-content:space-evenly;padding:10px 8px 14px;flex-wrap:wrap;gap:4px;z-index:2}
+#player-side{flex:0 1 var(--combat-player-w);min-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:10px 4px 14px;z-index:2}
+#enemy-side{flex:0 1 var(--combat-enemy-w);display:flex;align-items:flex-end;justify-content:center;padding:10px 8px 14px;flex-wrap:nowrap;gap:clamp(2px,.8vw,12px);z-index:2}
 
 .unit{display:flex;flex-direction:column;align-items:center;position:relative;transition:opacity .5s}
 .unit.dead{opacity:0;pointer-events:none}
 .unit .intent{font-size:13px;min-height:20px;margin-bottom:3px;color:var(--paper-dim);
   background:rgba(0,0,0,.45);padding:1px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+#enemy-side .unit{padding-top:30px}
+#enemy-side .unit .intent{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:4;
+  margin:0;white-space:nowrap;max-width:250px;overflow:hidden;text-overflow:ellipsis}
+#enemy-side .unit.dead .intent{display:none}
 .unit .intent b{color:#ff6b5b;font-size:14.5px}
 .unit .intent .ib{color:var(--block)}
 .frame{position:relative;display:flex;align-items:flex-end;justify-content:center;
@@ -306,7 +310,7 @@ button{font-family:inherit}
 }
 @media (max-width:620px){
   :root{--card-w:120px;--card-h:176px;--card-art-h:68px}
-  #stage{--combat-side-w:50%}
+  #stage{--combat-player-w:50%;--combat-enemy-w:50%}
   #screen-title{justify-content:flex-start;padding-top:22px}
   .char-grid{grid-template-columns:1fr;max-width:340px}
   .char-card{min-height:150px}
@@ -322,6 +326,9 @@ button{font-family:inherit}
   .unit.elite .frame.sprite-frame{width:130px;height:166px}
   .unit.boss .frame.sprite-frame{width:150px;height:190px}.unit.boss .frame .face{font-size:54px}
   .unit.boss .frame.emoji-frame{width:100px;height:100px}
+  #enemy-side .unit{padding-top:27px}
+  #enemy-side .unit .intent{max-width:138px;font-size:11px}
+  #enemy-side .unit .intent b{font-size:12px}
   #player-side{min-width:120px}
   #hand{height:calc(var(--card-h) + 18px)}
 }
