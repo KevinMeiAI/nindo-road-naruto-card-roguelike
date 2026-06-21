@@ -120,7 +120,7 @@ button{font-family:inherit}
 
 /* ============ 战斗 ============ */
 #screen-combat{padding:0;overflow:hidden}
-#stage{flex:1;position:relative;display:flex;align-items:stretch;min-height:230px;overflow:hidden}
+#stage{--combat-side-w:clamp(260px,30vw,520px);flex:1;position:relative;display:flex;align-items:stretch;justify-content:center;min-height:230px;overflow:hidden}
 #stage.act1{background:
   radial-gradient(ellipse 100% 60% at 50% 105%, rgba(38,66,32,.55), transparent),
   radial-gradient(ellipse 60% 40% at 80% 0%, rgba(84,184,240,.07), transparent),
@@ -138,8 +138,8 @@ button{font-family:inherit}
 #stage.shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:none}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(4px,-2px)}}
 
-#player-side{width:34%;min-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:10px 4px 14px;z-index:2}
-#enemy-side{flex:1;display:flex;align-items:flex-end;justify-content:space-evenly;padding:10px 8px 14px;flex-wrap:wrap;gap:4px;z-index:2}
+#player-side{flex:0 1 var(--combat-side-w);min-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:10px 4px 14px;z-index:2}
+#enemy-side{flex:0 1 var(--combat-side-w);display:flex;align-items:flex-end;justify-content:space-evenly;padding:10px 8px 14px;flex-wrap:wrap;gap:4px;z-index:2}
 
 .unit{display:flex;flex-direction:column;align-items:center;position:relative;transition:opacity .5s}
 .unit.dead{opacity:0;pointer-events:none}
@@ -153,6 +153,8 @@ button{font-family:inherit}
   box-shadow:0 6px 16px rgba(0,0,0,.55), inset 0 0 18px rgba(0,0,0,.5);
   transition:transform .15s}
 .frame .face{font-size:50px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+.frame .sprite{width:72px;height:72px;object-fit:contain;display:block;filter:drop-shadow(0 4px 5px rgba(0,0,0,.65))}
+.unit.player .frame .sprite{width:78px;height:78px}
 .frame::before{content:"";position:absolute;inset:-7px;border-radius:50%;
   border:1.5px dashed color-mix(in srgb, var(--fc) 55%, transparent)}
 .unit.player .frame{--fc:var(--naruto);--f1:#4a3014;--f2:#1c1006;box-shadow:0 6px 16px rgba(0,0,0,.55),0 0 22px rgba(255,122,26,.25)}
@@ -160,6 +162,7 @@ button{font-family:inherit}
 .unit.boss .frame{--fc:var(--seal);width:118px;height:118px;--f1:#3f1820;--f2:#170709;
   box-shadow:0 6px 16px rgba(0,0,0,.6),0 0 30px rgba(192,48,34,.35)}
 .unit.boss .frame .face{font-size:64px}
+.unit.boss .frame .sprite{width:90px;height:90px}
 .unit.targetable .frame{cursor:pointer}
 .unit.target-glow .frame{border-color:var(--naruto);
   box-shadow:0 0 0 4px rgba(255,122,26,.25),0 0 26px rgba(255,122,26,.7);cursor:pointer;
@@ -302,6 +305,7 @@ button{font-family:inherit}
 }
 @media (max-width:620px){
   :root{--card-w:120px;--card-h:176px;--card-art-h:68px}
+  #stage{--combat-side-w:50%}
   #screen-title{justify-content:flex-start;padding-top:22px}
   .char-grid{grid-template-columns:1fr;max-width:340px}
   .char-card{min-height:150px}
@@ -312,8 +316,10 @@ button{font-family:inherit}
   .card .ds.longdesc{font-size:8px;line-height:1.12}
   .card .ds b{font-size:1em}
   .frame{width:82px;height:82px}.frame .face{font-size:42px}
+  .frame .sprite{width:62px;height:62px}.unit.player .frame .sprite{width:66px;height:66px}
   .unit.boss .frame{width:100px;height:100px}.unit.boss .frame .face{font-size:54px}
-  #player-side{min-width:120px;width:30%}
+  .unit.boss .frame .sprite{width:76px;height:76px}
+  #player-side{min-width:120px}
   #hand{height:calc(var(--card-h) + 18px)}
 }
 </style>
@@ -421,7 +427,7 @@ const KW = {
 
 const CHARACTERS = {
   naruto:{
-    n:"漩涡鸣人",face:"🦊",hp:80,gold:120,
+    n:"漩涡鸣人",face:"🦊",sprite:"assets/sprites/naruto.svg",hp:80,gold:120,
     deck:["taijutsu","taijutsu","taijutsu","taijutsu","kawarimi","kawarimi","kawarimi","kawarimi","rasengan","kagebunshin"]
   },
   sasuke:{
@@ -582,7 +588,7 @@ const ENEMIES = {
     special:{every:4,move:{b:5,str:1,txt:"音叉共鸣"}}},
   snake:{n:"大蛇",sp:"🐍",hp:[19,25],moves:[{a:5,poison:2,txt:"毒牙"},{a:8,txt:"绞缠"},{b:5,poison:1,txt:"喷吐毒雾"}],
     special:{every:3,move:{b:4,poison:3,txt:"毒雾盘踞"}}},
-  nukenin:{n:"叛忍",sp:"👹",hp:[32,38],moves:[{a:10,txt:"斩击"},{str:1,txt:"怒气积蓄"},{a:6,b:5,txt:"攻防一体"}],
+  nukenin:{n:"叛忍",sp:"👹",sprite:"assets/sprites/nukenin.svg",hp:[32,38],moves:[{a:10,txt:"斩击"},{str:1,txt:"怒气积蓄"},{a:6,b:5,txt:"攻防一体"}],
     grow:{every:4,str:1}},
   puppet:{n:"战傀儡",sp:"🪆",hp:[28,34],moves:[{b:9,txt:"机关展开"},{a:9,txt:"暗器齐射"},{a:5,weak:1,txt:"麻痹毒针"}],
     grow:{every:3,b:5}},
@@ -821,6 +827,9 @@ function cardHTML(c,extra="",style=""){
     <div class="ds${cardDescClass(desc)}">${desc}</div>
     ${RAR_LABEL[c.r]?`<div class="rar">◆ ${RAR_LABEL[c.r]}</div>`:''}
   </div>`;
+}
+function unitPortrait(icon,sprite,name=""){
+  return sprite?`<img class="sprite" src="${esc(sprite)}" alt="${esc(name)}">`:`<div class="face">${icon}</div>`;
 }
 
 /* ====================== 游戏主体 ====================== */
@@ -1215,7 +1224,7 @@ Object.assign(G,{
     const A=ACTS[this.act];
     const mk=key=>{
       const d=ENEMIES[key];
-      const e={key,n:d.n,sp:d.sp,maxHp:rnd(d.hp[0],d.hp[1]),
+      const e={key,n:d.n,sp:d.sp,sprite:d.sprite||"",maxHp:rnd(d.hp[0],d.hp[1]),
         moves:d.moves,special:d.special||null,phase2:d.phase2||null,phase2done:false,
         regen:d.regen||0,grow:d.grow||null,
         mi:rnd(0,d.moves.length-1),tc:0,block:0,str:0,weak:0,vuln:0,
@@ -1420,7 +1429,7 @@ Object.assign(G,{
     if(e.boss&&e.phase2&&!e.phase2done){
       e.phase2done=true;
       const p=e.phase2;
-      e.n=p.n;e.sp=p.sp;e.hp=Math.floor(e.maxHp*p.hpRatio);
+      e.n=p.n;e.sp=p.sp;e.sprite=p.sprite||e.sprite||"";e.hp=Math.floor(e.maxHp*p.hpRatio);
       e.str+=p.str;e.moves=p.moves;e.special=p.special;e.mi=0;e.tc=0;
       e.regen=p.regen||e.regen||0;e.grow=p.grow||e.grow||null;
       this.rollIntent(e);
@@ -1635,7 +1644,7 @@ Object.assign(G,{
     const C=this.char();
     // 玩家
     $('player-side').innerHTML=`<div class="unit player" onclick="G.clickStage(event)">
-      <div class="frame"><div class="face">${C.face}</div></div>
+      <div class="frame">${unitPortrait(C.face,C.sprite,C.n)}</div>
       <div class="uname">${C.n} ${this.block?`<span class="ub">🛡️${this.block}</span>`:''}</div>
       <div class="hpbar pb"><i style="width:${Math.max(0,this.hp/this.maxHp*100)}%"></i></div>
       <div class="hptx">${Math.max(0,this.hp)} / ${this.maxHp}</div>
@@ -1647,7 +1656,7 @@ Object.assign(G,{
       const pickedTarget=this.picked!==null&&this.hand[this.picked]&&this.cardNeedsTarget(this.hand[this.picked]);
       return `<div class="unit ${dead?'dead':''} ${e.elite?'elite':''} ${e.boss?'boss':''} ${!dead?'targetable':''} ${pickedTarget&&!dead?'target-glow':''}" data-ei="${i}" onclick="G.clickEnemy(${i})">
         <div class="intent">${dead?'':this.intentHTML(e)+' <span style="opacity:.65;font-size:11px">'+(e.intent?e.intent.txt:'')+'</span>'}</div>
-        <div class="frame"><div class="face">${e.sp}</div></div>
+        <div class="frame">${unitPortrait(e.sp,e.sprite,e.n)}</div>
         <div class="uname">${e.n} ${e.block?`<span class="ub">🛡️${e.block}</span>`:''}</div>
         <div class="hpbar"><i style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></i></div>
         <div class="hptx">${Math.max(0,e.hp)} / ${e.maxHp}</div>
