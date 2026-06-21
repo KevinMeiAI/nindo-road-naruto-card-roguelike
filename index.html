@@ -372,8 +372,8 @@ button{font-family:inherit}
       </button>
       <button class="char-card" onclick="G.newRun('sakura')">
         <div class="char-face">🌸</div><div class="char-name">春野樱</div>
-        <div class="char-role">医疗 · 怪力 · 身法防守</div>
-        <div class="char-desc">防守和续航更强,能净化异常状态,通过怪力拳与医疗体系稳定推进。</div>
+        <div class="char-role">医疗 · 怪力蓄势 · 身法防守</div>
+        <div class="char-desc">防守和续航更强,能把治疗与格挡转化为怪力,再用重拳打出爆发。</div>
         <div class="char-deck">起手:4 攻 + 4 防 + 怪力拳 / 掌仙术</div>
       </button>
     </div>
@@ -429,6 +429,9 @@ const KW = {
   "影分身":"每回合结束,按当前层数 ×3 获得格挡,随后自动减少 1 层",
   "忍道":"每回合开始获得等量格挡",
   "九尾":"每回合开始获得等量力量,每个来源持续 3 回合",
+  "怪力":"下一张攻击牌对每个目标额外造成等量伤害,触发后清空",
+  "医术":"每次打出回复牌时获得等量怪力",
+  "聚力":"每次打出格挡牌时获得等量怪力",
   "消耗":"打出后从本场战斗中移除,不进入弃牌堆",
   "格挡":"抵消伤害,自己回合开始时消散",
   "再生":"敌人每回合回复生命",
@@ -462,7 +465,7 @@ const CARDS = {
   lion_combo:{n:"狮子连弹",t:"atk",c:1,r:0,ic:"🦁",art:"assets/card-art/lion_combo.jpg",d:"造成 <b>7</b> 点伤害",dmg:7,chars:["sasuke"],up:{d:"造成 <b>10</b> 点伤害",dmg:10}},
   chidori_seed:{n:"千鸟雏形",t:"atk",c:1,r:0,ic:"⚡",art:"assets/card-art/chidori_seed.jpg",d:"造成 <b>6</b> 点伤害,施加 <b>1</b> 层易伤",dmg:6,vuln:1,chars:["sasuke"],up:{d:"造成 <b>8</b> 点伤害,施加 <b>2</b> 层易伤",dmg:8,vuln:2}},
   power_punch:{n:"怪力拳",t:"atk",c:1,r:0,ic:"💥",art:"assets/card-art/power_punch.jpg",d:"造成 <b>8</b> 点伤害",dmg:8,chars:["sakura"],up:{d:"造成 <b>11</b> 点伤害",dmg:11}},
-  palm_heal:{n:"掌仙术",t:"skl",c:1,r:0,ic:"💚",art:"assets/card-art/palm_heal.jpg",d:"获得 <b>5</b> 点格挡,回复 <b>2</b> 点生命",blk:5,heal:2,chars:["sakura"],up:{d:"获得 <b>7</b> 点格挡,回复 <b>3</b> 点生命",blk:7,heal:3}},
+  palm_heal:{n:"掌仙术",t:"skl",c:1,r:0,ic:"💚",art:"assets/card-art/palm_heal.jpg",d:"获得 <b>5</b> 点格挡,回复 <b>2</b> 点生命,获得 <b>1</b> 层怪力",blk:5,heal:2,might:1,chars:["sakura"],up:{d:"获得 <b>7</b> 点格挡,回复 <b>3</b> 点生命,获得 <b>2</b> 层怪力",blk:7,heal:3,might:2}},
   /* —— 普通 —— */
   kunai:{n:"苦无投掷",t:"atk",c:0,r:1,ic:"🗡️",d:"造成 <b>3</b> 点伤害",dmg:3,up:{d:"造成 <b>5</b> 点伤害",dmg:5}},
   renda:{n:"木叶旋风",t:"atk",c:1,r:1,ic:"🌪️",d:"造成 <b>3</b>×<b>2</b> 点伤害",dmg:3,hits:2,up:{d:"造成 <b>4</b>×<b>2</b> 点伤害",dmg:4}},
@@ -485,9 +488,10 @@ const CARDS = {
   chakra_gloves:{n:"查克拉护手",t:"skl",c:0,r:1,ic:"💠",d:"获得 <b>3</b> 点格挡,抽 <b>1</b> 张牌",blk:3,draw:1,chars:["sakura"],up:{d:"获得 <b>5</b> 点格挡,抽 <b>1</b> 张牌",blk:5}},
   precise_punch:{n:"精准重拳",t:"atk",c:1,r:1,ic:"👊",d:"造成 <b>7</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:7,tweak:1,chars:["sakura"],up:{d:"造成 <b>10</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:10}},
   ground_slam:{n:"碎地冲击",t:"atk",c:1,r:1,ic:"🌋",d:"对<b>所有</b>敌人造成 <b>5</b> 点伤害",dmg:5,aoe:1,chars:["sakura"],up:{d:"对<b>所有</b>敌人造成 <b>7</b> 点伤害",dmg:7}},
-  medical_guard:{n:"医疗架势",t:"pwr",c:1,r:1,ic:"💚",d:"身法 +<b>1</b>,回复 <b>2</b> 点生命",dex:1,heal:2,chars:["sakura"],up:{d:"身法 +<b>1</b>,回复 <b>5</b> 点生命",heal:5}},
+  medical_guard:{n:"医疗架势",t:"pwr",c:1,r:1,ic:"💚",d:"身法 +<b>1</b>,回复 <b>2</b> 点生命。每次打出回复牌获得 <b>1</b> 层怪力",dex:1,heal:2,healMight:1,chars:["sakura"],up:{d:"身法 +<b>1</b>,回复 <b>5</b> 点生命。每次打出回复牌获得 <b>2</b> 层怪力",heal:5,healMight:2}},
   chakra_step:{n:"查克拉步",t:"skl",c:0,r:1,ic:"🔵",d:"获得 <b>2</b> 点格挡,抽 <b>1</b> 张牌",blk:2,draw:1,up:{d:"获得 <b>4</b> 点格挡,抽 <b>1</b> 张牌",blk:4}},
   wire_trap:{n:"钢丝陷阱",t:"skl",c:1,r:1,ic:"🧵",d:"获得 <b>4</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:4,tvuln:1,all:1,up:{d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>2</b> 层易伤",blk:6,tvuln:2}},
+  focus_fist:{n:"蓄力正拳",t:"skl",c:1,r:1,ic:"💥",d:"获得 <b>4</b> 点格挡,获得 <b>3</b> 层怪力",blk:4,might:3,chars:["sakura"],up:{d:"获得 <b>6</b> 点格挡,获得 <b>4</b> 层怪力",blk:6,might:4}},
   /* —— 稀有 —— */
   kagebunshin:{n:"影分身之术",t:"skl",c:1,r:0,ic:"👥",art:"assets/card-art/kagebunshin.jpg",d:"获得 <b>2</b> 层影分身",clone:2,chars:["naruto"],up:{d:"获得 <b>3</b> 层影分身",clone:3}},
   chidori:{n:"千鸟",t:"atk",c:1,r:2,ic:"⚡",d:"造成 <b>11</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:11,self:2,chars:["sasuke"],up:{n:"雷切",d:"造成 <b>15</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:15}},
@@ -510,9 +514,10 @@ const CARDS = {
   chidori_stream:{n:"千鸟流",t:"skl",c:1,r:2,ic:"⚡",d:"获得 <b>7</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:7,tvuln:1,all:1,chars:["sasuke"],up:{d:"获得 <b>10</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:10}},
   kusanagi:{n:"草薙剑",t:"atk",c:1,r:2,ic:"🗡️",d:"造成 <b>5</b>×<b>2</b> 点伤害,施加 <b>1</b> 层易伤",dmg:5,hits:2,vuln:1,chars:["sasuke"],up:{d:"造成 <b>7</b>×<b>2</b> 点伤害,施加 <b>1</b> 层易伤",dmg:7}},
   cleanse_jutsu:{n:"解毒术",t:"skl",c:1,r:1,ic:"🟢",d:"清除自身中毒、虚弱、易伤,抽 <b>1</b> 张牌",cleanse:1,draw:1,chars:["sakura"],up:{d:"清除自身中毒、虚弱、易伤,抽 <b>2</b> 张牌",draw:2}},
-  chakra_control:{n:"查克拉精控",t:"pwr",c:1,r:2,ic:"💠",d:"身法 +<b>1</b>,每回合开始获得 <b>2</b> 点格挡",dex:1,nindo:2,chars:["sakura"],up:{d:"身法 +<b>1</b>,每回合开始获得 <b>3</b> 点格挡",nindo:3}},
+  chakra_control:{n:"查克拉精控",t:"pwr",c:1,r:2,ic:"💠",d:"身法 +<b>1</b>,每回合开始获得 <b>2</b> 点格挡。每次打出格挡牌获得 <b>1</b> 层怪力",dex:1,nindo:2,blockMight:1,chars:["sakura"],up:{d:"身法 +<b>1</b>,每回合开始获得 <b>3</b> 点格挡。每次打出格挡牌获得 <b>1</b> 层怪力",nindo:3}},
   cherry_blossom:{n:"樱花冲",t:"atk",c:2,r:2,ic:"🌸",d:"造成 <b>16</b> 点伤害",dmg:16,chars:["sakura"],up:{d:"造成 <b>21</b> 点伤害",dmg:21}},
   chakra_scalpel:{n:"查克拉手术刀",t:"atk",c:1,r:2,ic:"🔪",d:"造成 <b>7</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:7,tweak:2,chars:["sakura"],up:{d:"造成 <b>9</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:9}},
+  rupture_punch:{n:"破绽重拳",t:"atk",c:1,r:2,ic:"👊",d:"造成 <b>8</b> 点伤害,施加 <b>1</b> 层易伤",dmg:8,vuln:1,chars:["sakura"],up:{d:"造成 <b>11</b> 点伤害,施加 <b>1</b> 层易伤",dmg:11}},
   /* —— 传说 —— */
   fuuton:{n:"风遁·螺旋手里剑",t:"atk",c:3,r:3,ic:"🌀",d:"造成 <b>26</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:26,self:4,ex:1,chars:["naruto"],up:{d:"造成 <b>34</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:34}},
   kyuubi:{n:"九尾查克拉",t:"pwr",c:2,r:2,ic:"🦊",d:"每回合开始力量 +<b>1</b>,持续 <b>3</b> 回合",ramp:1,rampTurns:3,chars:["naruto"],up:{c:1}},
@@ -527,7 +532,7 @@ const CARDS = {
   amaterasu:{n:"天照",t:"atk",c:2,r:3,ic:"🔥",d:"造成 <b>18</b> 点伤害,施加 <b>3</b> 层易伤,自身受 <b>3</b> 点伤害",dmg:18,vuln:3,self:3,chars:["sasuke"],up:{d:"造成 <b>24</b> 点伤害,施加 <b>3</b> 层易伤,自身受 <b>3</b> 点伤害",dmg:24}},
   curse_mark:{n:"咒印活化",t:"pwr",c:2,r:3,ic:"😈",d:"力量 +<b>1</b>,每回合开始力量 +<b>1</b>(3 回合),自身受 <b>5</b> 点伤害",str:1,ramp:1,rampTurns:3,self:5,chars:["sasuke"],up:{d:"力量 +<b>2</b>,每回合开始力量 +<b>1</b>(3 回合),自身受 <b>5</b> 点伤害",str:2}},
   susanoo_rib:{n:"须佐骨架",t:"pwr",c:2,r:3,ic:"🛡️",d:"身法 +<b>2</b>,每回合开始获得 <b>4</b> 点格挡",dex:2,nindo:4,chars:["sasuke"],up:{d:"身法 +<b>3</b>,每回合开始获得 <b>5</b> 点格挡",dex:3,nindo:5}},
-  byakugou:{n:"百豪之术",t:"pwr",c:2,r:3,ic:"◇",d:"力量 +<b>1</b>,身法 +<b>2</b>,回复 <b>6</b> 点生命",str:1,dex:2,heal:6,chars:["sakura"],up:{d:"力量 +<b>1</b>,身法 +<b>2</b>,回复 <b>10</b> 点生命",heal:10}},
+  byakugou:{n:"百豪之术",t:"pwr",c:2,r:3,ic:"◇",d:"力量 +<b>1</b>,身法 +<b>2</b>,回复 <b>6</b> 点生命。每次打出回复牌获得 <b>2</b> 层怪力",str:1,dex:2,heal:6,healMight:2,chars:["sakura"],up:{d:"力量 +<b>1</b>,身法 +<b>2</b>,回复 <b>10</b> 点生命。每次打出回复牌获得 <b>3</b> 层怪力",heal:10,healMight:3}},
   katsuyu:{n:"通灵术·蛞蝓",t:"skl",c:2,r:2,ic:"🐌",d:"回复 <b>6</b> 点生命,获得 <b>14</b> 点格挡。<b>消耗</b>",heal:6,blk:14,ex:1,chars:["sakura"],up:{d:"回复 <b>10</b> 点生命,获得 <b>18</b> 点格挡。<b>消耗</b>",heal:10,blk:18}},
   mitotic_regen:{n:"创造再生",t:"skl",c:2,r:3,ic:"💚",d:"清除自身中毒、虚弱、易伤,回复 <b>15</b> 点生命。<b>消耗</b>",cleanse:1,heal:15,ex:1,chars:["sakura"],up:{d:"清除自身中毒、虚弱、易伤,回复 <b>22</b> 点生命。<b>消耗</b>",heal:22}},
   heaven_kick:{n:"天守脚",t:"atk",c:3,r:3,ic:"🦶",d:"对<b>所有</b>敌人造成 <b>20</b> 点伤害",dmg:20,aoe:1,chars:["sakura"],up:{d:"对<b>所有</b>敌人造成 <b>27</b> 点伤害",dmg:27}},
@@ -803,6 +808,7 @@ function mkCard(key,upgraded=false){
     art:b.art||"",
     dmg:b.dmg||0,hits:b.hits||1,blk:b.blk||0,draw:b.draw||0,vuln:b.vuln||0,tvuln:b.tvuln||0,
     weak:b.weak||0,tweak:b.tweak||0,clone:b.clone||0,aoe:b.aoe||0,self:b.self||0,heal:b.heal||0,
+    might:b.might||0,healMight:b.healMight||0,blockMight:b.blockMight||0,
     str:b.str||0,dex:b.dex||0,nindo:b.nindo||0,ramp:b.ramp||0,rampTurns:b.rampTurns||0,energy:b.energy||0,cleanse:b.cleanse||0,
     all:b.all||0,ex:b.ex||0,unplayable:b.unplayable||0};
   if(upgraded)upgradeCard(c);return c;
@@ -881,6 +887,12 @@ const G={
     this.rampSources=sources.filter(r=>r.turns>0);
     this.rampStr=this.activeRampStr();
     return gain;
+  },
+  gainMight(n){
+    if(!n)return;
+    this.might=Math.max(0,(this.might||0)+n);
+    const el=this.playerEl&&this.playerEl();
+    if(el)this.fxText(el,'怪力+'+n,'blk');
   },
   randomPotionKey(excludeKeys=[]){
     const exclude=new Set(excludeKeys);
@@ -1279,6 +1291,7 @@ Object.assign(G,{
     }
     // 玩家战斗态
     this.block=0;this.str=this.permStr;this.dex=0;this.weak=0;this.vuln=0;this.poison=0;
+    this.might=0;this.healMight=0;this.blockMight=0;
     this.clones=this.hasRelic('contract')?2:0;
     this.nindoBlk=0;this.rampStr=0;this.rampSources=[];
     this.turn=0;this.picked=null;this.busy=false;this.combatEnded=false;
@@ -1414,6 +1427,13 @@ Object.assign(G,{
     const vals=[...new Set((targets.length?targets:[{vuln:0}]).map(t=>this.calc(c.dmg+bonus,me,t)))].sort((a,b)=>a-b);
     return vals.length>1?`${vals[0]}-${vals[vals.length-1]}`:`${vals[0]||0}`;
   },
+  cardMightDamageText(c){
+    if(!this.combatActive()||c.t!=='atk'||!this.might)return '';
+    const alive=(this.enemies||[]).filter(e=>e.hp>0);
+    const targets=c.aoe?alive:[alive[0]||{vuln:0}];
+    const vals=[...new Set((targets.length?targets:[{vuln:0}]).map(t=>this.calc(this.might,{str:0,weak:this.weak||0},t)))].sort((a,b)=>a-b);
+    return vals.length>1?`${vals[0]}-${vals[vals.length-1]}`:`${vals[0]||0}`;
+  },
   cardDesc(c){
     if(!this.combatActive())return c.d;
     if(c.unplayable)return c.d;
@@ -1428,6 +1448,13 @@ Object.assign(G,{
     if(c.energy)parts.push(`获得 <b>${c.energy}</b> 点查克拉`);
     if(c.heal)parts.push(`回复 <b>${c.heal}</b> 点生命`);
     if(c.cleanse)parts.push('清除自身中毒、虚弱、易伤');
+    if(c.might)parts.push(`获得 <b>${c.might}</b> 层怪力`);
+    if(c.healMight)parts.push(`每次打出回复牌获得 <b>${c.healMight}</b> 层怪力`);
+    if(c.blockMight)parts.push(`每次打出格挡牌获得 <b>${c.blockMight}</b> 层怪力`);
+    if(c.t==='atk'&&this.might){
+      const m=this.cardMightDamageText(c);
+      parts.push(`消耗怪力额外造成 <b>${m}</b> 点伤害`);
+    }
     if(c.str)parts.push(`力量 +<b>${c.str}</b>`);
     if(c.dex)parts.push(`身法 +<b>${c.dex}</b>`);
     if(c.clone)parts.push(`获得 <b>${c.clone}</b> 层影分身`);
@@ -1494,6 +1521,9 @@ Object.assign(G,{
     const vBonus=this.hasRelic('sharingan')?1:0;
     const wBonus=this.hasRelic('seal_tag')?1:0;
     const targetsAll=this.cardTargetsAll(c);
+    if(c.healMight)this.healMight+=c.healMight;
+    if(c.blockMight)this.blockMight+=c.blockMight;
+    const attackMight=c.t==='atk'&&c.dmg?(this.might||0):0;
     if(c.dmg){
       const ts=c.aoe?this.enemies.filter(e=>e.hp>0):[target];
       ts.forEach(t=>{
@@ -1502,8 +1532,13 @@ Object.assign(G,{
           if(t.hp<=0)break;
           this.dealDamage(t,this.calc(c.dmg+bonus,me,t));
         }
+        if(attackMight&&t.hp>0)this.dealDamage(t,this.calc(attackMight,{str:0,weak:this.weak},t));
         if(c.vuln&&t.hp>0)t.vuln+=c.vuln+vBonus;
       });
+      if(attackMight){
+        this.might=0;
+        this.fxText(this.playerEl(),'怪力释放','blk');
+      }
     }
     if(c.tvuln){const ts=targetsAll||!target?this.enemies.filter(e=>e.hp>0):[target];ts.forEach(t=>t.vuln+=c.tvuln+vBonus)}
     if(c.tweak||c.weak){
@@ -1511,13 +1546,17 @@ Object.assign(G,{
       const ts=targetsAll||!target?this.enemies.filter(e=>e.hp>0):[target];
       ts.forEach(t=>t.weak+=w);
     }
-    if(c.blk){const b=c.blk+this.dex;this.block+=b;this.fxText(this.playerEl(),'+'+b,'blk');SFX.blk()}
+    if(c.blk){
+      const b=c.blk+this.dex;this.block+=b;this.fxText(this.playerEl(),'+'+b,'blk');SFX.blk();
+      if(this.blockMight)this.gainMight(this.blockMight);
+    }
     if(c.draw)this.draw(c.draw);
-    if(c.heal){this.heal(c.heal);this.fxText(this.playerEl(),'+'+c.heal,'heal')}
+    if(c.heal){this.heal(c.heal);this.fxText(this.playerEl(),'+'+c.heal,'heal');if(this.healMight)this.gainMight(this.healMight)}
     if(c.self){this.hp-=c.self;this.fxText(this.playerEl(),'-'+c.self);if(this.hp<=0){this.updateTopbar();return this.gameOver()}}
     if(c.cleanse){this.poison=0;this.weak=0;this.vuln=0}
     if(c.energy)this.energy+=c.energy;
     if(c.clone)this.clones+=c.clone;
+    if(c.might)this.gainMight(c.might);
     if(c.str)this.str+=c.str;
     if(c.dex)this.dex+=c.dex;
     if(c.nindo)this.nindoBlk+=c.nindo;
@@ -1669,10 +1708,13 @@ Object.assign(G,{
     if(o.regen)add('再生',o.regen,true);
     if(o.grow)add('蓄势','',true);
     if(isPlayer){
+      if(this.might)add('怪力',this.might,true);
       if(this.dex)add('身法',this.dex,true);
       if(this.clones)add('影分身',this.clones,true);
       if(this.nindoBlk)add('忍道',this.nindoBlk,true);
       if(this.rampStr)add('九尾',this.rampStr,true);
+      if(this.healMight)add('医术',this.healMight,true);
+      if(this.blockMight)add('聚力',this.blockMight,true);
       if(this.poison)add('中毒',this.poison,false);
     }
     return T.join('');
