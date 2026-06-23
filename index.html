@@ -328,6 +328,9 @@ button{font-family:inherit}
 .event-box p{margin:13px 0;line-height:1.85;font-size:14.5px}
 .eopts{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 .eopts .btn{letter-spacing:.05em;font-size:14px;padding:12px 16px}
+.overlay-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px;width:min(300px,84vw);margin-top:8px}
+.overlay-actions .btn{width:100%;padding:12px 18px;border-radius:6px;text-align:center}
+.overlay-actions .btn.ghost{font-size:15px;letter-spacing:.14em}
 .statline{display:flex;gap:22px;justify-content:center;color:var(--paper-dim);font-size:13px;flex-wrap:wrap}
 .statline b{color:var(--paper)}
 @media (prefers-reduced-motion: reduce){
@@ -2012,10 +2015,17 @@ Object.assign(G,{
         <div><div class="sec-s">当前</div><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div></div>
         <div><div class="sec-s">升级后</div><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(mkCard(c.key,true),'static')}</div></div>
       </div>
-      <button class="btn" onclick="G.applyRestUpgrade()">确认升级</button>
-      <button class="btn ghost small" onclick="G.closeOverlay()">重新选择</button>
+      <div class="overlay-actions">
+        <button class="btn" onclick="G.applyRestUpgrade()">确认升级</button>
+        <button class="btn ghost" onclick="G.reselectRestUpgrade()">重新选择</button>
+      </div>
     </div>`;
     $('overlay').classList.add('on');
+  },
+  reselectRestUpgrade(){
+    this._upgradeCard=null;
+    this._previewReturnOverlay=null;
+    this.restUpgrade();
   },
   applyRestUpgrade(){
     const c=this._upgradeCard;
