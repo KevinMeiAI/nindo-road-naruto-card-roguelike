@@ -714,10 +714,10 @@ const ACTS=[
 ];
 
 const MAP_RULES={
-  rows:10,cols:6,paths:5,
-  noEliteBefore:3,maxElitePerRoute:3,maxUnknownPerRoute:4,
+  rows:12,cols:6,paths:5,
+  noEliteBefore:3,minElitePerRoute:2,maxElitePerRoute:4,maxUnknownPerRoute:4,
   guaranteedRestFrom:3,guaranteedRestTo:9,
-  weights:{fight:42,unknown:26,shop:11,rest:13,elite:8},
+  weights:{fight:38,unknown:23,shop:9,rest:12,elite:18},
   unknown:{event:.58,fight:.25,shop:.10,chest:.07},
   potionDrop:{fight:.4,elite:.75},
   shopRelicSlots:2
@@ -1135,6 +1135,14 @@ const G={
     const chestRow=rnd(4,ROWS-2);
     let restRow=rnd(C.guaranteedRestFrom,Math.min(C.guaranteedRestTo,ROWS-1));
     while(restRow===chestRow)restRow=rnd(C.guaranteedRestFrom,Math.min(C.guaranteedRestTo,ROWS-1));
+    const eliteRows=[];
+    const eliteRowPool=shuffle(Array.from({length:ROWS},(_,i)=>i+1)
+      .filter(r=>r>C.noEliteBefore&&r<ROWS&&r!==chestRow&&r!==restRow));
+    while(eliteRows.length<(C.minElitePerRoute||0)&&eliteRowPool.length){
+      const idx=eliteRowPool.findIndex(r=>eliteRows.every(er=>Math.abs(er-r)>1));
+      const pickIdx=idx>=0?idx:0;
+      eliteRows.push(eliteRowPool.splice(pickIdx,1)[0]);
+    }
     const routeCount=(route,t)=>route.filter(k=>nodes[k]&&nodes[k].t===t).length;
     const routesWith=k=>routes.filter(r=>r.includes(k));
     const hasIncomingType=(n,t)=>[...n.from].some(k=>nodes[k]&&nodes[k].t===t);
@@ -1145,12 +1153,15 @@ const G={
       for(const [t,w] of entries){r-=w;if(r<=0)return t}
       return 'fight';
     };
-    const canUse=(k,t)=>{
+    const canUse=(k,t,reserveFutureElites=false)=>{
       const n=nodes[k];
       if(t==='elite'&&n.r<=C.noEliteBefore)return false;
       if(t==='rest'&&(n.r===chestRow||n.r===restRow-1||n.r===restRow+1))return false;
       if(t==='rest'&&hasIncomingType(n,'rest'))return false;
-      if(t==='elite'&&routesWith(k).some(r=>routeCount(r,'elite')>=C.maxElitePerRoute))return false;
+      if(t==='elite'){
+        const future=reserveFutureElites?eliteRows.filter(r=>r>n.r).length:0;
+        if(routesWith(k).some(r=>routeCount(r,'elite')+future>=C.maxElitePerRoute))return false;
+      }
       if(t==='unknown'&&routesWith(k).some(r=>routeCount(r,'unknown')>=C.maxUnknownPerRoute))return false;
       return true;
     };
@@ -1160,9 +1171,10 @@ const G={
         if(r===1){n.t='fight';return}
         if(r===chestRow){n.t='chest';return}
         if(r===restRow){n.t='rest';return}
+        if(eliteRows.includes(r)){n.t='elite';return}
         const first=weightedType();
         const choices=[first,'fight','unknown','shop','rest','elite'];
-        n.t=choices.find(t=>canUse(k,t))||'fight';
+        n.t=choices.find(t=>canUse(k,t,true))||'fight';
       });
       if(r!==chestRow&&r!==restRow&&!row.some(([,n])=>n.t==='fight'||n.t==='elite')){
         const f=row.find(([k])=>canUse(k,'fight'));
@@ -1173,7 +1185,30 @@ const G={
       const restSpot=shuffle(Object.entries(nodes).filter(([k,n])=>k!=='boss'&&n.r>2&&n.r!==chestRow&&!hasNeighborType(n,'rest')))[0];
       if(restSpot)restSpot[1].t='rest';
     }
-    this.mapRows=ROWS;this.mapChestRow=chestRow;this.mapRestRow=restRow;this.mapRoutes=routes;
+    const eliteScore=k=>{
+      const n=nodes[k];
+      return (n.t==='fight'?4:n.t==='unknown'?3:n.t==='shop'?1:0)+n.r/100;
+    };
+    const ensureRouteElites=()=>{
+      const min=C.minElitePerRoute||0;
+      if(!min)return;
+      routes.forEach(route=>{
+        let guard=0;
+        while(routeCount(route,'elite')<min&&guard++<ROWS){
+          const candidates=shuffle(route.filter(k=>{
+            const n=nodes[k];
+            if(!n||k==='boss'||n.r<=C.noEliteBefore)return false;
+            if(['boss','rest','chest'].includes(n.t))return false;
+            return canUse(k,'elite');
+          })).sort((a,b)=>eliteScore(b)-eliteScore(a));
+          const spot=candidates[0];
+          if(!spot)break;
+          nodes[spot].t='elite';
+        }
+      });
+    };
+    ensureRouteElites();
+    this.mapRows=ROWS;this.mapChestRow=chestRow;this.mapRestRow=restRow;this.mapEliteRows=eliteRows;this.mapRoutes=routes;
     this.nodes=nodes;
   },
   renderMap(){
@@ -1312,25 +1347,55 @@ Object.assign(G,{
     const maxHp=Math.max(1,rnd(d.hp[0],d.hp[1])+hpBonus);
     const e={key,n:d.n,sp:d.sp,sprite:d.sprite||"",maxHp,
       moves:d.moves,special:d.special||null,phase2:d.phase2||null,phase2done:false,
-      regen:d.regen||0,grow:d.grow||null,summonOnly:d.summonOnly||0,
+      regen:d.regen||0,grow:d.grow?{...d.grow}:null,summonOnly:d.summonOnly||0,
       mi:rnd(0,d.moves.length-1),tc:0,block:0,str:0,weak:0,vuln:0,
       stealth:d.stealth||0,thorns:d.thorns||0,
       elite:d.elite||0,boss:d.boss||0};
     e.hp=e.maxHp;return e;
   },
+  enemyHpBonus(kind){
+    const floor=this.row||1,act=this.act||0;
+    const base=Math.floor(floor*1.1)+act*6;
+    if(kind==='boss')return 18+act*24;
+    if(kind==='elite')return base+10+act*6+Math.floor(floor*.7);
+    return base;
+  },
+  enemyStartStr(kind){
+    const floor=this.row||1,act=this.act||0;
+    if(kind==='boss')return 1+act;
+    if(kind==='elite')return 1+act;
+    return (act>=1?1:0)+(floor>=8?1:0);
+  },
+  enhanceEnemyGrowth(e,kind){
+    if(e.summonOnly)return;
+    const floor=this.row||1,act=this.act||0;
+    let bonus=null;
+    if(kind==='boss')bonus={every:3,str:1+Math.floor(act/2),b:6+act*2};
+    else if(kind==='elite')bonus={every:3,str:1,b:4+act*2};
+    else if(act>0||floor>=6)bonus={every:4,str:1};
+    if(!bonus)return;
+    const g={...(e.grow||{})};
+    g.every=Math.min(g.every||bonus.every,bonus.every);
+    if(bonus.str)g.str=(g.str||0)+bonus.str;
+    if(bonus.b)g.b=(g.b||0)+bonus.b;
+    e.grow=g;
+  },
+  applyEnemyDifficulty(e,kind){
+    if(!e.summonOnly)e.str+=this.enemyStartStr(kind);
+    this.enhanceEnemyGrowth(e,kind);
+  },
   startCombat(kind){
     this.combatKind=kind;
     const A=ACTS[this.act];
-    const mk=key=>this.makeEnemy(key);
+    const mk=key=>this.makeEnemy(key,this.enemyHpBonus(kind));
     if(kind==='boss')this.enemies=A.boss.map(mk);
     else if(kind==='elite')this.enemies=pick(A.elites).map(mk);
     else{
-      const dbl=this.row>=3&&Math.random()<0.45;
+      const dbl=this.row>=3&&Math.random()<(this.act>=1?0.6:0.5);
       this.enemies=[mk(pick(A.pool))];
       if(dbl)this.enemies.push(mk(pick(A.pool)));
-      const bonus=Math.floor(this.row*0.9)+(this.act*5);
-      this.enemies.forEach(e=>{e.maxHp+=bonus;e.hp+=bonus});
     }
+    this.enemies.forEach(e=>this.applyEnemyDifficulty(e,kind));
     // 玩家战斗态
     this.block=0;this.str=this.permStr;this.dex=0;this.weak=0;this.vuln=0;this.poison=0;
     this.might=0;this.healMight=0;this.blockMight=0;this.genjutsu=0;this.chakraDrain=0;
@@ -1572,8 +1637,9 @@ Object.assign(G,{
       const p=e.phase2;
       e.n=p.n;e.sp=p.sp;e.sprite=p.sprite||e.sprite||"";e.hp=Math.floor(e.maxHp*p.hpRatio);
       e.str+=p.str;e.moves=p.moves;e.special=p.special;e.mi=0;e.tc=0;
-      e.regen=p.regen||e.regen||0;e.grow=p.grow||e.grow||null;
+      e.regen=p.regen||e.regen||0;e.grow=p.grow?{...p.grow}:(e.grow?{...e.grow}:null);
       e.stealth=p.stealth||0;e.thorns=p.thorns||e.thorns||0;
+      this.enhanceEnemyGrowth(e,this.combatKind||'boss');
       this.rollIntent(e);
       this.banner('禁 术 · 解 放');SFX.lose();
       $('stage').classList.add('shake');setTimeout(()=>$('stage').classList.remove('shake'),400);
@@ -1954,7 +2020,8 @@ Object.assign(G,{
       <div class="sec-s" style="margin-top:10px">领悟一张稀有忍术 — 可跳过</div>`;
     const cs=this.randomCards(3,2).map(c=>this.maybeUpgradeRewardCard(c,this.rewardUpgradeChance('boss')));
     this._choices=cs;this._cardPicked=false;
-    html+=`<div class="cgrid">${cs.map((c,i)=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
+    html+=`<div class="cgrid" id="boss-card-reward-grid">${cs.map((c,i)=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
+      <div class="sec-s" id="boss-card-reward-status"></div>
       <button class="btn" onclick="G.toNextAct()">进入${next.name.split(' · ')[0]} →</button>`;
     $('reward-list').innerHTML=html;
     show('screen-reward');
@@ -1962,7 +2029,15 @@ Object.assign(G,{
   takeBossCard(i){
     if(this._cardPicked)return toast('只能领悟一张');
     const c=this._choices[i];if(!c)return;
-    this._cardPicked=true;this.deck.push(c);SFX.card();
+    this._cardPicked=true;this.deck.push(c);this._choices=[];
+    const grid=$('boss-card-reward-grid');
+    if(grid){
+      grid.innerHTML=`<div><div class="sec-s">已选忍术</div><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div></div>`;
+      grid.style.pointerEvents='none';
+    }
+    const status=$('boss-card-reward-status');
+    if(status)status.textContent='未选择的忍术已经离开奖励池';
+    SFX.card();
     toast(`「${c.n}」加入卡组`);
   },
   toNextAct(){
