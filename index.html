@@ -1709,10 +1709,9 @@ Object.assign(G,{
         if(uEl)uEl.classList.remove('lunge-l');
         if(m){
           if(m.a){
-            let total=0;
             for(let h=0;h<(m.hits||1);h++){
               let d=this.calc(m.a,e,{vuln:this.vuln});
-              total+=this.damagePlayer(d);
+              this.damagePlayer(d);
             }
           }
           const effectText=this.applyEnemyMoveEffects(e,m);
