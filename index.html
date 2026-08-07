@@ -38,11 +38,14 @@ button{font-family:inherit}
   border-radius:4px;padding:2px 9px;font-size:12px;cursor:pointer}
 .tbtn:active{background:rgba(255,255,255,.08)}
 #relicbar{display:flex;gap:5px;flex-wrap:wrap}
-.relic-i{width:25px;height:25px;border-radius:50%;cursor:pointer;font-size:13px;
+.relic-i{width:25px;height:25px;border-radius:50%;cursor:pointer;font-size:13px;padding:0;
+  position:relative;
   background:radial-gradient(circle at 35% 30%,#41351e,#191204);
   border:1px solid var(--gold);display:flex;align-items:center;justify-content:center}
+.relic-i.flash{animation:relicflash .6s}
+@keyframes relicflash{30%{transform:scale(1.4);box-shadow:0 0 14px var(--gold)}}
 #potionbar{display:flex;gap:5px}
-.potion-i{width:25px;height:25px;border-radius:6px;cursor:pointer;font-size:13px;
+.potion-i{width:25px;height:25px;border-radius:6px;cursor:pointer;font-size:13px;padding:0;
   background:radial-gradient(circle at 35% 30%,#23303d,#0d1217);
   border:1px solid var(--chakra);display:flex;align-items:center;justify-content:center}
 .potion-i.empty{opacity:.25;border-style:dashed;cursor:default}
@@ -115,6 +118,8 @@ button{font-family:inherit}
 .title-sub{color:var(--naruto);letter-spacing:.62em;margin:6px 0 26px;font-size:13px;text-indent:.62em}
 .title-desc{color:var(--paper-dim);text-align:center;line-height:2;font-size:13.5px;max-width:430px;margin-bottom:30px}
 .title-desc b{color:var(--paper)}
+#continue-wrap{margin-bottom:16px}
+#continue-wrap:empty{display:none}
 .char-grid{display:grid;grid-template-columns:repeat(3,minmax(0,170px));gap:12px;width:min(560px,100%);margin:0 auto 16px}
 .char-card{min-height:190px;padding:12px;border-radius:6px;border:1px solid rgba(236,220,180,.22);
   background:linear-gradient(180deg,rgba(45,34,16,.92),rgba(18,13,6,.94));color:var(--paper);
@@ -212,7 +217,7 @@ button{font-family:inherit}
 .hptx{font-size:10.5px;color:var(--paper-dim);margin-top:2px}
 .strow{display:flex;gap:4px;justify-content:center;margin-top:3px;flex-wrap:wrap;min-height:17px;max-width:150px}
 .stag{font-size:10.5px;padding:0 5px;border-radius:3px;background:rgba(0,0,0,.55);
-  border:1px solid rgba(255,255,255,.22);cursor:pointer;white-space:nowrap}
+  border:1px solid rgba(255,255,255,.22);color:var(--paper);cursor:pointer;white-space:nowrap}
 .stag.buff{border-color:rgba(126,224,126,.5)}.stag.debuff{border-color:rgba(224,101,72,.6)}
 
 .slashfx{position:absolute;width:90px;height:90px;pointer-events:none;z-index:30}
@@ -248,8 +253,9 @@ button{font-family:inherit}
 #orb small{font-size:8.5px;font-weight:400;opacity:.9;letter-spacing:.1em}
 #orb.zero{filter:grayscale(.8);box-shadow:none}
 #hand{flex:1;position:relative;height:calc(var(--card-h) + 24px)}
-#endturn{min-width:74px;padding:12px 10px;font-size:14px;letter-spacing:.1em;border-radius:6px}
+#endturn{min-width:74px;padding:12px 10px;font-size:14px;letter-spacing:.1em;border-radius:6px;position:relative}
 #endturn.enemyturn{filter:grayscale(1);pointer-events:none}
+#endturn.hint:not(.enemyturn)::after{content:"";position:absolute;right:7px;top:7px;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold)}
 
 /* 卡牌 */
 .card{width:var(--card-w);height:var(--card-h);border-radius:10px;position:absolute;cursor:pointer;
@@ -381,10 +387,11 @@ button{font-family:inherit}
     <div class="title-sub">N I N D O · R O G U E L I K E</div>
     <p class="title-desc">
       选择鸣人、佐助或小樱,以不同初始牌组踏上忍道。<br>
-      穿越<b>两章随机路线</b>,在战斗、奇遇、商店、宝箱与篝火间权衡。<br>
+      穿越<b>三章随机路线</b>,在战斗、奇遇、商店、宝箱与篝火间权衡。<br>
       每回合 <b>3 点查克拉</b>,格挡回合末消散,敌人意图完全公开——<br>
-      构筑角色专属忍术卡组,收集忍具与秘药,击败深处的<b>大蛇丸</b>。
+      构筑角色专属忍术卡组,收集忍具与秘药,迎战沿途强敌与<b>晓之首领</b>。
     </p>
+    <div id="continue-wrap" class="center"></div>
     <div class="char-grid">
       <button class="char-card" onclick="G.newRun('naruto')">
         <div class="char-face">🦊</div><div class="char-name">漩涡鸣人</div>
@@ -426,6 +433,7 @@ button{font-family:inherit}
     <div id="combat-bottom">
       <div id="combat-info">
         <button class="pilebtn" onclick="G.viewPile('draw')">📥 抽牌堆 <span id="n-draw">0</span></button>
+        <button class="pilebtn" onclick="G.viewPile('exhaust')">📛 消耗堆 <span id="n-exhaust">0</span></button>
         <span id="combat-log" style="flex:1;text-align:center;padding:0 6px"></span>
         <button class="pilebtn" onclick="G.viewPile('discard')">📤 弃牌堆 <span id="n-discard">0</span></button>
       </div>
@@ -461,9 +469,9 @@ const KW = {
   "医术":"每次打出回复牌时获得等量怪力",
   "聚力":"每次打出格挡牌时获得等量怪力",
   "潜行":"下一次受到攻击伤害降低 50%,随后减少 1 层",
-  "反伤":"被攻击时对玩家反弹等量伤害",
-  "幻术":"下回合查克拉减少等量数值",
-  "查克拉封印":"下回合查克拉减少等量数值",
+  "反伤":"被攻击时对玩家反弹等量伤害,即使攻击被格挡也会触发",
+  "幻术":"下回合查克拉减少等量数值,与查克拉封印合计最多扣 2 点",
+  "查克拉封印":"下回合查克拉减少等量数值,与幻术合计最多扣 2 点",
   "消耗":"打出后从本场战斗中移除,不进入弃牌堆",
   "格挡":"抵消伤害,自己回合开始时消散",
   "再生":"敌人每回合回复生命",
@@ -552,7 +560,7 @@ const CARDS = {
   rupture_punch:{n:"破绽重拳",t:"atk",c:1,r:2,ic:"👊",d:"造成 <b>8</b> 点伤害,施加 <b>1</b> 层易伤",dmg:8,vuln:1,chars:["sakura"],up:{d:"造成 <b>11</b> 点伤害,施加 <b>1</b> 层易伤",dmg:11}},
   /* —— 传说 —— */
   fuuton:{n:"风遁·螺旋手里剑",t:"atk",c:3,r:3,ic:"🌀",d:"造成 <b>26</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:26,self:4,ex:1,chars:["naruto"],up:{d:"造成 <b>34</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:34}},
-  kyuubi:{n:"九尾查克拉",t:"pwr",c:2,r:2,ic:"🦊",d:"每回合开始力量 +<b>1</b>,持续 <b>3</b> 回合",ramp:1,rampTurns:3,chars:["naruto"],up:{c:1}},
+  kyuubi:{n:"九尾查克拉",t:"pwr",c:2,r:2,ic:"🦊",d:"每回合开始力量 +<b>1</b>,持续 <b>3</b> 回合",ramp:1,rampTurns:3,chars:["naruto"],up:{c:1,d:"每回合开始力量 +<b>1</b>,持续 <b>3</b> 回合(费用 2→1)"}},
   tajuu:{n:"多重影分身",t:"skl",c:2,r:2,ic:"👥",d:"获得 <b>3</b> 层影分身。<b>消耗</b>",clone:3,ex:1,chars:["naruto"],up:{d:"获得 <b>4</b> 层影分身。<b>消耗</b>",clone:4}},
   senpou:{n:"仙法·超大玉螺旋丸",t:"atk",c:3,r:3,ic:"💥",d:"造成 <b>32</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:32,tweak:2,chars:["naruto"],up:{d:"造成 <b>40</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:40}},
   bijuudama:{n:"尾兽玉",t:"atk",c:3,r:3,ic:"⚫",d:"对<b>所有</b>敌人造成 <b>22</b> 点伤害,自身受 <b>6</b> 点伤害。<b>消耗</b>",dmg:22,aoe:1,self:6,ex:1,chars:["naruto"],up:{d:"对<b>所有</b>敌人造成 <b>30</b> 点伤害,自身受 <b>6</b> 点伤害。<b>消耗</b>",dmg:30}},
@@ -736,7 +744,7 @@ const EVENTS = [
    ]},
   {ic:"🤕",title:"受伤的同伴",text:"一名木叶同伴倒在路边,腿上中了苦无,看见你时眼睛亮了起来。",
    opts:[
-     {t:"🪙 出 50 金币雇人护送他(获得随机忍具)",cond:g=>g.gold>=50,f:g=>{g.gold-=50;const r=g.randomRelic();if(!r)return "你已经收集了所有忍具,他回赠你 80 金币!"+(g.gold+=80,"");g.addRelic(r);return `同伴感激地塞给你他的「${RELICS[r].n}」。`}},
+     {t:"🪙 出 50 金币雇人护送他(获得随机忍具)",cond:g=>g.gold>=50,f:g=>{g.gold-=50;const r=g.randomRelic();if(!r){g.gold+=80;return "你已经收集了所有忍具,他回赠你 80 金币!"}g.addRelic(r);return `同伴感激地塞给你他的「${RELICS[r].n}」。`}},
      {t:"🩹 亲自帮他包扎(受 5 点伤害,最大生命 +4)",f:g=>{g.eventDamage(5);if(g.hp<=0)return null;g.maxHp+=4;return "你撕下衣袖为他止血,他教了你一招护体心法。"}},
      {t:"🚶 任务要紧(离开)",f:g=>"忍者的世界,有时只能硬下心肠。"},
    ]},
@@ -807,6 +815,21 @@ const EVENTS = [
 const $=id=>document.getElementById(id);
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
+const SAVE_KEY='nindo-road-save-v2';
+const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+const boundedInt=(v,fallback,min,max)=>{
+  const n=Number(v);
+  return Number.isFinite(n)?Math.max(min,Math.min(max,Math.trunc(n))):fallback;
+};
+const strictInt=(v,min,max)=>{
+  const n=Number(v);
+  return Number.isInteger(n)&&n>=min&&n<=max?n:null;
+};
+let CARD_W_CACHE=0;
+function cardWidth(){
+  if(!CARD_W_CACHE)CARD_W_CACHE=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-w'))||126;
+  return CARD_W_CACHE;
+}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
 function toast(m){const t=$('toast');t.innerHTML=m;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1900)}
@@ -874,7 +897,8 @@ function cardDescClass(desc){
 function cardHTML(c,extra="",style=""){
   const desc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
   const art=c.art?`<img src="${esc(c.art)}" alt="">`:c.ic;
-  return `<div oncontextmenu="event.preventDefault();event.stopPropagation();G.previewUpgrade('${c.key}',${c.upgraded?1:0});return false" class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
+  const keyboard=String(extra).split(/\s+/).includes('inhand')?'role="button" tabindex="0"':'';
+  return `<div ${keyboard} data-card-key="${esc(c.key)}" data-upgraded="${c.upgraded?1:0}" oncontextmenu="event.preventDefault();event.stopPropagation();G.previewUpgrade('${c.key}',${c.upgraded?1:0});return false" class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
     <div class="gem">${c.unplayable?'✕':c.c}</div>
     <div class="nm" style="font-size:${cardNameSize(c.n)}px">${c.n}</div>
     <div class="art">${art}</div>
@@ -894,20 +918,114 @@ function unitFrame(icon,sprite,name=""){
 const G={
   sfxOn:true,
   toggleSfx(){SFX.on=!SFX.on;$('sfx-btn').textContent=SFX.on?'🔊':'🔇';},
-  char(){return CHARACTERS[this.character]||CHARACTERS.naruto},
+  char(){return own(CHARACTERS,this.character)?CHARACTERS[this.character]:CHARACTERS.naruto},
   cardAllowed(k){
-    const ch=CARDS[k]&&CARDS[k].chars;
+    if(!own(CARDS,k))return false;
+    const ch=CARDS[k].chars;
     return !ch||ch.includes(this.character||'naruto');
   },
   potionAllowed(k){
-    const ch=POTIONS[k]&&POTIONS[k].chars;
+    if(!own(POTIONS,k))return false;
+    const ch=POTIONS[k].chars;
     return !ch||ch.includes(this.character||'naruto');
+  },
+  saveRun(){
+    if(!this.nodes||!this.character||this.hp<=0)return;
+    try{
+      const nodes={};
+      Object.entries(this.nodes).forEach(([k,n])=>{
+        nodes[k]={r:n.r,c:n.c,t:n.t,revealed:!!n.revealed,edges:[...n.edges],from:[...n.from]};
+      });
+      localStorage.setItem(SAVE_KEY,JSON.stringify({
+        version:2,character:this.character,hp:this.hp,maxHp:this.maxHp,gold:this.gold,
+        act:this.act,row:this.row,curCol:this.curCol,mapRows:this.mapRows,
+        deck:this.deck.map(c=>({key:c.key,upgraded:!!c.upgraded})),relics:this.relics,potions:this.potions,stats:this.stats,
+        permStr:this.permStr,nodes
+      }));
+    }catch(e){}
+  },
+  clearSave(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}},
+  readSave(){
+    try{
+      const s=JSON.parse(localStorage.getItem(SAVE_KEY));
+      if(!s||s.version!==2||!own(CHARACTERS,s.character)||!Array.isArray(s.deck)||!s.nodes||typeof s.nodes!=='object'||Array.isArray(s.nodes))return null;
+      return s;
+    }catch(e){return null}
+  },
+  renderContinue(){
+    const wrap=$('continue-wrap');if(!wrap)return;
+    const s=this.readSave();
+    const act=s?boundedInt(s.act,0,0,ACTS.length-1):0;
+    const row=s?(strictInt(s.row,0,MAP_RULES.rows)??0):0;
+    wrap.innerHTML=s?`<button class="btn blue" onclick="G.continueRun()">继续上次地图进度 · ${CHARACTERS[s.character].n} ${act+1}-${row}</button>`:'';
+  },
+  continueRun(){
+    const s=this.readSave();
+    if(!s)return toast('没有可恢复的进度');
+    const act=boundedInt(s.act,0,0,ACTS.length-1);
+    const nodes=Object.create(null),nodeTypes=new Set(['fight','elite','rest','unknown','event','shop','chest','boss']);
+    const validNodeKey=k=>k==='boss'||/^\d+-\d+$/.test(k);
+    for(const [k,n] of Object.entries(s.nodes)){
+      if(!validNodeKey(k)||!n||!nodeTypes.has(n.t)||!Array.isArray(n.edges)||!Array.isArray(n.from))continue;
+      const row=Number(n.r),col=Number(n.c);if(!Number.isFinite(row)||!Number.isFinite(col))continue;
+      if(k==='boss'&&(n.t!=='boss'||row!==MAP_RULES.rows+1||col!==(MAP_RULES.cols-1)/2))continue;
+      if(k!=='boss'){
+        const [keyRow,keyCol]=k.split('-').map(Number);
+        if(n.t==='boss'||!Number.isInteger(row)||!Number.isInteger(col)||row!==keyRow||col!==keyCol||row<1||row>MAP_RULES.rows||col<0||col>=MAP_RULES.cols)continue;
+      }
+      nodes[k]={r:row,c:col,t:n.t,revealed:!!n.revealed,
+        edges:new Set(n.edges.filter(x=>typeof x==='string'&&validNodeKey(x))),
+        from:new Set(n.from.filter(x=>typeof x==='string'&&validNodeKey(x)))};
+    }
+    if(!nodes.boss){this.clearSave();this.renderContinue();return toast('存档地图已损坏,请开始新冒险')}
+    Object.values(nodes).forEach(n=>{
+      n.edges=new Set([...n.edges].filter(k=>nodes[k]&&nodes[k].r===n.r+1));
+      n.from=new Set();
+    });
+    Object.entries(nodes).forEach(([k,n])=>n.edges.forEach(next=>nodes[next].from.add(k)));
+    const starts=Object.keys(nodes).filter(k=>nodes[k].r===1);
+    const walk=(initial,nextKeys)=>{
+      const seen=new Set(initial),stack=[...initial];
+      while(stack.length){const k=stack.pop();nextKeys(nodes[k]).forEach(next=>{if(!seen.has(next)){seen.add(next);stack.push(next)}})}
+      return seen;
+    };
+    const reachable=walk(starts,n=>n.edges),reachesBoss=walk(['boss'],n=>n.from);
+    const topologyValid=starts.length>0&&reachable.has('boss')&&Object.keys(nodes).every(k=>reachable.has(k)&&reachesBoss.has(k));
+    if(!topologyValid){this.clearSave();this.renderContinue();return toast('存档路线已损坏,请开始新冒险')}
+    SFX.ac();this.character=s.character;
+    this.maxHp=boundedInt(s.maxHp,this.char().hp,1,9999);
+    this.hp=boundedInt(s.hp,this.maxHp,1,this.maxHp);
+    this.gold=boundedInt(s.gold,0,0,999999);this.act=act;
+    const savedRow=strictInt(s.row,0,MAP_RULES.rows),savedCol=strictInt(s.curCol,-1,MAP_RULES.cols-1);
+    if(savedRow===null||savedCol===null||(savedRow===0&&savedCol!==-1)||(savedRow>0&&!nodes[`${savedRow}-${savedCol}`])){
+      this.clearSave();this.renderContinue();return toast('存档位置已损坏,请开始新冒险');
+    }
+    this.row=savedRow;this.curCol=savedCol;
+    this.deck=s.deck.filter(c=>c&&typeof c.key==='string'&&own(CARDS,c.key)).map(c=>mkCard(c.key,!!c.upgraded));
+    if(!this.deck.length){this.clearSave();this.renderContinue();return toast('存档卡组已损坏,请开始新冒险')}
+    this.relics=[...new Set((Array.isArray(s.relics)?s.relics:[]).filter(k=>typeof k==='string'&&(own(RELICS,k)||own(BOSS_RELICS,k))))];
+    this.potions=(Array.isArray(s.potions)?s.potions:[]).filter(k=>typeof k==='string'&&own(POTIONS,k)).slice(0,2);
+    const stats=s.stats&&typeof s.stats==='object'?s.stats:{};
+    const stat=k=>boundedInt(own(stats,k)?stats[k]:0,0,0,999999999);
+    this.stats={dmg:stat('dmg'),kills:stat('kills'),cards:stat('cards'),turns:stat('turns'),elites:stat('elites')};
+    this.permStr=boundedInt(s.permStr,0,0,99);
+    this.mapRows=MAP_RULES.rows;this.nodes=nodes;
+    this.pendingRemove=false;this._ended=false;this.combatEnded=false;this.busy=false;this.picked=null;
+    $('topbar').classList.add('on');this.updateTopbar();this.renderMap();show('screen-map');
+    toast('已恢复上次的冒险');
   },
   returnToTitle(){
     this.closeOverlay();
     $('topbar').classList.remove('on');
     this._ended=false;this.combatEnded=false;this.busy=false;this.picked=null;
+    this.renderContinue();
     show('screen-title');
+  },
+  flashRelic(k){
+    requestAnimationFrame(()=>{
+      const el=document.querySelector(`.relic-i[data-relic="${k}"]`);if(!el)return;
+      el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');
+    });
   },
   activeRampStr(){
     return (this.rampSources||[]).reduce((sum,r)=>sum+(r.turns>0?r.str:0),0);
@@ -945,7 +1063,8 @@ const G={
   /* ---------- 新开局 ---------- */
   newRun(charKey=null){
     SFX.ac();
-    this.character=CHARACTERS[charKey]?charKey:(this.character||'naruto');
+    this.clearSave();
+    this.character=own(CHARACTERS,charKey)?charKey:(own(CHARACTERS,this.character)?this.character:'naruto');
     const C=this.char();
     this._ended=false;this.combatEnded=false;
     this.maxHp=C.hp;this.hp=C.hp;this.gold=C.gold;
@@ -960,7 +1079,7 @@ const G={
     this.act=a;this.row=0;this.curCol=-1;
     this.genMap();
     $('topbar').classList.add('on');
-    this.updateTopbar();this.renderMap();show('screen-map');
+    this.updateTopbar();this.renderMap();show('screen-map');this.saveRun();
   },
   floorLabel(){return `${this.act+1}-${this.row}`},
   heal(n){if(n<=0)return;this.hp=Math.min(this.maxHp,this.hp+n);SFX.heal();this.updateTopbar()},
@@ -984,7 +1103,11 @@ const G={
     }
     this.updateTopbar();
   },
-  relicData(k){return RELICS[k]||BOSS_RELICS[k]},
+  relicData(k){
+    if(own(RELICS,k))return RELICS[k];
+    if(own(BOSS_RELICS,k))return BOSS_RELICS[k];
+    return null;
+  },
   randomRelic(){const p=Object.keys(RELICS).filter(k=>!this.hasRelic(k));return p.length?pick(p):null},
   randomRelics(count){
     const p=shuffle(Object.keys(RELICS).filter(k=>!this.hasRelic(k)));
@@ -1052,16 +1175,16 @@ const G={
   },
   updateTopbar(){
     $('t-char').textContent=`${this.char().face} ${this.char().n}`;
-    $('t-hp').textContent=`${this.hp}/${this.maxHp}`;
+    $('t-hp').textContent=`${Math.max(0,this.hp)}/${this.maxHp}`;
     $('t-gold').textContent=this.gold;
     $('t-floor').textContent=`📍 ${ACTS[this.act].name.slice(0,3)} · ${this.row}/${(this.mapRows||7)+1} 层`;
     $('t-deck').textContent=this.deck.length;
     $('relicbar').innerHTML=this.relics.map(k=>{const r=this.relicData(k);
-      return `<div class="relic-i" onclick="toast('<b>${esc(r.n)}</b><br>${esc(r.d)}')">${r.ic}</div>`}).join('');
+      return `<button class="relic-i" data-relic="${k}" onclick="toast('<b>${esc(r.n)}</b><br>${esc(r.d)}')">${r.ic}</button>`}).join('');
     let ph='';
     for(let i=0;i<2;i++){
       const k=this.potions[i];
-      ph+=k?`<div class="potion-i" onclick="G.potionMenu(${i})">${POTIONS[k].ic}</div>`
+      ph+=k?`<button class="potion-i" onclick="G.potionMenu(${i})">${POTIONS[k].ic}</button>`
           :`<div class="potion-i empty">·</div>`;
     }
     $('potionbar').innerHTML=ph;
@@ -1069,14 +1192,14 @@ const G={
   potionMenu(i){
     const k=this.potions[i];if(!k)return;
     const p=POTIONS[k];
-    const inCombat=$('screen-combat').classList.contains('active')&&this.enemies&&this.enemies.some(e=>e.hp>0);
+    const inCombat=$('screen-combat').classList.contains('active')&&this.enemies&&this.enemies.some(e=>e.hp>0)&&!this.busy&&!this.combatEnded;
     const ov=$('overlay');
     ov.innerHTML=`<div style="margin:auto;text-align:center" class="center">
       <div style="font-size:54px">${p.ic}</div>
       <div class="sec-t" style="font-size:20px;letter-spacing:.15em">${p.n}</div>
       <div class="sec-s">${p.d}</div>
       ${inCombat?`<button class="btn" onclick="G.usePotion(${i})">使 用</button>`:
-        `<div class="sec-s">只能在战斗中使用</div>`}
+        `<div class="sec-s">只能在我方行动时使用</div>`}
       <button class="btn ghost small" onclick="G.discardPotion(${i})">丢弃</button>
       <button class="btn ghost small" onclick="G.closeOverlay()">返回</button>
     </div>`;
@@ -1084,11 +1207,20 @@ const G={
   },
   discardPotion(i){this.potions.splice(i,1);this.updateTopbar();this.closeOverlay()},
   usePotion(i){
+    if(this.busy||this.combatEnded||!$('screen-combat').classList.contains('active')){
+      this.closeOverlay();return toast('当前无法使用秘药');
+    }
     const k=this.potions[i];if(!k)return;
     this.potions.splice(i,1);this.closeOverlay();SFX.potion();
     if(k==='heisyo')this.heal(12);
     if(k==='smokeball'){this.block+=10;this.fxText(this.playerEl(),'+10','blk')}
-    if(k==='bakukunai'){this.enemies.filter(e=>e.hp>0).forEach(e=>this.dealDamage(e,9,true));if(this.checkWin())return}
+    if(k==='bakukunai'){
+      for(const e of this.enemies.filter(e=>e.hp>0)){
+        this.dealDamage(e,9);
+        if(this.hp<=0){this.updateTopbar();return this.gameOver()}
+      }
+      if(this.checkWin())return;
+    }
     if(k==='chakrapill')this.energy+=2;
     if(k==='antidote'){this.poison=0;this.weak=0;this.vuln=0}
     if(k==='strpill')this.str+=1;
@@ -1099,7 +1231,13 @@ const G={
     if(k==='dexpill')this.dex+=2;
     if(k==='lightningpill'){this.energy+=1;this.enemies.filter(e=>e.hp>0).forEach(e=>e.vuln+=1)}
     if(k==='eyedrops')this.enemies.filter(e=>e.hp>0).forEach(e=>{e.weak+=1;e.vuln+=1});
-    if(k==='fireseal'){this.enemies.filter(e=>e.hp>0).forEach(e=>this.dealDamage(e,14,true));if(this.checkWin())return}
+    if(k==='fireseal'){
+      for(const e of this.enemies.filter(e=>e.hp>0)){
+        this.dealDamage(e,14);
+        if(this.hp<=0){this.updateTopbar();return this.gameOver()}
+      }
+      if(this.checkWin())return;
+    }
     if(k==='medspray'){this.heal(10);this.poison=0;this.weak=0;this.vuln=0}
     if(k==='mightpill'){this.str+=1;this.block+=6;this.fxText(this.playerEl(),'+6','blk')}
     if(k==='slugfluid'){this.heal(6);this.block+=10;this.fxText(this.playerEl(),'+10','blk')}
@@ -1107,7 +1245,7 @@ const G={
   },
 
   /* ---------- StS式路线图 ---------- */
-  genMap(){
+  genMap(attempt=0){
     const C=MAP_RULES,ROWS=C.rows,COLS=C.cols,PATHS=C.paths;
     const nodes={};   // "r-c" -> {r,c,t,edges:Set}
     const key=(r,c)=>r+'-'+c;
@@ -1127,6 +1265,7 @@ const G={
     const starts=Object.keys(nodes).filter(k=>nodes[k].r===1);
     const routes=[];
     const walk=(k,path=[])=>{
+      if(routes.length>=1500)return;
       const p=path.concat(k);
       if(k==='boss'){routes.push(p);return}
       nodes[k].edges.forEach(nk=>walk(nk,p));
@@ -1135,32 +1274,27 @@ const G={
     const chestRow=rnd(4,ROWS-2);
     let restRow=rnd(C.guaranteedRestFrom,Math.min(C.guaranteedRestTo,ROWS-1));
     while(restRow===chestRow)restRow=rnd(C.guaranteedRestFrom,Math.min(C.guaranteedRestTo,ROWS-1));
-    const eliteRows=[];
-    const eliteRowPool=shuffle(Array.from({length:ROWS},(_,i)=>i+1)
-      .filter(r=>r>C.noEliteBefore&&r<ROWS&&r!==chestRow&&r!==restRow));
-    while(eliteRows.length<(C.minElitePerRoute||0)&&eliteRowPool.length){
-      const idx=eliteRowPool.findIndex(r=>eliteRows.every(er=>Math.abs(er-r)>1));
-      const pickIdx=idx>=0?idx:0;
-      eliteRows.push(eliteRowPool.splice(pickIdx,1)[0]);
-    }
     const routeCount=(route,t)=>route.filter(k=>nodes[k]&&nodes[k].t===t).length;
     const routesWith=k=>routes.filter(r=>r.includes(k));
     const hasIncomingType=(n,t)=>[...n.from].some(k=>nodes[k]&&nodes[k].t===t);
     const hasNeighborType=(n,t)=>hasIncomingType(n,t)||[...n.edges].some(k=>nodes[k]&&nodes[k].t===t);
-    const weightedType=()=>{
-      const entries=Object.entries(C.weights),sum=entries.reduce((s,[,w])=>s+w,0);
+    const weightedType=(includeElite=true)=>{
+      const entries=Object.entries(C.weights).filter(([t])=>includeElite||t!=='elite');
+      const sum=entries.reduce((s,[,w])=>s+w,0);
       let r=Math.random()*sum;
       for(const [t,w] of entries){r-=w;if(r<=0)return t}
       return 'fight';
     };
-    const canUse=(k,t,reserveFutureElites=false)=>{
+    const canUse=(k,t)=>{
       const n=nodes[k];
       if(t==='elite'&&n.r<=C.noEliteBefore)return false;
       if(t==='rest'&&(n.r===chestRow||n.r===restRow-1||n.r===restRow+1))return false;
       if(t==='rest'&&hasIncomingType(n,'rest'))return false;
       if(t==='elite'){
-        const future=reserveFutureElites?eliteRows.filter(r=>r>n.r).length:0;
-        if(routesWith(k).some(r=>routeCount(r,'elite')+future>=C.maxElitePerRoute))return false;
+        if(hasNeighborType(n,'elite'))return false;
+        const rowNodes=Object.values(nodes).filter(x=>x.r===n.r);
+        if(rowNodes.length>1&&rowNodes.every(x=>x===n||x.t==='elite'))return false;
+        if(routesWith(k).some(r=>routeCount(r,'elite')>=C.maxElitePerRoute))return false;
       }
       if(t==='unknown'&&routesWith(k).some(r=>routeCount(r,'unknown')>=C.maxUnknownPerRoute))return false;
       return true;
@@ -1171,10 +1305,9 @@ const G={
         if(r===1){n.t='fight';return}
         if(r===chestRow){n.t='chest';return}
         if(r===restRow){n.t='rest';return}
-        if(eliteRows.includes(r)){n.t='elite';return}
-        const first=weightedType();
-        const choices=[first,'fight','unknown','shop','rest','elite'];
-        n.t=choices.find(t=>canUse(k,t,true))||'fight';
+        const first=weightedType(false);
+        const choices=[first,'fight','unknown','shop','rest'];
+        n.t=choices.find(t=>canUse(k,t))||'fight';
       });
       if(r!==chestRow&&r!==restRow&&!row.some(([,n])=>n.t==='fight'||n.t==='elite')){
         const f=row.find(([k])=>canUse(k,'fight'));
@@ -1185,30 +1318,56 @@ const G={
       const restSpot=shuffle(Object.entries(nodes).filter(([k,n])=>k!=='boss'&&n.r>2&&n.r!==chestRow&&!hasNeighborType(n,'rest')))[0];
       if(restSpot)restSpot[1].t='rest';
     }
-    const eliteScore=k=>{
+    const minElites=C.minElitePerRoute||0;
+    let guard=0;
+    while(guard++<Object.keys(nodes).length*3){
+      const deficient=routes.filter(route=>routeCount(route,'elite')<minElites);
+      if(!deficient.length)break;
+      const candidates=shuffle(Object.keys(nodes).filter(k=>{
+        const n=nodes[k];
+        return k!=='boss'&&n.r<ROWS&&['fight','unknown','shop'].includes(n.t)&&canUse(k,'elite');
+      })).map(k=>({
+        k,
+        score:deficient.reduce((sum,route)=>sum+(route.includes(k)?1:0),0)*100
+          +(nodes[k].t==='fight'?4:nodes[k].t==='unknown'?2:0)+nodes[k].r/100
+      })).filter(x=>x.score>=100).sort((a,b)=>b.score-a.score);
+      if(!candidates.length)break;
+      nodes[candidates[0].k].t='elite';
+    }
+    const optionalEliteChance=C.weights.elite/Object.values(C.weights).reduce((s,w)=>s+w,0);
+    shuffle(Object.keys(nodes)).forEach(k=>{
       const n=nodes[k];
-      return (n.t==='fight'?4:n.t==='unknown'?3:n.t==='shop'?1:0)+n.r/100;
+      if(k!=='boss'&&n.r<ROWS&&['fight','unknown'].includes(n.t)&&Math.random()<optionalEliteChance&&canUse(k,'elite'))n.t='elite';
+    });
+    const pathRange=(start,type)=>{
+      const memo=new Map();
+      const visit=k=>{
+        if(memo.has(k))return memo.get(k);
+        const n=nodes[k],own=n&&n.t===type?1:0;
+        if(!n||!n.edges.size){const end={min:own,max:own};memo.set(k,end);return end}
+        const next=[...n.edges].map(visit);
+        const range={min:own+Math.min(...next.map(x=>x.min)),max:own+Math.max(...next.map(x=>x.max))};
+        memo.set(k,range);return range;
+      };
+      return visit(start);
     };
-    const ensureRouteElites=()=>{
-      const min=C.minElitePerRoute||0;
-      if(!min)return;
-      routes.forEach(route=>{
-        let guard=0;
-        while(routeCount(route,'elite')<min&&guard++<ROWS){
-          const candidates=shuffle(route.filter(k=>{
-            const n=nodes[k];
-            if(!n||k==='boss'||n.r<=C.noEliteBefore)return false;
-            if(['boss','rest','chest'].includes(n.t))return false;
-            return canUse(k,'elite');
-          })).sort((a,b)=>eliteScore(b)-eliteScore(a));
-          const spot=candidates[0];
-          if(!spot)break;
-          nodes[spot].t='elite';
-        }
+    const graphValid=starts.length>0&&starts.every(k=>{
+      const elites=pathRange(k,'elite'),rests=pathRange(k,'rest');
+      const chests=pathRange(k,'chest'),unknowns=pathRange(k,'unknown');
+      return elites.min>=minElites&&elites.max<=C.maxElitePerRoute
+        &&rests.min>=1&&chests.min===1&&chests.max===1&&unknowns.max<=C.maxUnknownPerRoute;
+    })&&Object.entries(nodes).every(([k,n])=>{
+      if(n.t==='elite'&&n.r<=C.noEliteBefore)return false;
+      return [...n.edges].every(next=>{
+        const m=nodes[next];
+        return !m||!((n.t==='elite'&&m.t==='elite')||(n.t==='rest'&&m.t==='rest'));
       });
-    };
-    ensureRouteElites();
-    this.mapRows=ROWS;this.mapChestRow=chestRow;this.mapRestRow=restRow;this.mapEliteRows=eliteRows;this.mapRoutes=routes;
+    });
+    if(!graphValid){
+      if(attempt<60)return this.genMap(attempt+1);
+      throw new Error('无法生成满足路线约束的地图');
+    }
+    this.mapRows=ROWS;this.mapChestRow=chestRow;this.mapRestRow=restRow;this.mapRoutes=routes;
     this.nodes=nodes;
   },
   renderMap(){
@@ -1240,7 +1399,7 @@ const G={
       const isDone=n.r<this.row||(n.r===this.row&&!isCur);
       const R=n.t==='boss'?26:18;
       const cls=`mnode ${isAvail?'avail':''} ${isCur?'cur':''} ${isDone&&!isAvail?'done':''}`;
-      const click=isAvail?`onclick="G.enterNode('${k}')"`:'';
+      const click=isAvail?`role="button" tabindex="0" onclick="G.enterNode('${k}')"`:'';
       nds+=`<g class="${cls}" ${click}>
         ${isAvail?`<circle class="pulse" cx="${X(n.c)}" cy="${Y(n.r)}" r="${R}"/>`:''}
         <circle class="bg" cx="${X(n.c)}" cy="${Y(n.r)}" r="${R}"/>
@@ -1277,19 +1436,28 @@ const G={
     else if(t==='chest')this.openChest();
   },
   backToMap(){
-    this.updateTopbar();this.renderMap();show('screen-map');
+    this.updateTopbar();this.renderMap();show('screen-map');this.saveRun();
   },
 
   /* ---------- 牌堆/卡组查看 ---------- */
-  viewDeck(){this.viewCards('我的卡组',this.deck)},
+  viewDeck(){
+    const playable=this.deck.filter(c=>!c.unplayable);
+    const avg=playable.length?(playable.reduce((sum,c)=>sum+c.c,0)/playable.length).toFixed(1):'0.0';
+    const count=t=>this.deck.filter(c=>c.t===t).length;
+    this.viewCards('我的卡组',this.deck,`攻击 ${count('atk')} · 技能 ${count('skl')} · 能力 ${count('pwr')} · 诅咒 ${count('curse')} · 平均费用 ${avg}`);
+  },
   viewPile(which){
     if(which==='draw')this.viewCards('抽牌堆(顺序已隐藏)',shuffle([...this.drawPile]));
-    else this.viewCards('弃牌堆',this.discardPile);
+    else if(which==='discard')this.viewCards('弃牌堆',this.discardPile);
+    else this.viewCards('消耗堆',this.exhaustPile||[]);
   },
-  viewCards(title,cards){
+  viewCards(title,cards,summary=''){
+    const order={atk:0,skl:1,pwr:2,curse:3};
+    const sorted=[...cards].sort((a,b)=>(a.c-b.c)||((order[a.t]??9)-(order[b.t]??9))||a.n.localeCompare(b.n,'zh-CN'));
     const ov=$('overlay');
     ov.innerHTML=`<div class="sec-t" style="font-size:19px">${title} · ${cards.length} 张</div><div class="divider"></div>
-      <div class="cgrid">${cards.map(c=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div>`).join('')||'<div class="sec-s">(空)</div>'}</div>
+      ${summary?`<div class="sec-s">${summary}</div>`:''}
+      <div class="cgrid">${sorted.map(c=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div>`).join('')||'<div class="sec-s">(空)</div>'}</div>
       <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button>`;
     ov.classList.add('on');
   },
@@ -1298,7 +1466,7 @@ const G={
     if(!list.length){toast('没有符合条件的卡牌');return onEmpty?onEmpty():undefined}
     const ov=$('overlay');
     ov.innerHTML=`<div class="sec-t" style="font-size:19px">${title}</div><div class="divider"></div>
-      <div class="cgrid">${list.map(x=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G._dp(${x.i})">${cardHTML(x.c,'static')}</div>`).join('')}</div>
+      <div class="cgrid">${list.map(x=>`<div role="button" tabindex="0" style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G._dp(${x.i})">${cardHTML(x.c,'static')}</div>`).join('')}</div>
       ${allowCancel?'<button class="btn ghost" onclick="G.closeOverlay()">返 回</button>':''}`;
     this._onDp=onPick;ov.classList.add('on');
   },
@@ -1402,6 +1570,7 @@ Object.assign(G,{
     this.clones=this.hasRelic('contract')?2:0;
     this.nindoBlk=0;this.rampStr=0;this.rampSources=[];
     this.turn=0;this.picked=null;this.busy=false;this.combatEnded=false;
+    this._weakFresh=0;this._vulnFresh=0;
     this.drawPile=shuffle(this.deck.map(c=>({...c})));
     this.discardPile=[];this.hand=[];this.exhaustPile=[];
     if(this.hasRelic('kunaibag'))this.block+=5;
@@ -1424,17 +1593,18 @@ Object.assign(G,{
     this.energy=3
       +(this.hasRelic('scroll')?1:0)
       +(this.turn===1&&this.hasRelic('hiraishin')?1:0);
-    const chakraPenalty=(this.genjutsu||0)+(this.chakraDrain||0);
+    if(this.turn===1&&this.hasRelic('hiraishin'))this.flashRelic('hiraishin');
+    const chakraPenalty=Math.min(2,(this.genjutsu||0)+(this.chakraDrain||0));
     if(chakraPenalty){
       this.energy=Math.max(0,this.energy-chakraPenalty);
       this.fxText(this.playerEl(),`查克拉-${chakraPenalty}`,'blk');
       this.genjutsu=0;this.chakraDrain=0;
     }
     this.firstAtk=true;this.firstSkl=true;
-    if(this.turn===1&&this.hasRelic('chakra_bead'))this.str+=1;
+    if(this.turn===1&&this.hasRelic('chakra_bead')){this.str+=1;this.flashRelic('chakra_bead')}
     if(this.nindoBlk)this.block+=this.nindoBlk;
     this.tickRamp();
-    if(this.hasRelic('cells'))this.hp=Math.min(this.maxHp,this.hp+1);
+    if(this.hasRelic('cells')&&this.hp<this.maxHp){this.hp++;this.flashRelic('cells')}
     if(this.poison>0){
       this.hp-=this.poison;this.fxText(this.playerEl(),'-'+this.poison);SFX.hurt();
       this.poison--;
@@ -1503,9 +1673,38 @@ Object.assign(G,{
       if(c&&this.cardNeedsTarget(c))return this.playCardAt(this.picked,e);
     }
   },
+  cancelPick(){
+    if(this.picked===null)return;
+    this.picked=null;$('target-hint').classList.remove('on');this.renderCombat();
+  },
   clickStage(ev){
-    if(ev.target.closest('.unit')||ev.target.closest('.card'))return;
-    if(this.picked!==null){this.picked=null;$('target-hint').classList.remove('on');this.renderCombat()}
+    if(ev&&ev.target&&ev.target.closest('.card'))return;
+    this.cancelPick();
+  },
+  explainIntent(i){
+    if(this.picked!==null)return this.clickEnemy(i);
+    const e=this.enemies[i];if(!e||e.hp<=0||!e.intent)return;
+    const m=e.intent,parts=[];
+    if(m.a)parts.push(`⚔️ 造成 ${this.calc(m.a,e,{vuln:this.vuln})}${(m.hits||1)>1?' × '+m.hits:''} 点伤害`);
+    if(m.b)parts.push(`🛡️ 获得 ${m.b} 点格挡`);
+    if(m.str)parts.push(`💪 力量 +${m.str}`);
+    if(m.heal)parts.push(`💚 回复 ${m.heal} 点生命`);
+    if(m.weak)parts.push(`🌀 施加 ${m.weak} 层虚弱`);
+    if(m.vulnP)parts.push(`💢 施加 ${m.vulnP} 层易伤`);
+    if(m.poison)parts.push(`☠️ 施加 ${m.poison} 层中毒`);
+    if(m.stealth)parts.push(`🌫️ 获得 ${m.stealth} 层潜行`);
+    if(m.thorns)parts.push(`🪞 获得 ${m.thorns} 层反伤`);
+    if(m.genjutsu)parts.push(`👁️ 下回合查克拉 -${m.genjutsu}`);
+    if(m.drain)parts.push(`🔵 下回合查克拉 -${m.drain}`);
+    if(m.summon)parts.push('➕ 召唤援军');
+    if(e.regen)parts.push(`♻️ 行动前最多回复 ${e.regen} 点生命`);
+    if(e.grow){
+      const gains=[];if(e.grow.str)gains.push(`力量 +${e.grow.str}`);if(e.grow.b)gains.push(`格挡 +${e.grow.b}`);if(e.grow.heal)gains.push(`回复 ${e.grow.heal}`);
+      parts.push(`📈 每 ${e.grow.every} 回合成长: ${gains.join('、')}`);
+    }
+    if(m.genjutsu||m.drain)parts.push('查克拉惩罚合计最多 2 点');
+    if(m.a&&this.enemies.filter(x=>x.hp>0).length>1)parts.push('实际伤害可能受前序敌人的状态效果影响');
+    toast(`<b>${e.n} · ${m.txt}</b><br>${parts.join('<br>')||'蓄势待发'}`);
   },
   playCardAt(idx,target){
     const c=this.hand[idx];if(!c||c.c>this.energy)return;
@@ -1513,7 +1712,8 @@ Object.assign(G,{
     this.hand.splice(idx,1);
     this.stats.cards++;
     this.execCard(c,target);
-    if(this.hp<=0||this.combatEnded)return;
+    if(this.hp<=0){this.gameOver();return}
+    if(this.combatEnded)return;
     if(c.t==='pwr'||c.ex)this.exhaustPile.push(c);
     else this.discardPile.push(c);
     if(this.checkWin())return;
@@ -1527,6 +1727,13 @@ Object.assign(G,{
   },
   combatActive(){
     return $('screen-combat').classList.contains('active')&&this.enemies&&this.hand;
+  },
+  statusBonus(){
+    return {v:this.hasRelic('sharingan')?1:0,w:this.hasRelic('seal_tag')?1:0};
+  },
+  enemyTargets(c,target){
+    if(this.cardTargetsAll(c))return this.enemies.filter(e=>e.hp>0);
+    return target&&target.hp>0?[target]:[];
   },
   cardAttackBonus(c){
     if(!this.combatActive()||c.t!=='atk'||!this.firstAtk)return 0;
@@ -1581,13 +1788,12 @@ Object.assign(G,{
     if(c.clone)parts.push(`获得 <b>${c.clone}</b> 层影分身`);
     if(c.nindo)parts.push(`每回合开始获得 <b>${c.nindo}</b> 点格挡`);
     if(c.ramp)parts.push(`每回合开始力量 +<b>${c.ramp}</b>,持续 <b>${c.rampTurns||3}</b> 回合`);
-    const vBonus=this.hasRelic('sharingan')?1:0;
-    const wBonus=this.hasRelic('seal_tag')?1:0;
+    const bonus=this.statusBonus();
     const vuln=(c.vuln||0)+(c.tvuln||0);
     const weak=(c.tweak||0)+(c.weak||0);
     const scope=this.cardTargetsAll(c)?'对所有敌人':'对目标';
-    if(vuln)parts.push(`${scope}施加 <b>${vuln+vBonus}</b> 层易伤`);
-    if(weak)parts.push(`${scope}施加 <b>${weak+wBonus}</b> 层虚弱`);
+    if(vuln)parts.push(`${scope}施加 <b>${vuln+bonus.v}</b> 层易伤`);
+    if(weak)parts.push(`${scope}施加 <b>${weak+bonus.w}</b> 层虚弱`);
     if(c.self)parts.push(`自身受 <b>${c.self}</b> 点伤害`);
     if(c.ex)parts.push('<b>消耗</b>');
     return parts.length?parts.join(', '):c.d;
@@ -1606,6 +1812,7 @@ Object.assign(G,{
   },
   dealDamage(e,raw,pure=false){
     let d=raw;
+    const reflected=!pure?(e.thorns||0):0;
     if(!pure&&e.stealth){
       d=Math.ceil(d*0.5);
       e.stealth=Math.max(0,e.stealth-1);
@@ -1614,8 +1821,8 @@ Object.assign(G,{
     const blocked=pure?0:Math.min(e.block,d);
     if(!pure)e.block-=blocked;
     d-=blocked;
+    this.stats.dmg+=Math.min(d,Math.max(0,e.hp));
     e.hp-=d;
-    this.stats.dmg+=d;
     const el=this.enemyEl(this.enemies.indexOf(e));
     if(el){
       this.fxSlash(el);
@@ -1626,8 +1833,8 @@ Object.assign(G,{
     }
     SFX.atk();
     if(e.hp<=0)this.handleDeath(e);
-    if(!pure&&e.thorns&&raw>0&&e.hp>0){
-      this.damagePlayer(e.thorns,'反伤');
+    if(reflected&&raw>0&&e.hp>0){
+      this.damagePlayer(reflected,'反伤');
       this.fxText(this.enemyEl(this.enemies.indexOf(e)),'反伤','blk');
     }
   },
@@ -1643,52 +1850,64 @@ Object.assign(G,{
       this.rollIntent(e);
       this.banner('禁 术 · 解 放');SFX.lose();
       $('stage').classList.add('shake');setTimeout(()=>$('stage').classList.remove('shake'),400);
-      toast('大蛇丸蜕下人皮,化作巨蛇之躯——战斗进入第二阶段!');
+      toast('首领解放禁术,显露全新形态——战斗进入第二阶段!');
       return;
     }
-    if(e.hp<=0)this.stats.kills++;
+    if(e.hp<=0&&!e._counted){
+      e._counted=true;this.stats.kills++;
+      setTimeout(()=>{
+        e._gone=true;
+        if(!this.combatEnded&&$('screen-combat').classList.contains('active'))this.renderCombat();
+      },620);
+    }
   },
   execCard(c,target){
     this.energy-=c.c;
     let bonus=0;
     if(c.t==='atk'&&this.firstAtk){
-      if(this.hasRelic('fuuma'))bonus+=4;
-      if(this.hasRelic('kyuubi_seal'))bonus+=6;
+      if(this.hasRelic('fuuma')){bonus+=4;this.flashRelic('fuuma')}
+      if(this.hasRelic('kyuubi_seal')){bonus+=6;this.flashRelic('kyuubi_seal')}
       this.firstAtk=false;
     }
     if(c.t==='skl'&&this.firstSkl){
-      if(this.hasRelic('bell')){this.block+=3;this.fxText(this.playerEl(),'+3','blk')}
-      if(this.hasRelic('chakra_thread'))this.draw(1);
+      if(this.hasRelic('bell')){this.block+=3;this.fxText(this.playerEl(),'+3','blk');this.flashRelic('bell')}
+      if(this.hasRelic('chakra_thread')){this.draw(1);this.flashRelic('chakra_thread')}
       this.firstSkl=false;
     }
     const me={str:this.str,weak:this.weak};
-    const vBonus=this.hasRelic('sharingan')?1:0;
-    const wBonus=this.hasRelic('seal_tag')?1:0;
-    const targetsAll=this.cardTargetsAll(c);
+    const statusBonus=this.statusBonus();
     if(c.healMight)this.healMight+=c.healMight;
     if(c.blockMight)this.blockMight+=c.blockMight;
     const attackMight=c.t==='atk'&&c.dmg?(this.might||0):0;
     if(c.dmg){
       const ts=c.aoe?this.enemies.filter(e=>e.hp>0):[target];
-      ts.forEach(t=>{
-        if(!t)return;
+      for(const t of ts){
+        if(!t)continue;
+        let transformed=false;
         for(let h=0;h<c.hits;h++){
           if(t.hp<=0)break;
+          const wasPhase2=t.phase2done;
           this.dealDamage(t,this.calc(c.dmg+bonus,me,t));
+          if(this.hp<=0)break;
+          if(!wasPhase2&&t.phase2done){transformed=true;break}
         }
-        if(attackMight&&t.hp>0)this.dealDamage(t,this.calc(attackMight,{str:0,weak:this.weak},t));
-        if(c.vuln&&t.hp>0)t.vuln+=c.vuln+vBonus;
-      });
+        if(this.hp<=0)break;
+        if(attackMight&&t.hp>0&&!transformed){
+          this.dealDamage(t,this.calc(attackMight,{str:0,weak:this.weak},t));
+          if(this.hp<=0)break;
+        }
+        if(c.vuln&&t.hp>0)t.vuln+=c.vuln+statusBonus.v;
+      }
       if(attackMight){
         this.might=0;
         this.fxText(this.playerEl(),'怪力释放','blk');
       }
+      if(this.hp<=0)return;
     }
-    if(c.tvuln){const ts=targetsAll||!target?this.enemies.filter(e=>e.hp>0):[target];ts.forEach(t=>t.vuln+=c.tvuln+vBonus)}
+    if(c.tvuln)this.enemyTargets(c,target).forEach(t=>t.vuln+=c.tvuln+statusBonus.v);
     if(c.tweak||c.weak){
-      const w=(c.tweak||0)+(c.weak||0)+wBonus;
-      const ts=targetsAll||!target?this.enemies.filter(e=>e.hp>0):[target];
-      ts.forEach(t=>t.weak+=w);
+      const w=(c.tweak||0)+(c.weak||0)+statusBonus.w;
+      this.enemyTargets(c,target).forEach(t=>t.weak+=w);
     }
     if(c.blk){
       const b=c.blk+this.dex;this.block+=b;this.fxText(this.playerEl(),'+'+b,'blk');SFX.blk();
@@ -1754,13 +1973,19 @@ Object.assign(G,{
       const h=Math.min(m.heal,e.maxHp-e.hp);
       e.hp+=h;parts.push(`回复 +${h}`);
     }
-    if(m.weak){this.weak+=m.weak;parts.push(`虚弱 +${m.weak}`)}
-    if(m.vulnP){this.vuln+=m.vulnP;parts.push(`易伤 +${m.vulnP}`)}
+    if(m.weak){this.weak+=m.weak;this._weakFresh+=m.weak;parts.push(`虚弱 +${m.weak}`)}
+    if(m.vulnP){this.vuln+=m.vulnP;this._vulnFresh+=m.vulnP;parts.push(`易伤 +${m.vulnP}`)}
     if(m.poison){this.poison+=m.poison;parts.push(`中毒 +${m.poison}`)}
     if(m.stealth){e.stealth=Math.min(3,(e.stealth||0)+m.stealth);parts.push(`潜行 +${m.stealth}`)}
     if(m.thorns){e.thorns=Math.min(9,(e.thorns||0)+m.thorns);parts.push(`反伤 +${m.thorns}`)}
-    if(m.genjutsu){this.genjutsu=(this.genjutsu||0)+m.genjutsu;parts.push(`幻术 ${m.genjutsu}`)}
-    if(m.drain){this.chakraDrain=(this.chakraDrain||0)+m.drain;parts.push(`查克拉封印 ${m.drain}`)}
+    if(m.genjutsu){
+      const add=Math.min(m.genjutsu,Math.max(0,2-(this.genjutsu||0)-(this.chakraDrain||0)));
+      if(add){this.genjutsu=(this.genjutsu||0)+add;parts.push(`幻术 ${add}`)}
+    }
+    if(m.drain){
+      const add=Math.min(m.drain,Math.max(0,2-(this.genjutsu||0)-(this.chakraDrain||0)));
+      if(add){this.chakraDrain=(this.chakraDrain||0)+add;parts.push(`查克拉封印 ${add}`)}
+    }
     if(m.summon){
       const made=this.summonEnemies(m.summon,m.count||1);
       if(made)parts.push(`召唤 ${made}`);
@@ -1778,17 +2003,19 @@ Object.assign(G,{
       this.fxText(this.playerEl(),'影分身-1','blk');
     }
     this.discardPile.push(...this.hand);this.hand=[];
-    if(this.weak)this.weak--;
-    if(this.vuln)this.vuln--;
     $('endturn').classList.add('enemyturn');
     this.banner('敌 方 行 动');
     this.renderCombat();
     const acts=this.enemies.filter(e=>e.hp>0);
     let i=0;
     const step=()=>{
+      if(this.combatEnded)return;
       if(this.hp<=0)return this.gameOver();
       if(i>=acts.length){
         this.enemies.forEach(e=>{if(e.weak)e.weak--;if(e.vuln)e.vuln--});
+        this.weak=Math.max(this._weakFresh,Math.max(0,this.weak-1));
+        this.vuln=Math.max(this._vulnFresh,Math.max(0,this.vuln-1));
+        this._weakFresh=0;this._vulnFresh=0;
         this.busy=false;
         return this.startTurn();
       }
@@ -1800,14 +2027,17 @@ Object.assign(G,{
       const uEl=document.querySelector(`[data-ei="${ei}"]`);
       if(uEl)uEl.classList.add('lunge-l');
       setTimeout(()=>{
+        if(this.combatEnded)return;
         if(uEl)uEl.classList.remove('lunge-l');
         if(m){
           if(m.a){
             for(let h=0;h<(m.hits||1);h++){
               let d=this.calc(m.a,e,{vuln:this.vuln});
               this.damagePlayer(d);
+              if(this.hp<=0)break;
             }
           }
+          if(this.hp<=0){this.updateTopbar();return this.gameOver()}
           const effectText=this.applyEnemyMoveEffects(e,m);
           const growText=this.applyEnemyGrowth(e);
           $('combat-log').textContent=`${e.n} 使出「${m.txt}」${regenText?' · '+regenText:''}${effectText?' · '+effectText:''}${growText?' · '+growText:''}`;
@@ -1869,7 +2099,7 @@ Object.assign(G,{
   },
   stTags(o,isPlayer){
     const T=[];
-    const add=(name,val,buff)=>T.push(`<span class="stag ${buff?'buff':'debuff'}" onclick="event.stopPropagation();toast('<b>${name}</b>:${esc(KW[name]||'')}')">${name}${val}</span>`);
+    const add=(name,val,buff)=>T.push(`<button type="button" class="stag ${buff?'buff':'debuff'}" onclick="event.stopPropagation();toast('<b>${name}</b>:${esc(KW[name]||'')}')">${name}${val}</button>`);
     if(o.str)add('力量',o.str,o.str>0);
     if(o.weak)add('虚弱',o.weak,false);
     if(o.vuln)add('易伤',o.vuln,false);
@@ -1894,7 +2124,8 @@ Object.assign(G,{
   renderCombat(){
     const C=this.char();
     // 玩家
-    $('player-side').innerHTML=`<div class="unit player" onclick="G.clickStage(event)">
+    const cancelAttrs=this.picked!==null?'role="button" tabindex="0" aria-label="取消选牌"':'';
+    $('player-side').innerHTML=`<div class="unit player" ${cancelAttrs} onclick="G.cancelPick()">
       ${unitFrame(C.face,C.sprite,C.n)}
       <div class="uname">${C.n} ${this.block?`<span class="ub">🛡️${this.block}</span>`:''}</div>
       <div class="hpbar pb"><i style="width:${Math.max(0,this.hp/this.maxHp*100)}%"></i></div>
@@ -1903,10 +2134,12 @@ Object.assign(G,{
     </div>`;
     // 敌人
     $('enemy-side').innerHTML=this.enemies.map((e,i)=>{
+      if(e._gone)return '';
       const dead=e.hp<=0;
       const pickedTarget=this.picked!==null&&this.hand[this.picked]&&this.cardNeedsTarget(this.hand[this.picked]);
-      return `<div class="unit ${dead?'dead':''} ${e.elite?'elite':''} ${e.boss?'boss':''} ${!dead?'targetable':''} ${pickedTarget&&!dead?'target-glow':''}" data-ei="${i}" onclick="G.clickEnemy(${i})">
-        <div class="intent">${dead?'':this.intentHTML(e)+' <span style="opacity:.65;font-size:11px">'+(e.intent?e.intent.txt:'')+'</span>'}</div>
+      const targetAttrs=pickedTarget&&!dead?'role="button" tabindex="0"':'';
+      return `<div class="unit ${dead?'dead':''} ${e.elite?'elite':''} ${e.boss?'boss':''} ${!dead?'targetable':''} ${pickedTarget&&!dead?'target-glow':''}" ${targetAttrs} data-ei="${i}" onclick="G.clickEnemy(${i})">
+        <button type="button" class="intent" onclick="event.stopPropagation();G.explainIntent(${i})">${dead?'':this.intentHTML(e)+' <span style="opacity:.65;font-size:11px">'+(e.intent?e.intent.txt:'')+'</span>'}</button>
         ${unitFrame(e.sp,e.sprite,e.n)}
         <div class="uname">${e.n} ${e.block?`<span class="ub">🛡️${e.block}</span>`:''}</div>
         <div class="hpbar"><i style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></i></div>
@@ -1918,7 +2151,7 @@ Object.assign(G,{
     const hand=$('hand');
     const W=hand.clientWidth||300;
     const n=this.hand.length;
-    const cardW=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-w'))||126;
+    const cardW=cardWidth();
     const gap=n>1?Math.min(cardW*0.82,(W-cardW-10)/(n-1)):0;
     const startX=(W-(cardW+gap*(n-1)))/2;
     hand.innerHTML=this.hand.map((c,i)=>{
@@ -1937,12 +2170,47 @@ Object.assign(G,{
     $('orb').classList.toggle('zero',this.energy===0);
     $('n-draw').textContent=this.drawPile.length;
     $('n-discard').textContent=this.discardPile.length;
+    $('n-exhaust').textContent=this.exhaustPile.length;
+    const canPlay=!this.busy&&!this.combatEnded&&this.hand.some(c=>!c.unplayable&&c.c<=this.energy);
+    $('endturn').classList.toggle('hint',canPlay);
   },
 });
-window.addEventListener('resize',()=>{if($('screen-combat').classList.contains('active')&&G.hand)G.renderCombat()});
+window.addEventListener('resize',()=>{
+  CARD_W_CACHE=0;
+  if($('screen-combat').classList.contains('active')&&G.hand)G.renderCombat();
+});
 document.addEventListener('click',e=>{
   if(!$('screen-combat').classList.contains('active'))return;
   if(e.target.closest('#stage')&&!e.target.closest('.unit'))G.clickStage(e);
+});
+let cardLongPress=null;
+document.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse')return;
+  const card=e.target.closest&&e.target.closest('.card');if(!card)return;
+  if(cardLongPress)clearTimeout(cardLongPress.timer);
+  const x=e.clientX,y=e.clientY;
+  cardLongPress={x,y,timer:setTimeout(()=>{
+    G._suppressCardClickUntil=performance.now()+700;
+    G.previewUpgrade(card.dataset.cardKey,card.dataset.upgraded==='1');
+    cardLongPress=null;
+  },550)};
+},{passive:true});
+document.addEventListener('pointermove',e=>{
+  if(!cardLongPress)return;
+  if(Math.hypot(e.clientX-cardLongPress.x,e.clientY-cardLongPress.y)>10){clearTimeout(cardLongPress.timer);cardLongPress=null}
+},{passive:true});
+['pointerup','pointercancel'].forEach(type=>document.addEventListener(type,()=>{
+  if(cardLongPress){clearTimeout(cardLongPress.timer);cardLongPress=null}
+},{passive:true}));
+document.addEventListener('click',e=>{
+  if(G._suppressCardClickUntil>performance.now()&&e.target.closest&&e.target.closest('.card')){
+    e.preventDefault();e.stopImmediatePropagation();
+  }
+},true);
+document.addEventListener('keydown',e=>{
+  if(e.repeat||(e.key!=='Enter'&&e.key!==' '))return;
+  const target=e.target.closest&&e.target.closest('[role="button"]');if(!target)return;
+  e.preventDefault();target.dispatchEvent(new MouseEvent('click',{bubbles:true}));
 });
 </script>
 <script>
@@ -1970,14 +2238,14 @@ Object.assign(G,{
     if(Math.random()<(kind==='elite'?MAP_RULES.potionDrop.elite:MAP_RULES.potionDrop.fight)){
       const pk=this.randomPotionKey();
       this._pendingPotion=pk;
-      html+=`<div class="ritem" id="potion-take" onclick="G.takePotion()">${POTIONS[pk].ic} 拾取秘药「${POTIONS[pk].n}」— ${POTIONS[pk].d}</div>`;
+      html+=`<div class="ritem" role="button" tabindex="0" id="potion-take" onclick="G.takePotion()">${POTIONS[pk].ic} 拾取秘药「${POTIONS[pk].n}」— ${POTIONS[pk].d}</div>`;
     }
     html+=`<div class="sec-s" style="margin-top:10px">领悟新忍术 — 选择一张加入卡组(可跳过)</div>`;
     const cs=this.combatRewardCards(kind);
     this._choices=cs;this._cardPicked=false;
-    html+=`<div class="cgrid" id="card-reward-grid">${cs.map((c,i)=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
+    html+=`<div class="cgrid" id="card-reward-grid">${cs.map((c,i)=>`<div role="button" tabindex="0" style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
       <div class="sec-s" id="card-reward-status"></div>`;
-    html+=`<button class="btn ghost" onclick="G.backToMap()">跳过,继续前进</button>`;
+    html+=`<button class="btn ghost" id="reward-continue" onclick="G.backToMap()">跳过,继续前进</button>`;
     $('reward-list').innerHTML=html;
     show('screen-reward');
   },
@@ -1986,7 +2254,8 @@ Object.assign(G,{
       SFX.potion();toast(`收下「${POTIONS[this._pendingPotion].n}」`);
       const el=$('potion-take');if(el){el.classList.add('noclick');el.style.opacity=.4}
       this._pendingPotion=null;
-      if(this._cardPicked)this.backToMap();
+      const status=$('card-reward-status');
+      if(status&&this._cardPicked)status.textContent='奖励已领取完毕';
     }
   },
   takeCard(i){
@@ -1998,7 +2267,8 @@ Object.assign(G,{
     if(grid){grid.classList.add('sold');grid.style.pointerEvents='none'}
     const status=$('card-reward-status');
     if(status)status.textContent=this._pendingPotion?'已选择卡牌,还可以拾取秘药':'已选择卡牌';
-    if(!this._pendingPotion)this.backToMap();
+    const btn=$('reward-continue');if(btn)btn.textContent='继续前进';
+    this.updateTopbar();
   },
   bossReward(){
     const isFinal=this.act>=ACTS.length-1;
@@ -2020,7 +2290,7 @@ Object.assign(G,{
       <div class="sec-s" style="margin-top:10px">领悟一张稀有忍术 — 可跳过</div>`;
     const cs=this.randomCards(3,2).map(c=>this.maybeUpgradeRewardCard(c,this.rewardUpgradeChance('boss')));
     this._choices=cs;this._cardPicked=false;
-    html+=`<div class="cgrid" id="boss-card-reward-grid">${cs.map((c,i)=>`<div style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
+    html+=`<div class="cgrid" id="boss-card-reward-grid">${cs.map((c,i)=>`<div role="button" tabindex="0" style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
       <div class="sec-s" id="boss-card-reward-status"></div>
       <button class="btn" onclick="G.toNextAct()">进入${next.name.split(' · ')[0]} →</button>`;
     $('reward-list').innerHTML=html;
@@ -2071,8 +2341,8 @@ Object.assign(G,{
       <div class="sec-s">队伍在树影间短暂休整,火光摇曳</div>
       <div class="divider"></div>
       <div class="center">
-        <div class="ritem" onclick="G.restHeal(${amt})">🍙 打坐调息<br><span style="color:var(--paper-dim);font-size:12.5px">回复 ${amt} 点生命(${Math.round(pct*100)}%)</span></div>
-        <div class="ritem" onclick="G.restUpgrade()">📜 修炼忍术<br><span style="color:var(--paper-dim);font-size:12.5px">永久升级一张卡牌</span></div>
+        <div class="ritem" role="button" tabindex="0" onclick="G.restHeal(${amt})">🍙 打坐调息<br><span style="color:var(--paper-dim);font-size:12.5px">回复 ${amt} 点生命(${Math.round(pct*100)}%)</span></div>
+        <div class="ritem" role="button" tabindex="0" onclick="G.restUpgrade()">📜 修炼忍术<br><span style="color:var(--paper-dim);font-size:12.5px">永久升级一张卡牌</span></div>
       </div>`;
     show('screen-rest');
   },
@@ -2127,7 +2397,7 @@ Object.assign(G,{
       <div class="cgrid">`;
     h+=this.shopCards.map((c,i)=>{
       if(!c)return `<div style="width:var(--card-w);text-align:center;color:var(--paper-dim);padding-top:60px">已售出</div>`;
-      return `<div onclick="G.buyCard(${i})"><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div>
+      return `<div role="button" tabindex="0" onclick="G.buyCard(${i})"><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div>
         <div class="price ${aff(this.shopPrices[i])}">🪙 ${this.shopPrices[i]}</div></div>`;
     }).join('');
     h+=`</div><div class="cgrid">`;
@@ -2135,12 +2405,12 @@ Object.assign(G,{
       h+=this.shopRelics.map((k,i)=>{
         if(!k)return `<div class="shop-relic sold"><div class="ric">✓</div><div class="rname">已售出</div><div class="rdesc">这件忍具已经收入囊中</div></div>`;
         const r=RELICS[k];
-        return `<div class="shop-relic" onclick="G.buyRelic(${i})"><div class="ric">${r.ic}</div><div class="rname">${r.n}</div><div class="rdesc">${r.d}</div><div class="price ${aff(150)}">🪙 150</div></div>`;
+        return `<div class="shop-relic" role="button" tabindex="0" onclick="G.buyRelic(${i})"><div class="ric">${r.ic}</div><div class="rname">${r.n}</div><div class="rdesc">${r.d}</div><div class="price ${aff(150)}">🪙 150</div></div>`;
       }).join('');
     }
     if(this.shopPotion){const p=POTIONS[this.shopPotion];
-      h+=`<div class="shop-relic" onclick="G.buyPotion()" style="border-color:var(--chakra)"><div class="ric">${p.ic}</div><div class="rname" style="color:var(--chakra)">${p.n}</div><div class="rdesc">${p.d}</div><div class="price ${aff(45)}">🪙 45</div></div>`}
-    h+=`<div class="shop-relic ${this.removeUsed?'sold':''}" onclick="G.buyRemove()"><div class="ric">🗑️</div><div class="rname">删卡服务</div><div class="rdesc">从卡组中永久移除一张卡牌</div><div class="price ${aff(75)}">🪙 75</div></div>`;
+      h+=`<div class="shop-relic" role="button" tabindex="0" onclick="G.buyPotion()" style="border-color:var(--chakra)"><div class="ric">${p.ic}</div><div class="rname" style="color:var(--chakra)">${p.n}</div><div class="rdesc">${p.d}</div><div class="price ${aff(45)}">🪙 45</div></div>`}
+    h+=`<div class="shop-relic ${this.removeUsed?'sold':''}" role="button" tabindex="0" onclick="G.buyRemove()"><div class="ric">🗑️</div><div class="rname">删卡服务</div><div class="rdesc">从卡组中永久移除一张卡牌</div><div class="price ${aff(75)}">🪙 75</div></div>`;
     h+=`</div><div class="center" style="margin-top:18px"><button class="btn ghost" onclick="G.backToMap()">离开商店</button></div>`;
     $('screen-shop').innerHTML=h;
   },
@@ -2208,7 +2478,7 @@ Object.assign(G,{
   gameOver(){
     if(this._ended)return;this._ended=true;
     this.combatEnded=true;this.busy=true;
-    setTimeout(()=>this._ended=false,500);
+    this.clearSave();
     this.hp=0;this.updateTopbar();SFX.lose();
     $('end-content').innerHTML=`
       <div style="font-size:60px">⚰️</div>
@@ -2219,6 +2489,7 @@ Object.assign(G,{
     show('screen-end');
   },
   victory(){
+    this._ended=true;this.combatEnded=true;this.busy=true;this.clearSave();
     SFX.win();this.updateTopbar();
     $('end-content').innerHTML=`
       <div class="uzu-wrap" style="margin:0 auto"><div class="uzu"></div><div class="uzu u2"></div><div class="uzu-core">🍥</div></div>
@@ -2232,6 +2503,7 @@ Object.assign(G,{
   },
 });
 window.G=G;window.CHARACTERS=CHARACTERS;window.CARDS=CARDS;window.RELICS=RELICS;window.BOSS_RELICS=BOSS_RELICS;window.POTIONS=POTIONS;window.ENEMIES=ENEMIES;window.ACTS=ACTS;window.MAP_RULES=MAP_RULES;window.mkCard=mkCard;window.upgradeCard=upgradeCard;
+G.renderContinue();
 </script>
 </body>
 </html>
