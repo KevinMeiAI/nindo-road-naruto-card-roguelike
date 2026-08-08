@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>忍道之路 · NINDO</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%238d211c'/%3E%3Cpath d='M10 10h44v44H10z' fill='none' stroke='%23f0e4c3' stroke-width='3'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='34' font-family='serif' fill='%23f0e4c3'%3EN%3C/text%3E%3C/svg%3E">
 <style>
 :root{
   --ink:#0f0c07; --ink2:#1a1409; --panel:#211a0e;
@@ -366,60 +367,204 @@ button{font-family:inherit}
   #player-side{min-width:120px}
   #hand{height:calc(var(--card-h) + 18px)}
 }
+
+/* ============ STUDIO UI PASS ============ */
+:root{
+  --ink:#070806;--ink2:#11120f;--panel:#171711;--panel-raised:#202019;
+  --paper:#f0e4c3;--paper-dim:#a99f83;--naruto:#f06a1d;--chakra:#4cc7ef;
+  --seal:#b9322b;--gold:#dfb256;--hp:#dc4949;--block:#65c8ef;
+  --atk:#d84b32;--skl:#2ea899;--pwr:#8460b5;--curse:#595a5c;
+  --card-w:156px;--card-h:224px;--card-art-h:96px;
+}
+body{font-family:"Songti SC","STSong","Noto Serif CJK SC",serif;background:#070806}
+button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakra);outline-offset:3px}
+#app::after{content:"";position:absolute;inset:0;z-index:80;pointer-events:none;opacity:.16;mix-blend-mode:soft-light;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E")}
+
+/* HUD */
+#topbar{min-height:58px;flex-wrap:nowrap;gap:0;padding:0 14px;color:var(--paper);
+  border-bottom:1px solid rgba(223,178,86,.34);background:rgba(8,9,7,.94);box-shadow:0 8px 24px rgba(0,0,0,.42);backdrop-filter:blur(12px)}
+.hud-brand{height:58px;display:flex;align-items:center;gap:9px;padding-right:18px;margin-right:18px;border-right:1px solid rgba(240,228,195,.14);font-weight:900;letter-spacing:.14em;white-space:nowrap}
+.hud-brand small{display:block;font-family:Georgia,serif;font-size:7px;color:var(--naruto);letter-spacing:.24em;margin-top:2px}
+.hud-seal{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--seal);color:#fff;background:#5d1715;transform:rotate(-4deg);box-shadow:inset 0 0 0 3px #170806,0 0 12px rgba(185,50,43,.25)}
+.hud-vitals{display:flex;align-items:center;gap:7px}.hud-route{margin-left:14px;padding-left:14px;border-left:1px solid rgba(240,228,195,.13)}
+.hud-route .hud-label{display:block;margin-bottom:1px}.hud-kit{margin-left:auto;display:flex;align-items:center;gap:9px;min-width:0}
+.hud-label{font-family:"PingFang SC",sans-serif;font-size:8px;letter-spacing:.14em;color:#777567;text-transform:uppercase}
+.tstat{height:36px;padding:4px 10px;gap:6px;background:rgba(255,255,255,.025);border:1px solid rgba(240,228,195,.1);border-radius:3px;font-family:"PingFang SC",sans-serif;font-size:13px}
+.tstat.ch{color:#d9f4ff;border-color:rgba(76,199,239,.25)}.tstat.hp{color:#ff7770}.tstat.gd{color:var(--gold)}.tstat.fl{height:auto;padding:0;border:0;background:none;color:var(--paper);font-family:inherit;font-size:12px}
+.tbtn{height:34px;padding:0 11px;border-radius:3px;border-color:rgba(240,228,195,.18);background:#171710;color:var(--paper);transition:.18s ease}
+.tbtn:hover{border-color:var(--gold);background:#242017;transform:translateY(-1px)}.deck-btn{display:flex;gap:8px;align-items:center}.deck-btn b{min-width:22px;height:22px;display:grid;place-items:center;background:#29251a;color:var(--gold);border-radius:2px}
+.icon-btn{width:34px;padding:0}#potionbar,#relicbar{display:flex;align-items:center;gap:5px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}#potionbar{max-width:72px}#relicbar{max-width:280px}#potionbar::-webkit-scrollbar,#relicbar::-webkit-scrollbar{display:none}
+.relic-i,.potion-i{width:29px;height:29px;border-radius:3px;background:#171710;transition:.18s ease;box-shadow:inset 0 0 8px rgba(0,0,0,.65)}
+.relic-i:hover,.potion-i:hover{transform:translateY(-2px);filter:brightness(1.25)}
+
+/* Title / roster */
+#screen-title{padding:0;display:none;justify-content:stretch;align-items:stretch;background:#070806 url("assets/backgrounds/act1-forest.jpg") center/cover no-repeat}
+#screen-title.active{display:flex}
+#screen-title::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,6,5,.97) 0%,rgba(5,6,5,.84) 39%,rgba(5,6,5,.35) 68%,rgba(5,6,5,.68) 100%)}
+#screen-title::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 60%,rgba(0,0,0,.82)),repeating-linear-gradient(90deg,transparent 0 79px,rgba(255,255,255,.012) 80px)}
+.title-shell{position:relative;z-index:2;display:grid;grid-template-columns:minmax(350px,.78fr) minmax(690px,1.22fr);gap:44px;width:min(1380px,100%);min-height:100%;margin:auto;padding:46px clamp(28px,4vw,64px);align-items:center}
+.title-hero{align-self:center;max-width:520px;animation:titleEnter .8s cubic-bezier(.2,.8,.2,1) both}
+.title-kicker{display:flex;align-items:center;gap:10px;color:#bcb397;font-family:"PingFang SC",sans-serif;font-size:10px;letter-spacing:.22em;margin-bottom:22px}.title-kicker span{width:34px;height:2px;background:var(--seal)}
+.title-mark{display:flex;align-items:center;gap:18px}.title-kanji{width:84px;height:98px;display:grid;place-items:center;background:#8d211c;color:#f9ead0;font-size:58px;font-weight:900;clip-path:polygon(8% 0,100% 5%,92% 100%,0 92%);box-shadow:inset 0 0 0 5px rgba(20,3,2,.5);text-shadow:0 3px 0 #45100d}
+.title-main{font-size:clamp(54px,5.4vw,82px);letter-spacing:.08em;line-height:.98;color:#f3e5c2;background:none;filter:none;text-shadow:0 5px 24px #000;white-space:nowrap}
+.title-sub{font-family:Georgia,serif;color:var(--naruto);font-size:12px;letter-spacing:.48em;text-indent:0;margin:10px 0 0}
+.title-desc{max-width:500px;margin:28px 0 22px;text-align:left;color:#c8bfa6;font-size:14px;line-height:1.9;font-family:"PingFang SC",sans-serif}
+.title-features{display:flex;flex-wrap:wrap;gap:7px}.title-features span{padding:5px 9px;border-left:2px solid var(--naruto);background:rgba(0,0,0,.44);color:#cfc7ae;font-family:"PingFang SC",sans-serif;font-size:10px;letter-spacing:.08em}
+.title-roster{align-self:center;padding:18px 0;animation:rosterEnter .85s .1s cubic-bezier(.2,.8,.2,1) both}
+.roster-heading{display:flex;justify-content:space-between;align-items:end;margin:0 0 14px;padding:0 2px 10px;border-bottom:1px solid rgba(240,228,195,.22)}
+.roster-heading small{font-family:Georgia,serif;color:var(--naruto);font-size:9px;letter-spacing:.25em}.roster-heading h2{font-size:22px;letter-spacing:.16em;margin-top:3px}.roster-heading>span{font-family:Georgia,serif;color:#777567;font-size:9px;letter-spacing:.16em}
+#continue-wrap{margin:0 0 10px;align-items:stretch}#continue-wrap .btn{width:100%;padding:9px 18px;font-size:12px}
+.char-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;margin:0}
+.char-card{position:relative;min-height:430px;padding:0;overflow:hidden;border-radius:4px;border:1px solid rgba(240,228,195,.25);background:rgba(13,14,11,.88);text-align:left;isolation:isolate;box-shadow:0 18px 42px rgba(0,0,0,.44);transition:transform .24s ease,border-color .24s ease,filter .24s ease}
+.char-card::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 46%,rgba(4,4,3,.96) 77%)}
+.char-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--char-accent,var(--naruto));transform:scaleX(.28);transform-origin:left;transition:transform .24s ease}
+.char-card[data-char="naruto"]{--char-accent:#f07820}.char-card[data-char="sasuke"]{--char-accent:#6ea9e7}.char-card[data-char="sakura"]{--char-accent:#ef7390}
+.char-card:hover{border-color:var(--char-accent);transform:translateY(-8px);filter:brightness(1.08);box-shadow:0 25px 50px rgba(0,0,0,.58)}.char-card:hover::after{transform:scaleX(1)}
+.char-portrait{position:absolute;z-index:-2;width:118%;height:76%;left:-9%;top:-1%;object-fit:contain;object-position:center top;filter:drop-shadow(0 16px 14px rgba(0,0,0,.68));transition:transform .3s ease}
+.char-card:hover .char-portrait{transform:scale(1.04) translateY(-4px)}.char-index{position:absolute;right:10px;top:8px;color:rgba(255,255,255,.28);font:700 28px Georgia,serif}
+.char-card-body{position:absolute;left:0;right:0;bottom:0;padding:74px 15px 15px;background:linear-gradient(180deg,transparent,rgba(7,8,6,.94) 36%,#0b0c09 100%)}
+.char-name{font-size:20px;letter-spacing:.12em;margin:2px 0 7px}.char-role{font-family:"PingFang SC",sans-serif;font-size:10px;color:var(--char-accent);letter-spacing:.08em}.char-desc{font-family:"PingFang SC",sans-serif;font-size:11px;line-height:1.55;color:#aaa38e;min-height:35px}
+.char-deck{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.char-deck span{font-family:"PingFang SC",sans-serif;font-size:9px;color:#d5cdb7;padding:3px 6px;background:#202018;border:1px solid rgba(240,228,195,.13);border-radius:2px}
+.roster-note{margin-top:12px;padding:10px 12px;background:rgba(0,0,0,.48);border-left:2px solid var(--seal);font-family:"PingFang SC",sans-serif;font-size:11px;color:#aaa38e}.roster-note span{color:var(--paper);margin-right:12px;font-weight:700}
+@keyframes titleEnter{from{opacity:0;transform:translateX(-28px)}}@keyframes rosterEnter{from{opacity:0;transform:translateY(24px)}}
+
+/* Shared scene layout */
+.screen{scrollbar-width:thin;scrollbar-color:#5b4b2b #0a0b08}.sec-t{font-size:26px;letter-spacing:.22em;text-shadow:0 3px 14px #000}.sec-s{font-family:"PingFang SC",sans-serif;color:#aaa38e}.divider{height:1px;width:170px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.btn{border:1px solid #d85a35;border-radius:3px;padding:11px 28px;background:#a72f23;color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.18),0 5px 0 #4e120e,0 10px 24px rgba(0,0,0,.42);transition:.16s ease}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.12)}.btn:active{transform:translateY(3px)}.btn.ghost{background:#232218;border-color:#4d4939;color:var(--paper);box-shadow:inset 0 1px rgba(255,255,255,.06),0 5px 0 #0e0f0c,0 10px 20px rgba(0,0,0,.35)}.btn.blue{background:#216987;border-color:#4eb6dc;box-shadow:inset 0 1px rgba(255,255,255,.15),0 5px 0 #0c3344,0 10px 20px rgba(0,0,0,.35)}
+
+/* Map */
+#screen-map{padding:24px clamp(20px,5vw,72px) 0;background:#080907 center/cover fixed no-repeat}
+#screen-map[data-act="0"]{background-image:linear-gradient(rgba(6,8,7,.82),rgba(6,8,7,.95)),url("assets/backgrounds/act1-forest.jpg")}
+#screen-map[data-act="1"]{background-image:linear-gradient(rgba(7,5,9,.84),rgba(7,5,9,.96)),url("assets/backgrounds/act2-hideout.jpg")}
+#screen-map[data-act="2"]{background-image:linear-gradient(rgba(8,5,6,.84),rgba(8,5,6,.96)),url("assets/backgrounds/act3-ruins.jpg")}
+.map-toolbar{position:sticky;top:-24px;z-index:8;width:min(760px,100%);margin:0 auto;background:rgba(8,9,7,.94);border-bottom:1px solid rgba(223,178,86,.25);backdrop-filter:blur(8px)}.map-head{display:flex;align-items:end;justify-content:space-between;width:100%;margin:0;padding:18px 10px 12px}.map-head .sec-t{text-align:left;margin:2px 0 0;font-size:20px;letter-spacing:.08em}.act-banner{text-align:left;font-family:"PingFang SC",sans-serif;font-size:9px;letter-spacing:.2em;color:var(--naruto)}
+.map-progress{text-align:right;border-right:3px solid var(--naruto);padding-right:10px}.map-progress small{display:block;color:#777567;font-family:"PingFang SC",sans-serif;font-size:8px;letter-spacing:.12em}.map-progress b{font-size:15px;color:var(--paper)}
+.map-legend{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;width:100%;margin:0;padding:5px 5px 8px}.map-legend span{font-family:"PingFang SC",sans-serif;font-size:9px;color:#aba48e;background:rgba(0,0,0,.45);padding:4px 8px;border:1px solid rgba(240,228,195,.1);border-radius:2px}
+#map-wrap{max-width:720px;padding:16px 70px 30px;border-left:1px solid rgba(223,178,86,.18);border-right:1px solid rgba(223,178,86,.18);background:linear-gradient(90deg,transparent,rgba(18,17,12,.82) 12%,rgba(18,17,12,.82) 88%,transparent)}
+.medge{stroke:rgba(200,191,162,.28);stroke-width:2.5;stroke-dasharray:2 7}.medge.lit{stroke:var(--naruto);filter:drop-shadow(0 0 4px rgba(240,106,29,.65))}.mnode circle.bg{fill:#151710;stroke:#6e6854;stroke-width:1.5}.mnode text{font-size:18px}.mnode text.lbl{font-family:"PingFang SC",sans-serif;font-size:8px;letter-spacing:.08em}.mnode.avail circle.bg{fill:#2b1d10;stroke:#f39a42;stroke-width:2.8}.mnode.cur circle.bg{fill:#102731;stroke:var(--chakra)}.mnode.done{filter:saturate(.25)}
+
+/* Combat presentation */
+#stage{background-position:center 58%;isolation:isolate}.stage-ground{display:none}#stage::before{content:"";position:absolute;left:0;right:0;bottom:0;height:38%;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(4,5,4,.16) 45%,rgba(3,4,3,.7))}
+#stage::after{z-index:5;background:radial-gradient(ellipse at center 72%,transparent 36%,rgba(0,0,0,.48) 100%),repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.01) 3px 6px)}
+#player-side,#enemy-side{z-index:6;padding-bottom:12px}.unit{filter:drop-shadow(0 14px 10px rgba(0,0,0,.55))}.unit .frame.sprite-frame{transition:transform .2s ease,filter .2s ease}.unit.targetable:hover .frame{transform:translateY(-4px);filter:drop-shadow(0 0 12px rgba(240,106,29,.7))}
+.unit .intent{min-width:108px;min-height:30px;padding:5px 10px 4px;border-radius:3px;border:1px solid rgba(240,228,195,.25);background:rgba(9,10,8,.9);box-shadow:0 5px 16px rgba(0,0,0,.5);color:#bcb49e;font-family:"PingFang SC",sans-serif}.unit .intent::before{content:"敌方意图";display:block;font-size:7px;line-height:1;letter-spacing:.15em;color:#69685e;margin-bottom:2px}.unit .intent b{color:#ff7264}.unit .intent:hover{border-color:var(--gold);color:var(--paper)}
+#enemy-side .unit{padding-top:48px}#enemy-side .unit .intent{top:0;max-width:210px}.uname{min-width:126px;margin-top:2px;padding:5px 10px 4px;text-align:center;background:rgba(8,9,7,.88);border-top:1px solid rgba(240,228,195,.24);font-size:12px;letter-spacing:.12em;text-shadow:0 2px 4px #000}
+.hpbar{width:126px;height:13px;margin-top:0;border-radius:1px;border:1px solid #080808;background:#070707;box-shadow:0 3px 8px rgba(0,0,0,.55)}.hpbar i{border-radius:0;background:linear-gradient(90deg,#8d1e21,#e04c48 72%,#ff7a66)}.hpbar.pb i{background:linear-gradient(90deg,#176d8b,#44bce7 72%,#8ce1ff)}.hptx{margin-top:-13px;z-index:2;color:#fff;font:bold 9px "PingFang SC",sans-serif;text-shadow:0 1px 3px #000;pointer-events:none}.strow{margin-top:8px}.stag{min-height:18px;border-radius:2px;font-family:"PingFang SC",sans-serif;font-size:9px;background:rgba(8,9,7,.88)}
+#turn-banner{top:39%;font-size:28px;letter-spacing:.38em;padding:12px;background:linear-gradient(90deg,transparent,rgba(9,10,8,.88),transparent);border-top:1px solid rgba(223,178,86,.3);border-bottom:1px solid rgba(223,178,86,.3)}
+#target-hint{top:16px;width:max-content;max-width:80%;left:50%;right:auto;transform:translateX(-50%);padding:7px 14px;background:rgba(9,10,8,.88);border:1px solid var(--naruto);font-family:"PingFang SC",sans-serif;font-size:10px;border-radius:2px}
+#combat-bottom{position:relative;z-index:7;background:#080907;border-top:1px solid rgba(223,178,86,.3);box-shadow:0 -12px 28px rgba(0,0,0,.45)}#combat-bottom::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,transparent,var(--naruto) 22%,var(--gold) 50%,var(--chakra) 78%,transparent);opacity:.55}
+#combat-info{height:36px;padding:5px 14px;background:#11110d;border-bottom:1px solid rgba(240,228,195,.1);font-family:"PingFang SC",sans-serif}.pilebtn{height:25px;border-radius:2px;background:#1b1b15;border-color:rgba(240,228,195,.16);color:#aaa38e}.pilebtn:hover{color:var(--paper);border-color:var(--gold)}#combat-log{color:#d8d0b8;font-size:11px;letter-spacing:.04em}
+#hand-outer{gap:14px;padding:6px 12px 10px;background:radial-gradient(ellipse at center bottom,rgba(76,199,239,.055),transparent 56%)}
+#orb{width:66px;height:66px;min-width:66px;border:1px solid #7cdbf5;background:radial-gradient(circle at 38% 32%,#9ce9ff 0 7%,#2799c4 26%,#0c3c56 72%);box-shadow:0 0 0 4px #101713,0 0 0 5px rgba(111,209,239,.48),0 0 24px rgba(76,199,239,.5),inset 0 -8px 18px rgba(0,0,0,.5)}#orb::before{content:"";position:absolute;width:49px;height:49px;border:1px dashed rgba(255,255,255,.42);border-radius:50%;animation:spin 12s linear infinite}#orb span,#orb small{position:relative;z-index:1}#orb small{font-size:7px;letter-spacing:.18em}
+#endturn{min-width:86px;height:62px;border-radius:3px;font-size:13px;line-height:1.45;background:#235d79;border-color:#5db9db;box-shadow:inset 0 1px rgba(255,255,255,.16),0 5px 0 #102c3a,0 9px 18px rgba(0,0,0,.42)}
+
+/* Cards */
+.card{border-radius:8px;padding:7px 8px 6px;border:1px solid color-mix(in srgb,var(--cc) 78%,#fff);background:linear-gradient(160deg,#2a281f,#11120e 78%);box-shadow:0 7px 16px rgba(0,0,0,.65),inset 0 0 0 2px #080906,inset 0 0 0 3px color-mix(in srgb,var(--cc) 42%,transparent);overflow:visible}
+.card::before{content:"";position:absolute;inset:4px;border:1px solid rgba(240,228,195,.12);border-radius:5px;pointer-events:none}.card::after{content:"";position:absolute;left:14px;right:14px;top:9px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);pointer-events:none}
+.card.inhand:hover{transform:translateY(-32px) scale(1.09)!important;box-shadow:0 20px 32px rgba(0,0,0,.72),0 0 16px color-mix(in srgb,var(--cc) 48%,transparent)}
+.card .gem{top:-9px;left:-9px;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#b9efff,#2284aa 45%,#0b354b 76%);border:2px solid #a9e7f8;box-shadow:0 3px 9px #000,0 0 8px rgba(76,199,239,.4);font-size:15px}.card .nm{font-size:13px!important;min-height:20px;padding:0 15px 4px;color:#f2e8ce;letter-spacing:.03em}.card .art{position:relative;height:var(--card-art-h);margin:1px 0 4px;border-radius:3px;border:1px solid color-mix(in srgb,var(--cc) 62%,#111);background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--cc) 44%,#222),#0b0c09 72%);filter:none;box-shadow:inset 0 0 18px rgba(0,0,0,.5);isolation:isolate}.card .art::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 34%,rgba(0,0,0,.28))}.card .art img{filter:saturate(.92) contrast(1.08)}.art-glyph{font-size:34px;filter:drop-shadow(0 4px 5px #000);z-index:1}.art-seal{position:absolute;font-size:72px;font-weight:900;color:rgba(255,255,255,.055);transform:rotate(-8deg);z-index:0}.card .tband{position:relative;z-index:2;margin:-10px auto 1px;border-radius:2px;padding:2px 12px;background:#181912;border-color:color-mix(in srgb,var(--cc) 55%,#222);font-size:7px}.card .ds{margin:0 3px;padding:7px 5px 2px;color:#d8d0b8;font-size:10px;line-height:1.38;background:rgba(0,0,0,.18);border-top:1px solid rgba(240,228,195,.08)}.card .ds.middesc{font-size:9.5px}.card .ds.longdesc{font-size:8.9px}.card .ds b{color:#f2a14b}.card .rar{font-family:"PingFang SC",sans-serif;font-size:7px;color:#b7ae94}.card.r2{box-shadow:0 7px 16px rgba(0,0,0,.65),0 0 12px rgba(223,178,86,.25),inset 0 0 0 2px #080906}.card.r3{animation:rarePulse 3.2s ease-in-out infinite;box-shadow:0 7px 16px rgba(0,0,0,.65),0 0 18px rgba(151,109,204,.42),inset 0 0 0 2px #080906}@keyframes rarePulse{50%{filter:brightness(1.08)}}
+.technique-callout{position:absolute;z-index:48;left:50%;top:24%;transform:translateX(-50%);pointer-events:none;text-align:center;animation:techniqueCall 1s ease forwards}.technique-callout small{display:block;color:#aba48e;font:8px "PingFang SC",sans-serif;letter-spacing:.3em}.technique-callout b{display:block;margin-top:2px;padding:7px 24px;color:#fff;font-size:22px;letter-spacing:.16em;text-shadow:0 3px 8px #000;border-top:1px solid currentColor;border-bottom:1px solid currentColor;background:linear-gradient(90deg,transparent,rgba(5,5,4,.86),transparent)}.technique-callout.atk b{color:#ff765b}.technique-callout.skl b{color:#66e0cf}.technique-callout.pwr b{color:#c6a0ef}@keyframes techniqueCall{0%{opacity:0;transform:translate(-50%,18px) scale(.92)}20%,68%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-16px) scale(1.03)}}
+
+/* Rewards, overlays and scene panels */
+#screen-reward,#screen-end{padding:32px;background:#080907 center/cover no-repeat}#screen-reward[data-act="0"]{background-image:linear-gradient(rgba(6,7,5,.78),rgba(6,7,5,.96)),url("assets/backgrounds/act1-forest.jpg")}#screen-reward[data-act="1"]{background-image:linear-gradient(rgba(7,5,9,.78),rgba(7,5,9,.96)),url("assets/backgrounds/act2-hideout.jpg")}#screen-reward[data-act="2"]{background-image:linear-gradient(rgba(8,5,6,.78),rgba(8,5,6,.96)),url("assets/backgrounds/act3-ruins.jpg")}#screen-end{background-image:linear-gradient(rgba(6,7,5,.74),rgba(6,7,5,.96)),url("assets/backgrounds/act3-ruins.jpg")}
+#reward-list{width:min(900px,100%);margin:auto;padding:22px;background:rgba(12,13,10,.8);border-top:1px solid rgba(223,178,86,.34);border-bottom:1px solid rgba(223,178,86,.34);backdrop-filter:blur(10px)}
+.cgrid{gap:18px;margin:14px 0}.ritem{min-width:300px;max-width:580px;border-radius:3px;padding:13px 20px;background:rgba(22,22,17,.94);border-color:rgba(223,178,86,.25);box-shadow:0 8px 22px rgba(0,0,0,.3);font-family:"PingFang SC",sans-serif}.ritem:hover{border-color:var(--gold);background:#242219;transform:translateY(-2px)}
+#overlay{background:rgba(4,5,4,.84);backdrop-filter:blur(12px);padding:32px}#overlay.on::before{content:"";position:fixed;inset:5%;border:1px solid rgba(223,178,86,.16);pointer-events:none}#overlay>.center{width:min(900px,100%);margin:auto;padding:24px;background:rgba(14,15,11,.88);border-top:1px solid rgba(223,178,86,.32);border-bottom:1px solid rgba(223,178,86,.32)}
+#toast{top:70px;border-radius:2px;border-color:var(--gold);background:rgba(12,13,10,.96);box-shadow:0 10px 28px rgba(0,0,0,.5);font-family:"PingFang SC",sans-serif}
+#screen-shop,#screen-rest,#screen-event{padding:30px;background-position:center;background-size:cover}.event-box{max-width:660px;margin:auto;border-radius:3px;padding:30px 34px;background:rgba(13,14,11,.88);border:1px solid rgba(223,178,86,.34);box-shadow:0 25px 60px rgba(0,0,0,.55);backdrop-filter:blur(10px)}.event-box .eic{width:74px;height:74px;display:grid;place-items:center;margin:0 auto 10px;background:#1e1e17;border:1px solid rgba(223,178,86,.32);font-size:40px;transform:rotate(-2deg)}.event-box p{font-family:"PingFang SC",sans-serif;color:#c4bca5}.eopts{gap:9px}.eopts .btn{text-align:left;padding:12px 16px;font-size:12px;border-left:3px solid var(--naruto)}
+.shop-shell,.rest-shell{width:min(1000px,100%);margin:auto;padding:24px;background:rgba(12,13,10,.84);border-top:1px solid rgba(223,178,86,.34);border-bottom:1px solid rgba(223,178,86,.34);backdrop-filter:blur(10px)}.shop-section-title{display:flex;align-items:center;gap:10px;width:min(900px,100%);margin:18px auto 2px;color:var(--gold);font-size:11px;letter-spacing:.16em}.shop-section-title::after{content:"";height:1px;flex:1;background:rgba(223,178,86,.22)}.shop-shelf{padding:8px 0 12px}.shop-relic{width:160px;min-height:174px;border-radius:4px;background:rgba(25,25,19,.94);border-color:rgba(223,178,86,.3);box-shadow:0 10px 22px rgba(0,0,0,.35);transition:.18s ease}.shop-relic:hover{transform:translateY(-5px);border-color:var(--gold);background:#242219}.shop-relic .ric{font-size:38px}.shop-relic .rname{font-size:14px}.price{font-family:"PingFang SC",sans-serif;font-weight:700}.price:not(.cant){display:inline-block;padding:4px 10px;background:#2b2413;border:1px solid rgba(223,178,86,.26)}
+.rest-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:min(720px,100%);margin:26px auto}.rest-choice{min-height:160px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;padding:22px;background:rgba(20,20,15,.9);border:1px solid rgba(240,228,195,.18);cursor:pointer;transition:.2s ease}.rest-choice:hover{transform:translateY(-5px);border-color:var(--gold);background:#25231a}.rest-choice .choice-icon{font-size:42px;margin-bottom:auto}.rest-choice b{font-size:20px;letter-spacing:.12em}.rest-choice span{font-family:"PingFang SC",sans-serif;font-size:11px;color:#aaa38e;margin-top:6px}
+.statline{max-width:760px;padding:18px;background:rgba(10,11,8,.75);border-top:1px solid rgba(223,178,86,.22);border-bottom:1px solid rgba(223,178,86,.22);font-family:"PingFang SC",sans-serif}.statline span{min-width:110px;text-align:center}.statline b{display:block;font-size:20px;color:var(--gold)}
+.screen.active:not(#screen-combat):not(#screen-title){animation:sceneEnter .34s ease-out both}@keyframes sceneEnter{from{opacity:.2;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media (max-width:1080px){
+  .title-shell{grid-template-columns:320px minmax(620px,1fr);gap:26px;padding:30px}.title-main{font-size:55px}.title-kanji{width:68px;height:82px;font-size:46px}.char-card{min-height:390px}.char-desc{font-size:10px}.hud-brand{display:none}.hud-vitals{margin-left:0}
+}
+@media (max-width:820px){
+  :root{--card-w:132px;--card-h:194px;--card-art-h:78px}
+  #topbar{min-height:82px;padding:5px 8px;flex-wrap:wrap}.hud-vitals{width:100%;justify-content:center;height:35px}.hud-route{margin-left:0;padding-left:0;border:0}.hud-kit{margin-left:auto}.tstat{height:30px;padding:3px 7px}.hud-label{display:none!important}
+  .title-shell{display:block;padding:26px 18px;overflow-y:auto}.title-hero{max-width:none;margin-bottom:24px}.title-desc{max-width:680px;margin:16px 0}.title-features{display:none}.title-roster{padding:0}.char-card{min-height:350px}.char-portrait{height:74%}
+  #stage{--combat-player-w:46%;--combat-enemy-w:54%}.frame.sprite-frame{width:140px;height:180px}.unit.player .frame.sprite-frame{width:145px;height:184px}.unit.elite .frame.sprite-frame{width:150px;height:190px}.unit.boss .frame.sprite-frame{width:170px;height:215px}.uname,.hpbar{min-width:105px;width:105px}.unit .intent{min-width:90px}.card .ds{font-size:8.8px}.card .ds.middesc{font-size:8.2px}.card .ds.longdesc{font-size:7.7px}
+}
+@media (max-width:620px){
+  :root{--card-w:116px;--card-h:172px;--card-art-h:64px}
+  #topbar{min-height:72px}.hud-vitals{justify-content:flex-start;overflow:hidden}.tstat{font-size:11px}.hud-route{display:none}.hud-kit{width:100%;justify-content:flex-end}.deck-btn{margin-right:auto}#relicbar{max-width:92px}.relic-i,.potion-i{width:25px;height:25px}
+  #screen-title{justify-content:flex-start}.title-shell{padding:20px 14px}.title-kicker{margin-bottom:12px}.title-kanji{width:54px;height:64px;font-size:36px}.title-main{font-size:42px}.title-sub{font-size:8px}.title-desc{font-size:11.5px;line-height:1.65;margin:13px 0 18px}.roster-heading h2{font-size:18px}
+  .char-grid{display:grid;grid-template-columns:1fr;gap:8px}.char-card{min-height:168px}.char-portrait{width:52%;height:115%;left:auto;right:-2%;top:-7%;object-position:center}.char-card::before{background:linear-gradient(90deg,rgba(9,10,8,.96) 0 48%,transparent 78%)}.char-card-body{top:0;bottom:0;width:68%;padding:20px 12px;background:linear-gradient(90deg,rgba(8,9,7,.98) 0 72%,transparent);display:flex;flex-direction:column;justify-content:center}.char-index{font-size:20px}.char-name{font-size:18px}.char-desc{min-height:auto}.roster-note{display:none}
+  #screen-map{padding:16px 8px 0}.map-toolbar{top:-16px}.map-head{padding-inline:8px}.map-head .sec-t{font-size:15px}.map-legend{gap:3px}.map-legend span{font-size:8px;padding:3px 5px}#map-wrap{padding:10px 12px 20px}
+  #stage{min-height:255px;--combat-player-w:44%;--combat-enemy-w:56%;background-position:center bottom}.frame.sprite-frame{width:104px;height:132px}.unit.player .frame.sprite-frame{width:108px;height:136px}.unit.elite .frame.sprite-frame{width:110px;height:142px}.unit.boss .frame.sprite-frame{width:125px;height:158px}#enemy-side{gap:0;padding-inline:0}.unit .intent{min-width:72px;max-width:105px!important;padding:3px 5px;font-size:9px}.unit .intent::before{font-size:6px}.uname,.hpbar{min-width:84px;width:84px}.uname{font-size:9px;padding:3px}.hpbar{height:11px}.hptx{margin-top:-11px;font-size:8px}.strow{max-width:100px;gap:2px}.stag{font-size:7px;padding:0 3px}.technique-callout b{font-size:16px;padding:5px 14px}
+  #combat-info{height:31px;padding:3px 6px}.pilebtn{font-size:0;padding:2px 6px}.pilebtn span,.pilebtn::first-letter{font-size:10px}#combat-log{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#hand-outer{gap:5px;padding:4px 5px 7px}#orb{width:48px;height:48px;min-width:48px;font-size:17px}#orb::before{width:36px;height:36px}#endturn{min-width:58px;width:58px;height:50px;padding:5px;font-size:10px}.card .nm{font-size:10px!important}.card .art{margin-bottom:2px}.card .tband{font-size:6px;margin-top:-8px}.card .ds{font-size:7.8px;line-height:1.18;padding:5px 3px}.card .ds.middesc{font-size:7.3px}.card .ds.longdesc{font-size:6.8px}.card .rar{font-size:5.8px}.card .gem{width:25px;height:25px;font-size:12px}
+  #screen-shop,#screen-rest,#screen-event,#screen-reward{padding:14px}.shop-shell,.rest-shell,#reward-list{padding:16px 10px}.rest-choices{grid-template-columns:1fr;gap:8px}.rest-choice{min-height:108px}.event-box{padding:20px 15px}.ritem{min-width:0;width:100%;font-size:12px}.shop-relic{width:132px;min-height:160px}
+}
 </style>
 </head>
 <body>
 <div id="app">
   <div id="topbar">
-    <div class="tstat ch" id="t-char"></div>
-    <div class="tstat hp">❤️<span id="t-hp"></span></div>
-    <div class="tstat gd">🪙<span id="t-gold"></span></div>
-    <div class="tstat fl" id="t-floor"></div>
-    <button class="tbtn" onclick="G.viewDeck()">🎴 卡组 <span id="t-deck"></span></button>
-    <div id="potionbar"></div>
-    <div id="relicbar"></div>
-    <button class="tbtn" id="sfx-btn" onclick="G.toggleSfx()">🔊</button>
+    <div class="hud-brand"><span class="hud-seal">忍</span><span>忍道之路<small>NINDO ROAD</small></span></div>
+    <div class="hud-vitals">
+      <div class="tstat ch" id="t-char"></div>
+      <div class="tstat hp"><span class="hud-label">生命</span><span id="t-hp"></span></div>
+      <div class="tstat gd"><span class="hud-label">资金</span>🪙<span id="t-gold"></span></div>
+    </div>
+    <div class="hud-route"><span class="hud-label">任务进度</span><div class="tstat fl" id="t-floor"></div></div>
+    <div class="hud-kit">
+      <button class="tbtn deck-btn" onclick="G.viewDeck()"><span>卡组</span><b id="t-deck"></b></button>
+      <div id="potionbar"></div>
+      <div id="relicbar"></div>
+      <button class="tbtn icon-btn" id="sfx-btn" onclick="G.toggleSfx()" aria-label="切换音效">🔊</button>
+    </div>
   </div>
 
   <div class="screen active" id="screen-title">
-    <div class="uzu-wrap"><div class="uzu"></div><div class="uzu u2"></div><div class="uzu-core">🍥</div></div>
-    <div class="title-main">忍道之路</div>
-    <div class="title-sub">N I N D O · R O G U E L I K E</div>
-    <p class="title-desc">
-      选择鸣人、佐助或小樱,以不同初始牌组踏上忍道。<br>
-      穿越<b>三章随机路线</b>,在战斗、奇遇、商店、宝箱与篝火间权衡。<br>
-      每回合 <b>3 点查克拉</b>,格挡回合末消散,敌人意图完全公开——<br>
-      构筑角色专属忍术卡组,收集忍具与秘药,迎战沿途强敌与<b>晓之首领</b>。
-    </p>
-    <div id="continue-wrap" class="center"></div>
-    <div class="char-grid">
-      <button class="char-card" onclick="G.newRun('naruto')">
-        <div class="char-face">🦊</div><div class="char-name">漩涡鸣人</div>
-        <div class="char-role">影分身 · 螺旋丸 · 九尾成长</div>
-        <div class="char-desc">韧性最高,依靠影分身形成延时防御,用螺旋丸和九尾查克拉在长战中滚雪球。</div>
-        <div class="char-deck">起手:4 攻 + 4 防 + 螺旋丸 / 影分身之术</div>
-      </button>
-      <button class="char-card" onclick="G.newRun('sasuke')">
-        <div class="char-face">👁️</div><div class="char-name">宇智波佐助</div>
-        <div class="char-role">雷遁 · 写轮眼 · 易伤爆发</div>
-        <div class="char-desc">生命较低,但启动快。通过易伤、虚弱和多段攻击压低敌人行动空间。</div>
-        <div class="char-deck">起手:4 攻 + 4 防 + 狮子连弹 / 千鸟雏形</div>
-      </button>
-      <button class="char-card" onclick="G.newRun('sakura')">
-        <div class="char-face">🌸</div><div class="char-name">春野樱</div>
-        <div class="char-role">医疗 · 怪力蓄势 · 身法防守</div>
-        <div class="char-desc">防守和续航更强,能把治疗与格挡转化为怪力,再用重拳打出爆发。</div>
-        <div class="char-deck">起手:4 攻 + 4 防 + 怪力拳 / 掌仙术</div>
-      </button>
+    <div class="title-shell">
+      <section class="title-hero">
+        <div class="title-kicker"><span></span>木叶机密任务 / RANK S</div>
+        <div class="title-mark"><span class="title-kanji">忍</span><div><div class="title-main">忍道之路</div><div class="title-sub">NINDO ROAD</div></div></div>
+        <p class="title-desc">三章随机爬塔卡牌冒险。观察敌人意图，构筑角色专属忍术，在每一次路线选择中决定自己的忍道。</p>
+        <div class="title-features"><span>3 名忍者</span><span>随机路线</span><span>卡组构筑</span><span>首领转阶段</span></div>
+      </section>
+      <section class="title-roster">
+        <div class="roster-heading"><div><small>SELECT SHINOBI</small><h2>选择出战忍者</h2></div><span>档案 01 / 03</span></div>
+        <div id="continue-wrap" class="center"></div>
+        <div class="char-grid">
+          <button class="char-card" data-char="naruto" onclick="G.newRun('naruto')">
+            <img class="char-portrait" src="assets/sprites/naruto.png" alt="漩涡鸣人">
+            <span class="char-index">01</span>
+            <div class="char-card-body"><div class="char-role">影分身 / 九尾成长</div><div class="char-name">漩涡鸣人</div>
+              <div class="char-desc">高韧性延时防御，在长战中持续累积力量。</div>
+              <div class="char-deck"><span>生命 80</span><span>螺旋丸</span><span>影分身</span></div></div>
+          </button>
+          <button class="char-card" data-char="sasuke" onclick="G.newRun('sasuke')">
+            <img class="char-portrait" src="assets/sprites/sasuke.png" alt="宇智波佐助">
+            <span class="char-index">02</span>
+            <div class="char-card-body"><div class="char-role">雷遁 / 易伤爆发</div><div class="char-name">宇智波佐助</div>
+              <div class="char-desc">高速压制与多段攻击，用写轮眼掌控战局。</div>
+              <div class="char-deck"><span>生命 72</span><span>狮子连弹</span><span>千鸟</span></div></div>
+          </button>
+          <button class="char-card" data-char="sakura" onclick="G.newRun('sakura')">
+            <img class="char-portrait" src="assets/sprites/sakura.png" alt="春野樱">
+            <span class="char-index">03</span>
+            <div class="char-card-body"><div class="char-role">医疗 / 怪力蓄势</div><div class="char-name">春野樱</div>
+              <div class="char-desc">将治疗与格挡转化为怪力，蓄势后重拳终结。</div>
+              <div class="char-deck"><span>生命 76</span><span>怪力拳</span><span>掌仙术</span></div></div>
+          </button>
+        </div>
+        <div class="roster-note"><span>任务目标</span>穿越木叶外围、音忍据点与晓之阴影</div>
+      </section>
     </div>
-    <p style="color:var(--paper-dim);font-size:11.5px;margin-top:22px;opacity:.7">攻击牌/定向技能:点击卡牌后点敌人 · 防御/能力/全体牌:连点两次打出 · 右键卡牌预览升级</p>
   </div>
 
   <div class="screen" id="screen-map">
-    <div class="act-banner" id="act-banner"></div>
-    <div class="sec-t" id="map-title"></div>
-    <div class="sec-s">⚔️战斗 💀精英 🔥篝火 ❓奇遇 🏪商店 ☠️首领 — 沿虚线路径前进</div>
-    <div class="divider"></div>
+    <div class="map-toolbar">
+      <div class="map-head">
+        <div><div class="act-banner" id="act-banner"></div><div class="sec-t" id="map-title"></div></div>
+        <div class="map-progress"><small>当前进度</small><b id="map-progress">第 1 层</b></div>
+      </div>
+      <div class="map-legend"><span>⚔️ 战斗</span><span>💀 精英</span><span>🔥 篝火</span><span>❓ 奇遇</span><span>🏪 商店</span><span>🎁 宝箱</span></div>
+    </div>
     <div id="map-wrap"></div>
   </div>
 
@@ -445,7 +590,7 @@ button{font-family:inherit}
     </div>
   </div>
 
-  <div class="screen" id="screen-reward"><div class="sec-t">战 斗 胜 利</div><div class="divider"></div><div class="center" id="reward-list"></div></div>
+  <div class="screen" id="screen-reward"><div class="act-banner">MISSION COMPLETE / 任务结算</div><div class="sec-t">战 斗 胜 利</div><div class="divider"></div><div class="center" id="reward-list"></div></div>
   <div class="screen" id="screen-rest"></div>
   <div class="screen" id="screen-event"><div class="event-box" id="event-box"></div></div>
   <div class="screen" id="screen-shop"></div>
@@ -831,7 +976,11 @@ function cardWidth(){
   return CARD_W_CACHE;
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const screen=$(id);screen.classList.add('active');
+  if(window.G&&Number.isInteger(G.act))screen.dataset.act=G.act;
+}
 function toast(m){const t=$('toast');t.innerHTML=m;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1900)}
 function esc(s){return String(s).replace(/"/g,'&quot;')}
 
@@ -896,7 +1045,7 @@ function cardDescClass(desc){
 }
 function cardHTML(c,extra="",style=""){
   const desc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
-  const art=c.art?`<img src="${esc(c.art)}" alt="">`:c.ic;
+  const art=c.art?`<img src="${esc(c.art)}" alt="">`:`<span class="art-seal">忍</span><span class="art-glyph">${c.ic}</span>`;
   const keyboard=String(extra).split(/\s+/).includes('inhand')?'role="button" tabindex="0"':'';
   return `<div ${keyboard} data-card-key="${esc(c.key)}" data-upgraded="${c.upgraded?1:0}" oncontextmenu="event.preventDefault();event.stopPropagation();G.previewUpgrade('${c.key}',${c.upgraded?1:0});return false" class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
     <div class="gem">${c.unplayable?'✕':c.c}</div>
@@ -1371,6 +1520,7 @@ const G={
     this.nodes=nodes;
   },
   renderMap(){
+    $('screen-map').dataset.act=this.act;
     $('act-banner').textContent=`— ${ACTS[this.act].name} —`;
     $('map-title').textContent=ACTS[this.act].sub;
     const ICON={fight:'⚔️',elite:'💀',rest:'🔥',unknown:'❓',event:'❓',shop:'🏪',chest:'🎁',boss:'☠️'};
@@ -1408,6 +1558,7 @@ const G={
       </g>`;
     });
     $('map-wrap').innerHTML=`<svg id="map-svg" viewBox="0 0 ${W} ${H}">${edges}${nds}</svg>`;
+    $('map-progress').textContent=this.row>0?`第 ${this.row} / ${rows+1} 层`:`起点 / ${rows+1} 层`;
     // 自动滚到当前位置附近
     const sc=$('screen-map');
     requestAnimationFrame(()=>{sc.scrollTop=sc.scrollHeight*(1-(this.row+1.6)/(rows+2))});
@@ -1709,6 +1860,7 @@ Object.assign(G,{
   playCardAt(idx,target){
     const c=this.hand[idx];if(!c||c.c>this.energy)return;
     this.picked=null;$('target-hint').classList.remove('on');
+    this.cardPlayFx(c);
     this.hand.splice(idx,1);
     this.stats.cards++;
     this.execCard(c,target);
@@ -2059,6 +2211,13 @@ Object.assign(G,{
     f.style.top=(r.top-a.top+rnd(0,16))+'px';
     $('app').appendChild(f);setTimeout(()=>f.remove(),900);
   },
+  cardPlayFx(c){
+    const stage=$('stage');if(!stage)return;
+    const fx=document.createElement('div');
+    fx.className=`technique-callout ${c.t}`;
+    fx.innerHTML=`<small>${TYPE_LABEL[c.t]||'忍术'} / NINJUTSU</small><b>${c.n.replace('⁺','')}</b>`;
+    stage.appendChild(fx);setTimeout(()=>fx.remove(),1050);
+  },
   fxSlash(anchor){
     if(!anchor)return;
     const r=anchor.getBoundingClientRect(),a=$('app').getBoundingClientRect();
@@ -2337,12 +2496,15 @@ Object.assign(G,{
     const pct=this.hasRelic('medkit')?0.5:0.3;
     const amt=Math.floor(this.maxHp*pct);
     $('screen-rest').innerHTML=`
-      <div class="sec-t">🔥 篝 火</div>
-      <div class="sec-s">队伍在树影间短暂休整,火光摇曳</div>
-      <div class="divider"></div>
-      <div class="center">
-        <div class="ritem" role="button" tabindex="0" onclick="G.restHeal(${amt})">🍙 打坐调息<br><span style="color:var(--paper-dim);font-size:12.5px">回复 ${amt} 点生命(${Math.round(pct*100)}%)</span></div>
-        <div class="ritem" role="button" tabindex="0" onclick="G.restUpgrade()">📜 修炼忍术<br><span style="color:var(--paper-dim);font-size:12.5px">永久升级一张卡牌</span></div>
+      <div class="rest-shell">
+        <div class="act-banner">SAFE HOUSE / 安全据点</div>
+        <div class="sec-t">篝 火</div>
+        <div class="sec-s">夜色暂时掩住了追兵，只够完成一项准备</div>
+        <div class="divider"></div>
+        <div class="rest-choices">
+          <div class="rest-choice" role="button" tabindex="0" onclick="G.restHeal(${amt})"><span class="choice-icon">🍙</span><b>打坐调息</b><span>回复 ${amt} 点生命 · ${Math.round(pct*100)}% 最大生命</span></div>
+          <div class="rest-choice" role="button" tabindex="0" onclick="G.restUpgrade()"><span class="choice-icon">📜</span><b>修炼忍术</b><span>永久升级一张未强化的卡牌</span></div>
+        </div>
       </div>`;
     show('screen-rest');
   },
@@ -2391,16 +2553,15 @@ Object.assign(G,{
   },
   renderShop(){
     const aff=p=>this.gold>=p?'':'cant';
-    let h=`<div class="sec-t">🏪 行商的帐篷</div>
-      <div class="sec-s">「呵呵,小兄弟,木叶的货可不便宜……看看?」 · 你的金币:<b style="color:var(--gold)">${this.gold}</b></div>
-      <div class="divider"></div>
-      <div class="cgrid">`;
+    let h=`<div class="shop-shell"><div class="act-banner">TRAVELING MERCHANT / 行商补给</div><div class="sec-t">行商的帐篷</div>
+      <div class="sec-s">“钱可以买不到忍道，但能让你活着走得更远。” · 持有 <b style="color:var(--gold)">${this.gold}</b> 金币</div>
+      <div class="divider"></div><div class="shop-section-title">忍术卷轴</div><div class="cgrid shop-shelf">`;
     h+=this.shopCards.map((c,i)=>{
       if(!c)return `<div style="width:var(--card-w);text-align:center;color:var(--paper-dim);padding-top:60px">已售出</div>`;
       return `<div role="button" tabindex="0" onclick="G.buyCard(${i})"><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div>
         <div class="price ${aff(this.shopPrices[i])}">🪙 ${this.shopPrices[i]}</div></div>`;
     }).join('');
-    h+=`</div><div class="cgrid">`;
+    h+=`</div><div class="shop-section-title">忍具与秘药</div><div class="cgrid shop-shelf">`;
     if(this.shopRelics.length){
       h+=this.shopRelics.map((k,i)=>{
         if(!k)return `<div class="shop-relic sold"><div class="ric">✓</div><div class="rname">已售出</div><div class="rdesc">这件忍具已经收入囊中</div></div>`;
@@ -2411,7 +2572,7 @@ Object.assign(G,{
     if(this.shopPotion){const p=POTIONS[this.shopPotion];
       h+=`<div class="shop-relic" role="button" tabindex="0" onclick="G.buyPotion()" style="border-color:var(--chakra)"><div class="ric">${p.ic}</div><div class="rname" style="color:var(--chakra)">${p.n}</div><div class="rdesc">${p.d}</div><div class="price ${aff(45)}">🪙 45</div></div>`}
     h+=`<div class="shop-relic ${this.removeUsed?'sold':''}" role="button" tabindex="0" onclick="G.buyRemove()"><div class="ric">🗑️</div><div class="rname">删卡服务</div><div class="rdesc">从卡组中永久移除一张卡牌</div><div class="price ${aff(75)}">🪙 75</div></div>`;
-    h+=`</div><div class="center" style="margin-top:18px"><button class="btn ghost" onclick="G.backToMap()">离开商店</button></div>`;
+    h+=`</div><div class="center" style="margin-top:18px"><button class="btn ghost" onclick="G.backToMap()">离开商店</button></div></div>`;
     $('screen-shop').innerHTML=h;
   },
   buyCard(i){
