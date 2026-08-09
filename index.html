@@ -464,7 +464,9 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
 .card{border-radius:8px;padding:7px 8px 6px;border:1px solid color-mix(in srgb,var(--cc) 78%,#fff);background:linear-gradient(160deg,#2a281f,#11120e 78%);box-shadow:0 7px 16px rgba(0,0,0,.65),inset 0 0 0 2px #080906,inset 0 0 0 3px color-mix(in srgb,var(--cc) 42%,transparent);overflow:visible}
 .card::before{content:"";position:absolute;inset:4px;border:1px solid rgba(240,228,195,.12);border-radius:5px;pointer-events:none}.card::after{content:"";position:absolute;left:14px;right:14px;top:9px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);pointer-events:none}
 .card.inhand:hover{transform:translateY(-32px) scale(1.09)!important;box-shadow:0 20px 32px rgba(0,0,0,.72),0 0 16px color-mix(in srgb,var(--cc) 48%,transparent)}
-.card .gem{top:-9px;left:-9px;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#b9efff,#2284aa 45%,#0b354b 76%);border:2px solid #a9e7f8;box-shadow:0 3px 9px #000,0 0 8px rgba(76,199,239,.4);font-size:15px}.card .nm{font-size:13px!important;min-height:20px;padding:0 15px 4px;color:#f2e8ce;letter-spacing:.03em}.card .art{position:relative;height:var(--card-art-h);margin:1px 0 4px;border-radius:3px;border:1px solid color-mix(in srgb,var(--cc) 62%,#111);background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--cc) 44%,#222),#0b0c09 72%);filter:none;box-shadow:inset 0 0 18px rgba(0,0,0,.5);isolation:isolate}.card .art::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 34%,rgba(0,0,0,.28))}.card .art img{filter:saturate(.92) contrast(1.08)}.art-glyph{font-size:34px;filter:drop-shadow(0 4px 5px #000);z-index:1}.art-seal{position:absolute;font-size:72px;font-weight:900;color:rgba(255,255,255,.055);transform:rotate(-8deg);z-index:0}.card .tband{position:relative;z-index:2;margin:-10px auto 1px;border-radius:2px;padding:2px 12px;background:#181912;border-color:color-mix(in srgb,var(--cc) 55%,#222);font-size:7px}.card .ds{margin:0 3px;padding:7px 5px 2px;color:#d8d0b8;font-size:10px;line-height:1.38;background:rgba(0,0,0,.18);border-top:1px solid rgba(240,228,195,.08)}.card .ds.middesc{font-size:9.5px}.card .ds.longdesc{font-size:8.9px}.card .ds b{color:#f2a14b}.card .rar{font-family:"PingFang SC",sans-serif;font-size:7px;color:#b7ae94}.card.r2{box-shadow:0 7px 16px rgba(0,0,0,.65),0 0 12px rgba(223,178,86,.25),inset 0 0 0 2px #080906}.card.r3{animation:rarePulse 3.2s ease-in-out infinite;box-shadow:0 7px 16px rgba(0,0,0,.65),0 0 18px rgba(151,109,204,.42),inset 0 0 0 2px #080906}@keyframes rarePulse{50%{filter:brightness(1.08)}}
+.card .gem{top:-9px;left:-9px;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#b9efff,#2284aa 45%,#0b354b 76%);border:2px solid #a9e7f8;box-shadow:0 3px 9px #000,0 0 8px rgba(76,199,239,.4);font-size:15px}.card .nm{font-size:var(--card-name-size,13px)!important;min-height:20px;padding:0 15px 4px;color:#f2e8ce;letter-spacing:.03em}.card .art{position:relative;height:var(--card-art-h);margin:1px 0 4px;border-radius:3px;border:1px solid color-mix(in srgb,var(--cc) 62%,#111);background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--cc) 44%,#222),#0b0c09 72%);filter:none;box-shadow:inset 0 0 18px rgba(0,0,0,.5);isolation:isolate}.card .art::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 34%,rgba(0,0,0,.28))}.card .art img{filter:saturate(.92) contrast(1.08)}.art-glyph{font-size:34px;filter:drop-shadow(0 4px 5px #000);z-index:1}.art-seal{position:absolute;font-size:72px;font-weight:900;color:rgba(255,255,255,.055);transform:rotate(-8deg);z-index:0}.card .tband{position:relative;z-index:2;margin:-10px auto 1px;border-radius:2px;padding:2px 12px;background:#181912;border-color:color-mix(in srgb,var(--cc) 55%,#222);font-size:7px}.card .ds{margin:0 3px;padding:7px 5px 2px;color:#d8d0b8;font-size:10px;line-height:1.38;background:rgba(0,0,0,.18);border-top:1px solid rgba(240,228,195,.08)}.card .ds.middesc{font-size:9.5px}.card .ds.longdesc{font-size:8.9px}.card .ds b{color:#f2a14b}.card .rar{font-family:"PingFang SC",sans-serif;font-size:7px;color:#b7ae94}.card.r2{box-shadow:0 7px 16px rgba(0,0,0,.65),0 0 12px rgba(223,178,86,.25),inset 0 0 0 2px #080906}.card.r3{animation:rarePulse 3.2s ease-in-out infinite;box-shadow:0 7px 16px rgba(0,0,0,.65),0 0 18px rgba(151,109,204,.42),inset 0 0 0 2px #080906}@keyframes rarePulse{50%{filter:brightness(1.08)}}
+.kw{all:unset;display:inline;color:#f4bc68;font:inherit;font-weight:800;border-bottom:1px dotted rgba(244,188,104,.8);cursor:help;line-height:inherit}.kw:hover,.kw:focus-visible{color:#ffe0a3;border-bottom-style:solid;outline:none;text-shadow:0 0 8px rgba(244,188,104,.45)}
+#keyword-tip{position:fixed;z-index:140;width:min(270px,calc(100vw - 20px));padding:10px 12px;border:1px solid rgba(223,178,86,.7);background:rgba(10,11,8,.97);color:#d8d0b8;font:11px/1.55 "PingFang SC","Microsoft YaHei",sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.65);pointer-events:none;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .12s ease,transform .12s ease,visibility .12s}.keyword-tip-title{display:block;margin-bottom:2px;color:#f4bc68;font-weight:900;font-size:12px}.keyword-tip-on{opacity:1!important;visibility:visible!important;transform:none!important}
 .technique-callout{position:absolute;z-index:48;left:50%;top:24%;transform:translateX(-50%);pointer-events:none;text-align:center;animation:techniqueCall 1s ease forwards}.technique-callout small{display:block;color:#aba48e;font:8px "PingFang SC",sans-serif;letter-spacing:.3em}.technique-callout b{display:block;margin-top:2px;padding:7px 24px;color:#fff;font-size:22px;letter-spacing:.16em;text-shadow:0 3px 8px #000;border-top:1px solid currentColor;border-bottom:1px solid currentColor;background:linear-gradient(90deg,transparent,rgba(5,5,4,.86),transparent)}.technique-callout.atk b{color:#ff765b}.technique-callout.skl b{color:#66e0cf}.technique-callout.pwr b{color:#c6a0ef}@keyframes techniqueCall{0%{opacity:0;transform:translate(-50%,18px) scale(.92)}20%,68%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-16px) scale(1.03)}}
 
 /* Rewards, overlays and scene panels */
@@ -495,7 +497,7 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
   .char-grid{display:grid;grid-template-columns:1fr;gap:8px}.char-card{min-height:168px}.char-portrait{width:52%;height:115%;left:auto;right:-2%;top:-7%;object-position:center}.char-card::before{background:linear-gradient(90deg,rgba(9,10,8,.96) 0 48%,transparent 78%)}.char-card-body{top:0;bottom:0;width:68%;padding:20px 12px;background:linear-gradient(90deg,rgba(8,9,7,.98) 0 72%,transparent);display:flex;flex-direction:column;justify-content:center}.char-index{font-size:20px}.char-name{font-size:18px}.char-desc{min-height:auto}.roster-note{display:none}
   #screen-map{padding:16px 8px 0}.map-toolbar{top:-16px}.map-head{padding-inline:8px}.map-head .sec-t{font-size:15px}.map-legend{gap:3px}.map-legend span{font-size:8px;padding:3px 5px}#map-wrap{padding:10px 12px 20px}
   #stage{min-height:255px;--combat-player-w:44%;--combat-enemy-w:56%;background-position:center bottom}.frame.sprite-frame{width:104px;height:132px}.unit.player .frame.sprite-frame{width:108px;height:136px}.unit.elite .frame.sprite-frame{width:110px;height:142px}.unit.boss .frame.sprite-frame{width:125px;height:158px}#enemy-side{gap:0;padding-inline:0}.unit .intent{min-width:72px;max-width:105px!important;padding:3px 5px;font-size:9px}.unit .intent::before{font-size:6px}.uname,.hpbar{min-width:84px;width:84px}.uname{font-size:9px;padding:3px}.hpbar{height:11px}.hptx{margin-top:-11px;font-size:8px}.strow{max-width:100px;gap:2px}.stag{font-size:7px;padding:0 3px}.technique-callout b{font-size:16px;padding:5px 14px}
-  #combat-info{height:31px;padding:3px 6px}.pilebtn{font-size:0;padding:2px 6px}.pilebtn span,.pilebtn::first-letter{font-size:10px}#combat-log{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#hand-outer{gap:5px;padding:4px 5px 7px}#orb{width:48px;height:48px;min-width:48px;font-size:17px}#orb::before{width:36px;height:36px}#endturn{min-width:58px;width:58px;height:50px;padding:5px;font-size:10px}.card .nm{font-size:10px!important}.card .art{margin-bottom:2px}.card .tband{font-size:6px;margin-top:-8px}.card .ds{font-size:7.8px;line-height:1.18;padding:5px 3px}.card .ds.middesc{font-size:7.3px}.card .ds.longdesc{font-size:6.8px}.card .rar{font-size:5.8px}.card .gem{width:25px;height:25px;font-size:12px}
+  #combat-info{height:31px;padding:3px 6px}.pilebtn{font-size:0;padding:2px 6px}.pilebtn span,.pilebtn::first-letter{font-size:10px}#combat-log{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#hand-outer{gap:5px;padding:4px 5px 7px}#orb{width:48px;height:48px;min-width:48px;font-size:17px}#orb::before{width:36px;height:36px}#endturn{min-width:58px;width:58px;height:50px;padding:5px;font-size:10px}.card .nm{font-size:calc(var(--card-name-size,12px)*.82)!important}.card .art{margin-bottom:2px}.card .tband{font-size:6px;margin-top:-8px}.card .ds{font-size:7.8px;line-height:1.18;padding:5px 3px}.card .ds.middesc{font-size:7.3px}.card .ds.longdesc{font-size:6.8px}.card .rar{font-size:5.8px}.card .gem{width:25px;height:25px;font-size:12px}
   #screen-shop,#screen-rest,#screen-event,#screen-reward{padding:14px}.shop-shell,.rest-shell,#reward-list{padding:16px 10px}.rest-choices{grid-template-columns:1fr;gap:8px}.rest-choice{min-height:108px}.event-box{padding:20px 15px}.ritem{min-width:0;width:100%;font-size:12px}.shop-relic{width:132px;min-height:160px}
 }
 </style>
@@ -533,22 +535,22 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
           <button class="char-card" data-char="naruto" onclick="G.newRun('naruto')">
             <img class="char-portrait" src="assets/sprites/naruto.png" alt="漩涡鸣人">
             <span class="char-index">01</span>
-            <div class="char-card-body"><div class="char-role">影分身 / 九尾成长</div><div class="char-name">漩涡鸣人</div>
-              <div class="char-desc">高韧性延时防御，在长战中持续累积力量。</div>
+            <div class="char-card-body"><div class="char-role">分身连携 / 仙术反击</div><div class="char-name">漩涡鸣人</div>
+              <div class="char-desc">生成并调度影分身，在防御收益与连段爆发间选择。</div>
               <div class="char-deck"><span>生命 80</span><span>螺旋丸</span><span>影分身</span></div></div>
           </button>
           <button class="char-card" data-char="sasuke" onclick="G.newRun('sasuke')">
             <img class="char-portrait" src="assets/sprites/sasuke.png" alt="宇智波佐助">
             <span class="char-index">02</span>
-            <div class="char-card-body"><div class="char-role">雷遁 / 易伤爆发</div><div class="char-name">宇智波佐助</div>
-              <div class="char-desc">高速压制与多段攻击，用写轮眼掌控战局。</div>
+            <div class="char-card-body"><div class="char-role">火遁灼烧 / 雷遁引爆</div><div class="char-name">宇智波佐助</div>
+              <div class="char-desc">用火遁铺设灼烧，再以雷遁和写轮眼精确收割。</div>
               <div class="char-deck"><span>生命 72</span><span>狮子连弹</span><span>千鸟</span></div></div>
           </button>
           <button class="char-card" data-char="sakura" onclick="G.newRun('sakura')">
             <img class="char-portrait" src="assets/sprites/sakura.png" alt="春野樱">
             <span class="char-index">03</span>
-            <div class="char-card-body"><div class="char-role">医疗 / 怪力蓄势</div><div class="char-name">春野樱</div>
-              <div class="char-desc">将治疗与格挡转化为怪力，蓄势后重拳终结。</div>
+            <div class="char-card-body"><div class="char-role">怪力储备 / 百豪盈疗</div><div class="char-name">春野樱</div>
+              <div class="char-desc">储存怪力、调配治疗与格挡，再用精准重拳终结。</div>
               <div class="char-deck"><span>生命 76</span><span>怪力拳</span><span>掌仙术</span></div></div>
           </button>
         </div>
@@ -598,6 +600,7 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
 
   <div id="overlay"></div>
   <div id="toast"></div>
+  <div id="keyword-tip" role="tooltip" aria-hidden="true"></div>
 </div>
 <script>
 /* ====================== 内容数据 ====================== */
@@ -607,10 +610,12 @@ const KW = {
   "易伤":"受到的攻击伤害提高 50%,每回合减少 1 层",
   "虚弱":"造成的攻击伤害降低 25%,每回合减少 1 层",
   "中毒":"每回合开始受到等同层数的伤害,随后减少 1 层",
+  "灼烧":"敌人行动前受到等同层数的伤害,随后减少 1 层",
+  "引爆":"立即按灼烧层数追加伤害,然后清空目标的灼烧",
   "影分身":"每回合结束,按当前层数 ×3 获得格挡,随后自动减少 1 层",
   "忍道":"每回合开始获得等量格挡",
   "九尾":"每回合开始获得等量力量,每个来源持续 3 回合",
-  "怪力":"下一张攻击牌对每个目标额外造成等量伤害,触发后清空",
+  "怪力":"下一张攻击牌对每个目标额外造成等量伤害,触发后清空。最多 20 层",
   "医术":"每次打出回复牌时获得等量怪力",
   "聚力":"每次打出格挡牌时获得等量怪力",
   "潜行":"下一次受到攻击伤害降低 50%,随后减少 1 层",
@@ -618,6 +623,12 @@ const KW = {
   "幻术":"下回合查克拉减少等量数值,与查克拉封印合计最多扣 2 点",
   "查克拉封印":"下回合查克拉减少等量数值,与幻术合计最多扣 2 点",
   "消耗":"打出后从本场战斗中移除,不进入弃牌堆",
+  "保留":"回合结束时留在手牌中,不会进入弃牌堆",
+  "盈疗":"回复超过生命上限时,每层盈疗把等量溢出回复转化为格挡。最多 2 层",
+  "蓄能":"下回合开始时获得额外查克拉,触发后清空",
+  "分身术式":"每回合开始自动获得影分身",
+  "洞察":"每回合首次施加易伤时抽牌",
+  "固守":"回合开始时不再清空现有格挡",
   "格挡":"抵消伤害,自己回合开始时消散",
   "再生":"敌人每回合回复生命",
   "蓄势":"敌人会周期性获得成长增益",
@@ -653,57 +664,74 @@ const CARDS = {
   palm_heal:{n:"掌仙术",t:"skl",c:1,r:0,ic:"💚",art:"assets/card-art/palm_heal.jpg",d:"获得 <b>5</b> 点格挡,回复 <b>2</b> 点生命,获得 <b>1</b> 层怪力",blk:5,heal:2,might:1,chars:["sakura"],up:{d:"获得 <b>7</b> 点格挡,回复 <b>3</b> 点生命,获得 <b>2</b> 层怪力",blk:7,heal:3,might:2}},
   /* —— 普通 —— */
   kunai:{n:"苦无投掷",t:"atk",c:0,r:1,ic:"🗡️",d:"造成 <b>3</b> 点伤害",dmg:3,up:{d:"造成 <b>5</b> 点伤害",dmg:5}},
-  renda:{n:"木叶旋风",t:"atk",c:1,r:1,ic:"🌪️",d:"造成 <b>3</b>×<b>2</b> 点伤害",dmg:3,hits:2,up:{d:"造成 <b>4</b>×<b>2</b> 点伤害",dmg:4}},
+  renda:{n:"木叶旋风",t:"atk",c:1,r:1,ic:"🌪️",d:"造成 <b>3</b>×<b>2</b> 点伤害。目标有虚弱时获得 <b>4</b> 点格挡",dmg:3,hits:2,blockIfWeak:4,up:{d:"造成 <b>4</b>×<b>2</b> 点伤害。目标有虚弱时获得 <b>6</b> 点格挡",dmg:4,blockIfWeak:6}},
   bakufu:{n:"起爆符",t:"atk",c:1,r:1,ic:"🧧",d:"造成 <b>7</b> 点伤害,施加 <b>1</b> 层易伤",dmg:7,vuln:1,up:{d:"造成 <b>9</b> 点伤害,施加 <b>2</b> 层易伤",dmg:9,vuln:2}},
-  shuriken:{n:"手里剑乱舞",t:"atk",c:1,r:1,ic:"✴️",d:"对<b>所有</b>敌人造成 <b>5</b> 点伤害",dmg:5,aoe:1,up:{d:"对<b>所有</b>敌人造成 <b>8</b> 点伤害",dmg:8}},
-  smoke:{n:"烟雾弹",t:"skl",c:1,r:1,ic:"💨",d:"获得 <b>4</b> 点格挡,抽 <b>1</b> 张牌",blk:4,draw:1,up:{d:"获得 <b>6</b> 点格挡,抽 <b>1</b> 张牌",blk:6}},
+  shuriken:{n:"手里剑乱舞",t:"atk",c:1,r:1,ic:"✴️",d:"对<b>所有</b>敌人造成 <b>4</b> 点伤害。若命中至少 2 名敌人,抽 <b>1</b> 张牌",dmg:4,aoe:1,drawIfMulti:1,up:{d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害。若命中至少 2 名敌人,抽 <b>1</b> 张牌",dmg:6}},
+  smoke:{n:"烟雾弹",t:"skl",c:1,r:1,ic:"💨",d:"获得 <b>5</b> 点格挡。若有敌人准备攻击,抽 <b>1</b> 张牌",blk:5,drawIfAnyAttacker:1,up:{d:"获得 <b>8</b> 点格挡。若有敌人准备攻击,抽 <b>1</b> 张牌",blk:8}},
   fuuin:{n:"封印术",t:"skl",c:1,r:1,ic:"🈲",d:"对所有敌人施加 <b>2</b> 层虚弱",weak:2,all:1,up:{d:"对所有敌人施加 <b>3</b> 层虚弱",weak:3}},
   shunshin:{n:"瞬身术",t:"skl",c:0,r:1,ic:"⚡",d:"抽 <b>2</b> 张牌",draw:2,up:{d:"抽 <b>3</b> 张牌",draw:3}},
   guard:{n:"铁壁防御",t:"skl",c:2,r:1,ic:"🛡️",d:"获得 <b>11</b> 点格挡",blk:11,up:{d:"获得 <b>15</b> 点格挡",blk:15}},
-  sharingan_copy:{n:"看破",t:"skl",c:1,r:1,ic:"👁️",d:"获得 <b>3</b> 点格挡,对目标施加 <b>1</b> 层虚弱",blk:3,tweak:1,chars:["sasuke"],up:{d:"获得 <b>5</b> 点格挡,对目标施加 <b>2</b> 层虚弱",blk:5,tweak:2}},
-  kage_shuriken:{n:"影手里剑",t:"atk",c:2,r:1,ic:"✴️",d:"造成 <b>13</b> 点伤害",dmg:13,up:{d:"造成 <b>17</b> 点伤害",dmg:17}},
-  uchiha_shuriken:{n:"宇智波手里剑",t:"atk",c:1,r:1,ic:"✴️",d:"造成 <b>2</b>×<b>3</b> 点伤害",dmg:2,hits:3,chars:["sasuke"],up:{d:"造成 <b>3</b>×<b>3</b> 点伤害",dmg:3}},
-  katon_spark:{n:"火遁·火花",t:"atk",c:1,r:1,ic:"🔥",d:"对<b>所有</b>敌人造成 <b>4</b> 点伤害",dmg:4,aoe:1,chars:["sasuke"],up:{d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害",dmg:6}},
+  sharingan_copy:{n:"看破",t:"skl",c:1,r:1,ic:"👁️",d:"获得 <b>3</b> 点格挡。目标准备攻击时额外 +<b>5</b>。施加 <b>1</b> 层虚弱",blk:3,blockIfTargetAttacking:5,tweak:1,chars:["sasuke"],up:{d:"获得 <b>4</b> 点格挡。目标准备攻击时额外 +<b>7</b>。施加 <b>1</b> 层虚弱",blk:4,blockIfTargetAttacking:7}},
+  kage_shuriken:{n:"影手里剑",t:"atk",c:2,r:1,ic:"✴️",d:"造成 <b>12</b> 点伤害。若目标有易伤,抽 <b>2</b> 张牌",dmg:12,drawIfVuln:2,up:{d:"造成 <b>16</b> 点伤害。若目标有易伤,抽 <b>2</b> 张牌",dmg:16}},
+  uchiha_shuriken:{n:"宇智波手里剑",t:"atk",c:1,r:1,ic:"✴️",d:"造成 <b>2</b>×<b>3</b> 点伤害。目标有易伤时追加 1 次攻击",dmg:2,hits:3,bonusHitsVsVuln:1,chars:["sasuke"],up:{d:"造成 <b>3</b>×<b>3</b> 点伤害。目标有易伤时追加 1 次攻击",dmg:3}},
+  katon_spark:{n:"火遁·火花",t:"atk",c:1,r:1,ic:"🔥",d:"对<b>所有</b>敌人造成 <b>3</b> 点伤害,施加 <b>2</b> 层灼烧",dmg:3,burn:2,aoe:1,chars:["sasuke"],up:{d:"对<b>所有</b>敌人造成 <b>5</b> 点伤害,施加 <b>3</b> 层灼烧",dmg:5,burn:3}},
   wire_feint:{n:"操具·钢丝束缚",t:"skl",c:1,r:1,ic:"🧵",d:"获得 <b>4</b> 点格挡,对目标施加 <b>1</b> 层虚弱",blk:4,tweak:1,chars:["sasuke"],up:{d:"获得 <b>6</b> 点格挡,对目标施加 <b>1</b> 层虚弱",blk:6}},
-  hawk_step:{n:"鹰步",t:"skl",c:0,r:1,ic:"🦅",d:"获得 <b>3</b> 点格挡,抽 <b>1</b> 张牌",blk:3,draw:1,chars:["sasuke"],up:{d:"获得 <b>5</b> 点格挡,抽 <b>1</b> 张牌",blk:5}},
+  hawk_step:{n:"鹰步",t:"skl",c:0,r:1,ic:"🦅",d:"获得 <b>2</b> 点格挡。每名准备攻击的敌人使其额外 +<b>2</b>",blk:2,blockPerAttacker:2,chars:["sasuke"],up:{d:"获得 <b>4</b> 点格挡。每名准备攻击的敌人使其额外 +<b>2</b>",blk:4}},
   revenge_focus:{n:"复仇意志",t:"pwr",c:1,r:1,ic:"🖤",d:"力量 +<b>1</b>,自身受 <b>2</b> 点伤害",str:1,self:2,chars:["sasuke"],up:{d:"力量 +<b>1</b>",self:0}},
-  kawazu_tataki:{n:"蛙组手",t:"atk",c:1,r:1,ic:"🐸",d:"造成 <b>7</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:7,tweak:1,chars:["naruto"],up:{d:"造成 <b>9</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:9,tweak:2}},
+  kawazu_tataki:{n:"蛙组手",t:"atk",c:1,r:1,ic:"🐸",d:"无视潜行,造成 <b>8</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:8,tweak:1,ignoreStealth:1,chars:["naruto"],up:{d:"无视潜行,造成 <b>11</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:11}},
   bunshin_feint:{n:"分身佯攻",t:"skl",c:1,r:1,ic:"👥",d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>1</b> 层虚弱",blk:6,weak:1,all:1,chars:["naruto"],up:{d:"获得 <b>8</b> 点格挡,对所有敌人施加 <b>1</b> 层虚弱",blk:8}},
   field_dressing:{n:"战地包扎",t:"skl",c:1,r:1,ic:"🩹",d:"回复 <b>3</b> 点生命。<b>消耗</b>",heal:3,ex:1,chars:["sakura"],up:{d:"回复 <b>6</b> 点生命。<b>消耗</b>",heal:6}},
-  chakra_gloves:{n:"查克拉护手",t:"skl",c:0,r:1,ic:"💠",d:"获得 <b>3</b> 点格挡,抽 <b>1</b> 张牌",blk:3,draw:1,chars:["sakura"],up:{d:"获得 <b>5</b> 点格挡,抽 <b>1</b> 张牌",blk:5}},
-  precise_punch:{n:"精准重拳",t:"atk",c:1,r:1,ic:"👊",d:"造成 <b>7</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:7,tweak:1,chars:["sakura"],up:{d:"造成 <b>10</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:10}},
-  ground_slam:{n:"碎地冲击",t:"atk",c:1,r:1,ic:"🌋",d:"对<b>所有</b>敌人造成 <b>5</b> 点伤害",dmg:5,aoe:1,chars:["sakura"],up:{d:"对<b>所有</b>敌人造成 <b>7</b> 点伤害",dmg:7}},
+  chakra_gloves:{n:"查克拉护手",t:"skl",c:0,r:1,ic:"💠",d:"获得 <b>3</b> 点格挡。每层怪力额外 +<b>1</b>(至多 4 层)。<b>保留</b>",blk:3,blockPerMight:1,mightBlockCap:4,retain:1,chars:["sakura"],up:{d:"获得 <b>5</b> 点格挡。每层怪力额外 +<b>1</b>(至多 4 层)。<b>保留</b>",blk:5}},
+  precise_punch:{n:"精准重拳",t:"atk",c:1,r:1,ic:"👊",d:"造成 <b>6</b> 点伤害。目标有虚弱时额外造成 <b>6</b> 点伤害",dmg:6,bonusVsWeak:6,chars:["sakura"],up:{d:"造成 <b>8</b> 点伤害。目标有虚弱时额外造成 <b>8</b> 点伤害",dmg:8,bonusVsWeak:8}},
+  ground_slam:{n:"碎地冲击",t:"atk",c:1,r:1,ic:"🌋",d:"对<b>所有</b>敌人造成 <b>4</b> 点伤害。每命中 1 名敌人,获得 <b>1</b> 层怪力",dmg:4,aoe:1,gainMightPerTarget:1,chars:["sakura"],up:{d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害。每命中 1 名敌人,获得 <b>1</b> 层怪力",dmg:6}},
   medical_guard:{n:"医疗架势",t:"pwr",c:1,r:1,ic:"💚",d:"身法 +<b>1</b>,回复 <b>2</b> 点生命。每次打出回复牌获得 <b>1</b> 层怪力",dex:1,heal:2,healMight:1,chars:["sakura"],up:{d:"身法 +<b>1</b>,回复 <b>5</b> 点生命。每次打出回复牌获得 <b>2</b> 层怪力",heal:5,healMight:2}},
   chakra_step:{n:"查克拉步",t:"skl",c:0,r:1,ic:"🔵",d:"获得 <b>2</b> 点格挡,抽 <b>1</b> 张牌",blk:2,draw:1,up:{d:"获得 <b>4</b> 点格挡,抽 <b>1</b> 张牌",blk:4}},
   wire_trap:{n:"钢丝陷阱",t:"skl",c:1,r:1,ic:"🧵",d:"获得 <b>4</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:4,tvuln:1,all:1,up:{d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>2</b> 层易伤",blk:6,tvuln:2}},
   focus_fist:{n:"蓄力正拳",t:"skl",c:1,r:1,ic:"💥",d:"获得 <b>4</b> 点格挡,获得 <b>3</b> 层怪力",blk:4,might:3,chars:["sakura"],up:{d:"获得 <b>6</b> 点格挡,获得 <b>4</b> 层怪力",blk:6,might:4}},
+  clone_assault:{n:"分身突击",t:"atk",c:1,r:1,ic:"👥",d:"造成 <b>5</b> 点伤害。消耗至多 1 层影分身,追加 1 次攻击",dmg:5,cloneSpend:1,cloneExtraHits:1,chars:["naruto"],up:{d:"造成 <b>7</b> 点伤害。消耗至多 1 层影分身,追加 1 次攻击",dmg:7}},
+  transformation_feint:{n:"变身佯动",t:"skl",c:0,r:1,ic:"🎭",d:"获得 <b>3</b> 点格挡。若任意敌人有负面状态,抽 <b>1</b> 张牌。<b>保留</b>",blk:3,drawIfDebuffed:1,retain:1,chars:["naruto"],up:{d:"获得 <b>5</b> 点格挡。若任意敌人有负面状态,抽 <b>1</b> 张牌。<b>保留</b>",blk:5}},
+  uzumaki_barrage:{n:"鸣人连弹",t:"atk",c:1,r:1,ic:"🍥",d:"造成 <b>2</b>×<b>3</b> 点伤害。本回合打出过技能牌时追加 1 次攻击",dmg:2,hits:3,comboHits:1,chars:["naruto"],up:{d:"造成 <b>3</b>×<b>3</b> 点伤害。本回合打出过技能牌时追加 1 次攻击",dmg:3}},
+  dragon_fire:{n:"火遁·龙火",t:"atk",c:1,r:1,ic:"🐉",d:"造成 <b>5</b> 点伤害,施加 <b>3</b> 层灼烧",dmg:5,burn:3,chars:["sasuke"],up:{d:"造成 <b>7</b> 点伤害,施加 <b>4</b> 层灼烧",dmg:7,burn:4}},
+  chidori_spear:{n:"千鸟锐枪",t:"atk",c:1,r:1,ic:"⚡",d:"造成 <b>7</b> 点伤害。目标有灼烧时额外造成 <b>5</b> 点伤害",dmg:7,bonusVsBurn:5,chars:["sasuke"],up:{d:"造成 <b>9</b> 点伤害。目标有灼烧时额外造成 <b>7</b> 点伤害",dmg:9,bonusVsBurn:7}},
+  sharingan_prediction:{n:"写轮眼预判",t:"skl",c:1,r:1,ic:"👁️",d:"获得目标下次攻击单段伤害一半的格挡,抽 <b>1</b> 张牌",intentBlockPct:.5,draw:1,chars:["sasuke"],up:{d:"获得目标下次攻击单段伤害等量的格挡,抽 <b>1</b> 张牌",intentBlockPct:1}},
+  chakra_concentration:{n:"查克拉集中",t:"skl",c:0,r:1,ic:"💠",d:"获得 <b>2</b> 层怪力。<b>消耗</b>",might:2,ex:1,chars:["sakura"],up:{d:"获得 <b>3</b> 层怪力。<b>消耗</b>",might:3}},
+  combat_triage:{n:"紧急分诊",t:"skl",c:1,r:1,ic:"🩺",d:"回复 <b>4</b> 点生命。生命不高于 50% 时,抽 <b>1</b> 张牌",heal:4,lowHpDraw:1,chars:["sakura"],up:{d:"回复 <b>6</b> 点生命。生命不高于 50% 时,抽 <b>1</b> 张牌",heal:6}},
+  tendon_guard:{n:"断筋防守",t:"skl",c:1,r:1,ic:"🦴",d:"获得 <b>5</b> 点格挡,使目标力量 -<b>1</b>",blk:5,enemyStrDown:1,chars:["sakura"],up:{d:"获得 <b>7</b> 点格挡,使目标力量 -<b>2</b>",blk:7,enemyStrDown:2}},
   /* —— 稀有 —— */
   kagebunshin:{n:"影分身之术",t:"skl",c:1,r:0,ic:"👥",art:"assets/card-art/kagebunshin.jpg",d:"获得 <b>2</b> 层影分身",clone:2,chars:["naruto"],up:{d:"获得 <b>3</b> 层影分身",clone:3}},
-  chidori:{n:"千鸟",t:"atk",c:1,r:2,ic:"⚡",d:"造成 <b>11</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:11,self:2,chars:["sasuke"],up:{n:"雷切",d:"造成 <b>15</b> 点伤害,自身受 <b>2</b> 点伤害",dmg:15}},
-  rasenrenwan:{n:"螺旋连丸",t:"atk",c:2,r:1,ic:"🌀",d:"造成 <b>7</b>×<b>2</b> 点伤害",dmg:7,hits:2,chars:["naruto"],up:{d:"造成 <b>9</b>×<b>2</b> 点伤害",dmg:9}},
-  gamado:{n:"通灵术·蛤蟆防壁",t:"skl",c:2,r:1,ic:"🐸",d:"获得 <b>12</b> 点格挡",blk:12,chars:["naruto"],up:{d:"获得 <b>16</b> 点格挡",blk:16}},
-  iryou:{n:"医疗忍术",t:"skl",c:1,r:2,ic:"💚",d:"回复 <b>5</b> 点生命。<b>消耗</b>",heal:5,ex:1,chars:["sakura"],up:{d:"回复 <b>9</b> 点生命。<b>消耗</b>",heal:9}},
+  chidori:{n:"千鸟",t:"atk",c:1,r:2,ic:"⚡",d:"造成 <b>10</b> 点伤害。目标有灼烧时额外造成 <b>5</b> 点伤害。自身受 <b>2</b> 点伤害",dmg:10,bonusVsBurn:5,self:2,chars:["sasuke"],up:{n:"雷切",d:"造成 <b>14</b> 点伤害。目标有灼烧时额外造成 <b>7</b> 点伤害。自身受 <b>2</b> 点伤害",dmg:14,bonusVsBurn:7}},
+  rasenrenwan:{n:"螺旋连丸",t:"atk",c:2,r:1,ic:"🌀",d:"造成 <b>6</b>×<b>2</b> 点伤害。消耗至多 2 层影分身,每层追加 1 次攻击",dmg:6,hits:2,cloneSpend:2,cloneExtraHits:1,chars:["naruto"],up:{d:"造成 <b>8</b>×<b>2</b> 点伤害。消耗至多 2 层影分身,每层追加 1 次攻击",dmg:8}},
+  gamado:{n:"通灵术·蛤蟆防壁",t:"skl",c:2,r:1,ic:"🐸",d:"获得 <b>10</b> 点格挡和 <b>1</b> 层影分身",blk:10,clone:1,chars:["naruto"],up:{d:"获得 <b>14</b> 点格挡和 <b>1</b> 层影分身",blk:14}},
+  iryou:{n:"医疗忍术",t:"skl",c:1,r:2,ic:"💚",d:"回复 <b>5</b> 点生命,获得 <b>2</b> 层怪力。<b>消耗</b>",heal:5,might:2,ex:1,chars:["sakura"],up:{d:"回复 <b>8</b> 点生命,获得 <b>3</b> 层怪力。<b>消耗</b>",heal:8,might:3}},
   raiton:{n:"雷遁·麻痹术",t:"skl",c:1,r:1,ic:"🌩️",d:"对目标施加 <b>1</b> 层易伤、<b>1</b> 层虚弱",tvuln:1,tweak:1,chars:["sasuke"],up:{d:"对目标施加 <b>2</b> 层易伤、<b>1</b> 层虚弱",tvuln:2}},
-  katon:{n:"火遁·豪火球",t:"atk",c:2,r:2,ic:"🔥",d:"对<b>所有</b>敌人造成 <b>10</b> 点伤害",dmg:10,aoe:1,chars:["sasuke"],up:{d:"对<b>所有</b>敌人造成 <b>14</b> 点伤害",dmg:14}},
+  katon:{n:"火遁·豪火球",t:"atk",c:2,r:2,ic:"🔥",d:"对<b>所有</b>敌人造成 <b>7</b> 点伤害。敌人已有灼烧时额外造成 <b>4</b> 点伤害,再施加 <b>3</b> 层灼烧",dmg:7,bonusVsBurn:4,burn:3,aoe:1,chars:["sasuke"],up:{d:"对<b>所有</b>敌人造成 <b>10</b> 点伤害。敌人已有灼烧时额外造成 <b>6</b> 点伤害,再施加 <b>4</b> 层灼烧",dmg:10,bonusVsBurn:6,burn:4}},
   chakra_focus:{n:"查克拉炼成",t:"skl",c:0,r:2,ic:"🔵",d:"获得 <b>2</b> 点查克拉。<b>消耗</b>",energy:2,ex:1,up:{d:"获得 <b>3</b> 点查克拉。<b>消耗</b>",energy:3}},
   sennin:{n:"仙人模式",t:"pwr",c:3,r:2,ic:"🐸",d:"力量 +<b>1</b>,身法 +<b>2</b>",str:1,dex:2,chars:["naruto"],up:{d:"力量 +<b>1</b>,身法 +<b>3</b>",dex:3}},
   nindo:{n:"我的忍道",t:"pwr",c:1,r:1,ic:"🍥",d:"每回合开始获得 <b>2</b> 点格挡",nindo:2,chars:["naruto"],up:{d:"每回合开始获得 <b>3</b> 点格挡",nindo:3}},
-  hosenka:{n:"火遁·凤仙火",t:"atk",c:1,r:1,ic:"🔥",d:"造成 <b>2</b>×<b>3</b> 点伤害,施加 <b>1</b> 层易伤",dmg:2,hits:3,vuln:1,chars:["sasuke"],up:{d:"造成 <b>3</b>×<b>3</b> 点伤害,施加 <b>1</b> 层易伤",dmg:3}},
+  hosenka:{n:"火遁·凤仙火",t:"atk",c:1,r:1,ic:"🔥",d:"造成 <b>2</b>×<b>3</b> 点伤害,施加 <b>2</b> 层灼烧",dmg:2,hits:3,burn:2,chars:["sasuke"],up:{d:"造成 <b>3</b>×<b>3</b> 点伤害,施加 <b>3</b> 层灼烧",dmg:3,burn:3}},
   shadow_bind:{n:"影缚术",t:"skl",c:1,r:2,ic:"🕳️",d:"对所有敌人施加 <b>2</b> 层虚弱,抽 <b>1</b> 张牌",weak:2,draw:1,all:1,up:{d:"对所有敌人施加 <b>3</b> 层虚弱,抽 <b>1</b> 张牌",weak:3}},
-  doton_wall:{n:"土遁·土流壁",t:"skl",c:1,r:2,ic:"🪨",d:"获得 <b>9</b> 点格挡",blk:9,up:{d:"获得 <b>12</b> 点格挡,抽 <b>1</b> 张牌",blk:12,draw:1}},
-  sage_kata:{n:"仙术体术",t:"atk",c:2,r:1,ic:"🐸",d:"造成 <b>12</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:12,tweak:1,chars:["naruto"],up:{d:"造成 <b>16</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:16}},
+  doton_wall:{n:"土遁·土流壁",t:"skl",c:1,r:2,ic:"🪨",d:"获得 <b>8</b> 点格挡。<b>保留</b>",blk:8,retain:1,up:{d:"获得 <b>11</b> 点格挡,抽 <b>1</b> 张牌。<b>保留</b>",blk:11,draw:1}},
+  sage_kata:{n:"仙术体术",t:"atk",c:2,r:1,ic:"🐸",d:"无视潜行,造成 <b>10</b> 点伤害。目标有虚弱时额外造成 <b>8</b> 点伤害",dmg:10,bonusVsWeak:8,ignoreStealth:1,chars:["naruto"],up:{d:"无视潜行,造成 <b>14</b> 点伤害。目标有虚弱时额外造成 <b>10</b> 点伤害",dmg:14,bonusVsWeak:10}},
   chakra_surge:{n:"查克拉奔流",t:"skl",c:0,r:2,ic:"💧",d:"获得 <b>1</b> 点查克拉,抽 <b>1</b> 张牌。<b>消耗</b>",energy:1,draw:1,ex:1,up:{d:"获得 <b>2</b> 点查克拉,抽 <b>1</b> 张牌。<b>消耗</b>",energy:2}},
   seal_reinforce:{n:"封印加固",t:"pwr",c:1,r:2,ic:"🈲",d:"身法 +<b>1</b>,每回合开始获得 <b>2</b> 点格挡",dex:1,nindo:2,up:{d:"身法 +<b>1</b>,每回合开始获得 <b>3</b> 点格挡",nindo:3}},
-  odama_chain:{n:"大玉连弹",t:"atk",c:2,r:1,ic:"🌀",d:"造成 <b>5</b>×<b>3</b> 点伤害",dmg:5,hits:3,chars:["naruto"],up:{d:"造成 <b>7</b>×<b>3</b> 点伤害",dmg:7}},
-  sharingan_focus:{n:"写轮眼洞察",t:"pwr",c:1,r:2,ic:"👁️",d:"力量 +<b>1</b>,身法 +<b>1</b>",str:1,dex:1,chars:["sasuke"],up:{d:"力量 +<b>1</b>,身法 +<b>2</b>",dex:2}},
-  chidori_stream:{n:"千鸟流",t:"skl",c:1,r:2,ic:"⚡",d:"获得 <b>7</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:7,tvuln:1,all:1,chars:["sasuke"],up:{d:"获得 <b>10</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:10}},
+  odama_chain:{n:"大玉连弹",t:"atk",c:2,r:1,ic:"🌀",d:"造成 <b>4</b>×<b>3</b> 点伤害。每层影分身使每段伤害 +<b>1</b>(至多 3 层)",dmg:4,hits:3,damagePerClone:1,cloneScaleCap:3,chars:["naruto"],up:{d:"造成 <b>5</b>×<b>3</b> 点伤害。每层影分身使每段伤害 +<b>2</b>(至多 3 层)",dmg:5,damagePerClone:2}},
+  sharingan_focus:{n:"写轮眼洞察",t:"pwr",c:1,r:2,ic:"👁️",d:"身法 +<b>1</b>。每回合首次施加易伤时,抽 <b>1</b> 张牌",dex:1,vulnDrawPower:1,chars:["sasuke"],up:{d:"身法 +<b>1</b>。每回合首次施加易伤时,抽 <b>2</b> 张牌",vulnDrawPower:2}},
+  chidori_stream:{n:"千鸟流",t:"skl",c:1,r:2,ic:"⚡",d:"获得 <b>7</b> 点格挡,对所有敌人施加 <b>2</b> 层灼烧",blk:7,burn:2,all:1,chars:["sasuke"],up:{d:"获得 <b>10</b> 点格挡,对所有敌人施加 <b>3</b> 层灼烧",blk:10,burn:3}},
   kusanagi:{n:"草薙剑",t:"atk",c:1,r:2,ic:"🗡️",d:"造成 <b>5</b>×<b>2</b> 点伤害,施加 <b>1</b> 层易伤",dmg:5,hits:2,vuln:1,chars:["sasuke"],up:{d:"造成 <b>7</b>×<b>2</b> 点伤害,施加 <b>1</b> 层易伤",dmg:7}},
   cleanse_jutsu:{n:"解毒术",t:"skl",c:1,r:1,ic:"🟢",d:"清除自身中毒、虚弱、易伤,抽 <b>1</b> 张牌",cleanse:1,draw:1,chars:["sakura"],up:{d:"清除自身中毒、虚弱、易伤,抽 <b>2</b> 张牌",draw:2}},
   chakra_control:{n:"查克拉精控",t:"pwr",c:1,r:2,ic:"💠",d:"身法 +<b>1</b>,每回合开始获得 <b>2</b> 点格挡。每次打出格挡牌获得 <b>1</b> 层怪力",dex:1,nindo:2,blockMight:1,chars:["sakura"],up:{d:"身法 +<b>1</b>,每回合开始获得 <b>3</b> 点格挡。每次打出格挡牌获得 <b>1</b> 层怪力",nindo:3}},
-  cherry_blossom:{n:"樱花冲",t:"atk",c:2,r:2,ic:"🌸",d:"造成 <b>16</b> 点伤害",dmg:16,chars:["sakura"],up:{d:"造成 <b>21</b> 点伤害",dmg:21}},
-  chakra_scalpel:{n:"查克拉手术刀",t:"atk",c:1,r:2,ic:"🔪",d:"造成 <b>7</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:7,tweak:2,chars:["sakura"],up:{d:"造成 <b>9</b> 点伤害,施加 <b>2</b> 层虚弱",dmg:9}},
-  rupture_punch:{n:"破绽重拳",t:"atk",c:1,r:2,ic:"👊",d:"造成 <b>8</b> 点伤害,施加 <b>1</b> 层易伤",dmg:8,vuln:1,chars:["sakura"],up:{d:"造成 <b>11</b> 点伤害,施加 <b>1</b> 层易伤",dmg:11}},
+  cherry_blossom:{n:"樱花冲",t:"atk",c:2,r:2,ic:"🌸",d:"造成 <b>12</b> 点伤害。本牌释放的怪力效果翻倍",dmg:12,mightMultiplier:2,chars:["sakura"],up:{d:"造成 <b>16</b> 点伤害。本牌释放的怪力效果翻倍",dmg:16}},
+  chakra_scalpel:{n:"查克拉手术刀",t:"atk",c:1,r:2,ic:"🔪",d:"造成 <b>6</b> 点伤害,使目标力量 -<b>2</b>",dmg:6,enemyStrDown:2,chars:["sakura"],up:{d:"造成 <b>8</b> 点伤害,使目标力量 -<b>3</b>",dmg:8,enemyStrDown:3}},
+  rupture_punch:{n:"破绽重拳",t:"atk",c:1,r:2,ic:"👊",d:"造成 <b>7</b> 点伤害。目标已有易伤时额外造成 <b>6</b> 点伤害,再施加 <b>1</b> 层易伤",dmg:7,bonusVsVuln:6,vuln:1,chars:["sakura"],up:{d:"造成 <b>10</b> 点伤害。目标已有易伤时额外造成 <b>8</b> 点伤害,再施加 <b>1</b> 层易伤",dmg:10,bonusVsVuln:8}},
+  sexy_jutsu:{n:"色诱之术",t:"skl",c:1,r:2,ic:"💫",d:"对目标施加 <b>3</b> 层虚弱。若目标正准备攻击,抽 <b>2</b> 张牌",tweak:3,drawIfTargetAttacking:2,chars:["naruto"],up:{c:0,d:"对目标施加 <b>3</b> 层虚弱。若目标正准备攻击,抽 <b>2</b> 张牌(费用 1→0)"}},
+  toad_oil_bomb:{n:"蛤蟆油炎弹",t:"atk",c:2,r:2,ic:"🐸",d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害,施加 <b>3</b> 层灼烧和 <b>1</b> 层虚弱",dmg:6,burn:3,weak:1,aoe:1,chars:["naruto"],up:{d:"对<b>所有</b>敌人造成 <b>9</b> 点伤害,施加 <b>4</b> 层灼烧和 <b>1</b> 层虚弱",dmg:9,burn:4}},
+  phoenix_wire:{n:"凤仙火爪红",t:"atk",c:2,r:2,ic:"🔥",d:"造成 <b>4</b>×<b>2</b> 点伤害,施加 <b>3</b> 层灼烧和 <b>1</b> 层易伤",dmg:4,hits:2,burn:3,vuln:1,chars:["sasuke"],up:{d:"造成 <b>6</b>×<b>2</b> 点伤害,施加 <b>4</b> 层灼烧和 <b>1</b> 层易伤",dmg:6,burn:4}},
+  chidori_blade:{n:"雷遁·千鸟刃",t:"atk",c:2,r:2,ic:"🗡️",d:"造成 <b>10</b> 点伤害。引爆灼烧,每层额外造成 <b>2</b> 点伤害,施加 <b>1</b> 层易伤",dmg:10,burnBurst:2,vuln:1,chars:["sasuke"],up:{d:"造成 <b>13</b> 点伤害。引爆灼烧,每层额外造成 <b>3</b> 点伤害,施加 <b>1</b> 层易伤",dmg:13,burnBurst:3}},
+  blossom_combo:{n:"樱花乱舞",t:"atk",c:1,r:2,ic:"🌸",d:"造成 <b>4</b>×<b>2</b> 点伤害。释放怪力但不消耗怪力",dmg:4,hits:2,preserveMight:1,chars:["sakura"],up:{d:"造成 <b>6</b>×<b>2</b> 点伤害。释放怪力但不消耗怪力",dmg:6}},
+  crater_breaker:{n:"地裂重拳",t:"atk",c:2,r:2,ic:"🌋",d:"造成 <b>9</b> 点伤害,消耗当前全部格挡并额外造成等量伤害",dmg:9,blockStrike:1,chars:["sakura"],up:{d:"造成 <b>13</b> 点伤害,消耗当前全部格挡并额外造成等量伤害",dmg:13}},
+  byakugou_reserve:{n:"百豪蓄印",t:"pwr",c:1,r:2,ic:"◇",d:"回复超过生命上限的数值转化为格挡。最多叠加 <b>2</b> 层",overhealPower:1,chars:["sakura"],up:{c:0,d:"回复超过生命上限的数值转化为格挡。最多叠加 <b>2</b> 层(费用 1→0)"}},
   /* —— 传说 —— */
+  frog_song:{n:"仙法·蛙鸣",t:"skl",c:2,r:3,ic:"🎵",d:"对所有敌人施加 <b>3</b> 层虚弱和 <b>2</b> 层易伤。下回合查克拉 +<b>1</b>。<b>消耗</b>",weak:3,tvuln:2,all:1,nextEnergy:1,ex:1,chars:["naruto"],up:{d:"对所有敌人施加 <b>4</b> 层虚弱和 <b>3</b> 层易伤。下回合查克拉 +<b>1</b>。<b>消耗</b>",weak:4,tvuln:3}},
   fuuton:{n:"风遁·螺旋手里剑",t:"atk",c:3,r:3,ic:"🌀",d:"造成 <b>26</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:26,self:4,ex:1,chars:["naruto"],up:{d:"造成 <b>34</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:34}},
   kyuubi:{n:"九尾查克拉",t:"pwr",c:2,r:2,ic:"🦊",d:"每回合开始力量 +<b>1</b>,持续 <b>3</b> 回合",ramp:1,rampTurns:3,chars:["naruto"],up:{c:1,d:"每回合开始力量 +<b>1</b>,持续 <b>3</b> 回合(费用 2→1)"}},
   tajuu:{n:"多重影分身",t:"skl",c:2,r:2,ic:"👥",d:"获得 <b>3</b> 层影分身。<b>消耗</b>",clone:3,ex:1,chars:["naruto"],up:{d:"获得 <b>4</b> 层影分身。<b>消耗</b>",clone:4}},
@@ -711,16 +739,18 @@ const CARDS = {
   bijuudama:{n:"尾兽玉",t:"atk",c:3,r:3,ic:"⚫",d:"对<b>所有</b>敌人造成 <b>22</b> 点伤害,自身受 <b>6</b> 点伤害。<b>消耗</b>",dmg:22,aoe:1,self:6,ex:1,chars:["naruto"],up:{d:"对<b>所有</b>敌人造成 <b>30</b> 点伤害,自身受 <b>6</b> 点伤害。<b>消耗</b>",dmg:30}},
   gamabunta:{n:"通灵术·蛤蟆文太",t:"skl",c:3,r:2,ic:"🐸",d:"获得 <b>20</b> 点格挡,对所有敌人施加 <b>2</b> 层虚弱。<b>消耗</b>",blk:20,weak:2,all:1,ex:1,chars:["naruto"],up:{d:"获得 <b>26</b> 点格挡,对所有敌人施加 <b>2</b> 层虚弱。<b>消耗</b>",blk:26}},
   kyuubi_cloak:{n:"九尾外衣",t:"pwr",c:2,r:3,ic:"🦊",d:"力量 +<b>1</b>,每回合开始力量 +<b>1</b>(3 回合),自身受 <b>3</b> 点伤害",str:1,ramp:1,rampTurns:3,self:3,chars:["naruto"],up:{d:"力量 +<b>1</b>,每回合开始力量 +<b>1</b>(3 回合),自身受 <b>1</b> 点伤害",self:1}},
-  senjutsu_focus:{n:"仙术凝神",t:"pwr",c:2,r:2,ic:"🌿",d:"身法 +<b>2</b>,每回合开始获得 <b>2</b> 点格挡",dex:2,nindo:2,chars:["naruto"],up:{d:"身法 +<b>2</b>,每回合开始获得 <b>4</b> 点格挡",nindo:4}},
+  senjutsu_focus:{n:"仙术凝神",t:"pwr",c:2,r:2,ic:"🌿",d:"身法 +<b>1</b>。每回合开始获得 <b>1</b> 层影分身",dex:1,clonePerTurn:1,chars:["naruto"],up:{c:1,d:"身法 +<b>1</b>。每回合开始获得 <b>1</b> 层影分身(费用 2→1)"}},
   rasen_barrage:{n:"螺旋丸连弹",t:"atk",c:3,r:2,ic:"🌀",d:"造成 <b>11</b>×<b>3</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:11,hits:3,self:4,ex:1,chars:["naruto"],up:{d:"造成 <b>14</b>×<b>3</b> 点伤害,自身受 <b>4</b> 点伤害。<b>消耗</b>",dmg:14}},
-  kirin:{n:"麒麟",t:"atk",c:3,r:3,ic:"⚡",d:"对<b>所有</b>敌人造成 <b>24</b> 点伤害,施加 <b>2</b> 层易伤。<b>消耗</b>",dmg:24,aoe:1,tvuln:2,ex:1,chars:["sasuke"],up:{d:"对<b>所有</b>敌人造成 <b>32</b> 点伤害,施加 <b>2</b> 层易伤。<b>消耗</b>",dmg:32}},
+  kagutsuchi:{n:"炎遁·加具土命",t:"skl",c:2,r:3,ic:"🖤",d:"所有敌人的灼烧翻倍,再施加 <b>2</b> 层灼烧。<b>消耗</b>",doubleBurn:1,burn:2,all:1,ex:1,chars:["sasuke"],up:{c:1,d:"所有敌人的灼烧翻倍,再施加 <b>2</b> 层灼烧。<b>消耗</b>(费用 2→1)"}},
+  kirin:{n:"麒麟",t:"atk",c:3,r:3,ic:"⚡",d:"对<b>所有</b>敌人造成 <b>18</b> 点伤害。引爆灼烧,每层额外造成 <b>2</b> 点伤害。<b>消耗</b>",dmg:18,aoe:1,burnBurst:2,ex:1,chars:["sasuke"],up:{d:"对<b>所有</b>敌人造成 <b>24</b> 点伤害。引爆灼烧,每层额外造成 <b>3</b> 点伤害。<b>消耗</b>",dmg:24,burnBurst:3}},
   amaterasu:{n:"天照",t:"atk",c:2,r:3,ic:"🔥",d:"造成 <b>18</b> 点伤害,施加 <b>3</b> 层易伤,自身受 <b>3</b> 点伤害",dmg:18,vuln:3,self:3,chars:["sasuke"],up:{d:"造成 <b>24</b> 点伤害,施加 <b>3</b> 层易伤,自身受 <b>3</b> 点伤害",dmg:24}},
-  curse_mark:{n:"咒印活化",t:"pwr",c:2,r:3,ic:"😈",d:"力量 +<b>1</b>,每回合开始力量 +<b>1</b>(3 回合),自身受 <b>5</b> 点伤害",str:1,ramp:1,rampTurns:3,self:5,chars:["sasuke"],up:{d:"力量 +<b>2</b>,每回合开始力量 +<b>1</b>(3 回合),自身受 <b>5</b> 点伤害",str:2}},
-  susanoo_rib:{n:"须佐骨架",t:"pwr",c:2,r:3,ic:"🛡️",d:"身法 +<b>2</b>,每回合开始获得 <b>4</b> 点格挡",dex:2,nindo:4,chars:["sasuke"],up:{d:"身法 +<b>3</b>,每回合开始获得 <b>5</b> 点格挡",dex:3,nindo:5}},
+  curse_mark:{n:"咒印活化",t:"pwr",c:2,r:3,ic:"😈",d:"力量 +<b>2</b>,身法 +<b>1</b>,自身受 <b>5</b> 点伤害",str:2,dex:1,self:5,chars:["sasuke"],up:{d:"力量 +<b>3</b>,身法 +<b>1</b>,自身受 <b>5</b> 点伤害",str:3}},
+  susanoo_rib:{n:"须佐骨架",t:"pwr",c:2,r:3,ic:"🛡️",d:"身法 +<b>1</b>,每回合开始获得 <b>3</b> 点格挡。回合开始时不再失去格挡",dex:1,nindo:3,retainBlock:1,chars:["sasuke"],up:{d:"身法 +<b>2</b>,每回合开始获得 <b>4</b> 点格挡。回合开始时不再失去格挡",dex:2,nindo:4}},
   byakugou:{n:"百豪之术",t:"pwr",c:2,r:3,ic:"◇",d:"力量 +<b>1</b>,身法 +<b>2</b>,回复 <b>6</b> 点生命。每次打出回复牌获得 <b>2</b> 层怪力",str:1,dex:2,heal:6,healMight:2,chars:["sakura"],up:{d:"力量 +<b>1</b>,身法 +<b>2</b>,回复 <b>10</b> 点生命。每次打出回复牌获得 <b>3</b> 层怪力",heal:10,healMight:3}},
   katsuyu:{n:"通灵术·蛞蝓",t:"skl",c:2,r:2,ic:"🐌",d:"回复 <b>6</b> 点生命,获得 <b>14</b> 点格挡。<b>消耗</b>",heal:6,blk:14,ex:1,chars:["sakura"],up:{d:"回复 <b>10</b> 点生命,获得 <b>18</b> 点格挡。<b>消耗</b>",heal:10,blk:18}},
   mitotic_regen:{n:"创造再生",t:"skl",c:2,r:3,ic:"💚",d:"清除自身中毒、虚弱、易伤,回复 <b>15</b> 点生命。<b>消耗</b>",cleanse:1,heal:15,ex:1,chars:["sakura"],up:{d:"清除自身中毒、虚弱、易伤,回复 <b>22</b> 点生命。<b>消耗</b>",heal:22}},
   heaven_kick:{n:"天守脚",t:"atk",c:3,r:3,ic:"🦶",d:"对<b>所有</b>敌人造成 <b>20</b> 点伤害",dmg:20,aoe:1,chars:["sakura"],up:{d:"对<b>所有</b>敌人造成 <b>27</b> 点伤害",dmg:27}},
+  hundred_heal_release:{n:"百豪·解放",t:"skl",c:2,r:3,ic:"💎",d:"当前怪力翻倍(最多 20 层),回复 <b>6</b> 点生命并清除中毒、虚弱、易伤。<b>消耗</b>",doubleMight:1,doubleMightCap:20,heal:6,cleanse:1,ex:1,chars:["sakura"],up:{d:"当前怪力翻倍(最多 20 层),回复 <b>10</b> 点生命并清除中毒、虚弱、易伤。<b>消耗</b>",heal:10}},
   /* —— 诅咒 —— */
   jyuin:{n:"咒印之痕",t:"curse",c:0,r:9,ic:"🕸️",d:"无法打出。占据手牌。",unplayable:1},
 };
@@ -1021,6 +1051,17 @@ function mkCard(key,upgraded=false){
     weak:b.weak||0,tweak:b.tweak||0,clone:b.clone||0,aoe:b.aoe||0,self:b.self||0,heal:b.heal||0,
     might:b.might||0,healMight:b.healMight||0,blockMight:b.blockMight||0,
     str:b.str||0,dex:b.dex||0,nindo:b.nindo||0,ramp:b.ramp||0,rampTurns:b.rampTurns||0,energy:b.energy||0,cleanse:b.cleanse||0,
+    burn:b.burn||0,burnBurst:b.burnBurst||0,bonusVsBurn:b.bonusVsBurn||0,bonusVsWeak:b.bonusVsWeak||0,bonusVsVuln:b.bonusVsVuln||0,
+    cloneSpend:b.cloneSpend||0,cloneExtraHits:b.cloneExtraHits||0,comboHits:b.comboHits||0,gainMightPerTarget:b.gainMightPerTarget||0,
+    mightMultiplier:b.mightMultiplier||1,preserveMight:b.preserveMight||0,retain:b.retain||0,blockPerAttacker:b.blockPerAttacker||0,
+    lowHpDraw:b.lowHpDraw||0,drawIfDebuffed:b.drawIfDebuffed||0,drawIfVuln:b.drawIfVuln||0,drawIfMulti:b.drawIfMulti||0,
+    drawIfTargetAttacking:b.drawIfTargetAttacking||0,enemyStrDown:b.enemyStrDown||0,nextEnergy:b.nextEnergy||0,doubleBurn:b.doubleBurn||0,
+    blockStrike:b.blockStrike||0,overhealPower:b.overhealPower||0,doubleMight:b.doubleMight||0,doubleMightCap:b.doubleMightCap||0,ignoreStealth:b.ignoreStealth||0,
+    intentBlockPct:b.intentBlockPct||0,
+    blockIfWeak:b.blockIfWeak||0,drawIfAnyAttacker:b.drawIfAnyAttacker||0,blockIfTargetAttacking:b.blockIfTargetAttacking||0,
+    bonusHitsVsVuln:b.bonusHitsVsVuln||0,damagePerClone:b.damagePerClone||0,cloneScaleCap:b.cloneScaleCap||0,
+    clonePerTurn:b.clonePerTurn||0,vulnDrawPower:b.vulnDrawPower||0,retainBlock:b.retainBlock||0,
+    blockPerMight:b.blockPerMight||0,mightBlockCap:b.mightBlockCap||0,
     all:b.all||0,ex:b.ex||0,unplayable:b.unplayable||0};
   if(upgraded)upgradeCard(c);return c;
 }
@@ -1043,16 +1084,28 @@ function cardDescClass(desc){
   if(len>22)return ' middesc';
   return '';
 }
+const KW_TERMS=Object.keys(KW).sort((a,b)=>b.length-a.length);
+const KW_PATTERN=new RegExp(KW_TERMS.map(name=>name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'g');
+function annotateKeywords(html){
+  return String(html).split(/(<[^>]+>)/g).map(part=>{
+    if(part.startsWith('<'))return part;
+    return part.replace(KW_PATTERN,name=>{
+      const button=`<button type="button" class="kw" data-kw="${esc(name)}" aria-label="${esc(name+': '+KW[name])}" aria-describedby="keyword-tip" onpointerdown="event.stopPropagation()" onmouseenter="G.showKeyword(event,this)" onmouseleave="G.hideKeyword()" onfocus="G.showKeyword(event,this)" onblur="G.hideKeyword()" onclick="event.preventDefault();event.stopPropagation();G.showKeyword(event,this,true)">${name}</button>`;
+      return button;
+    });
+  }).join('');
+}
 function cardHTML(c,extra="",style=""){
-  const desc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
+  const rawDesc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
+  const desc=annotateKeywords(rawDesc);
   const art=c.art?`<img src="${esc(c.art)}" alt="">`:`<span class="art-seal">忍</span><span class="art-glyph">${c.ic}</span>`;
   const keyboard=String(extra).split(/\s+/).includes('inhand')?'role="button" tabindex="0"':'';
   return `<div ${keyboard} data-card-key="${esc(c.key)}" data-upgraded="${c.upgraded?1:0}" oncontextmenu="event.preventDefault();event.stopPropagation();G.previewUpgrade('${c.key}',${c.upgraded?1:0});return false" class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
     <div class="gem">${c.unplayable?'✕':c.c}</div>
-    <div class="nm" style="font-size:${cardNameSize(c.n)}px">${c.n}</div>
+    <div class="nm" style="--card-name-size:${cardNameSize(c.n)}px">${c.n}</div>
     <div class="art">${art}</div>
     <div class="tband">${TYPE_LABEL[c.t]}</div>
-    <div class="ds${cardDescClass(desc)}">${desc}</div>
+    <div class="ds${cardDescClass(rawDesc)}">${desc}</div>
     ${RAR_LABEL[c.r]?`<div class="rar">◆ ${RAR_LABEL[c.r]}</div>`:''}
   </div>`;
 }
@@ -1067,6 +1120,27 @@ function unitFrame(icon,sprite,name=""){
 const G={
   sfxOn:true,
   toggleSfx(){SFX.on=!SFX.on;$('sfx-btn').textContent=SFX.on?'🔊':'🔇';},
+  showKeyword(ev,el,pin=false){
+    const name=el&&el.dataset&&el.dataset.kw;
+    if(!name||!KW[name])return;
+    const tip=$('keyword-tip'),r=el.getBoundingClientRect();
+    tip.innerHTML=`<span class="keyword-tip-title">${name}</span>${KW[name]}`;
+    tip.classList.add('keyword-tip-on');tip.setAttribute('aria-hidden','false');
+    const tr=tip.getBoundingClientRect();
+    tip.style.left=Math.max(10,Math.min(window.innerWidth-tr.width-10,r.left+r.width/2-tr.width/2))+'px';
+    tip.style.top=(r.bottom+10+tr.height<=window.innerHeight?r.bottom+8:Math.max(8,r.top-tr.height-8))+'px';
+    if(pin){
+      this._keywordPinnedUntil=performance.now()+2600;
+      clearTimeout(this._keywordTimer);
+      this._keywordTimer=setTimeout(()=>this.hideKeyword(true),2600);
+    }
+  },
+  hideKeyword(force=false){
+    if(!force&&this._keywordPinnedUntil>performance.now())return;
+    const tip=$('keyword-tip');if(!tip)return;
+    tip.classList.remove('keyword-tip-on');tip.setAttribute('aria-hidden','true');
+    this._keywordPinnedUntil=0;
+  },
   char(){return own(CHARACTERS,this.character)?CHARACTERS[this.character]:CHARACTERS.naruto},
   cardAllowed(k){
     if(!own(CARDS,k))return false;
@@ -1196,9 +1270,11 @@ const G={
   },
   gainMight(n){
     if(!n)return;
-    this.might=Math.max(0,(this.might||0)+n);
+    const before=this.might||0;
+    this.might=Math.max(0,Math.min(20,before+n));
+    const gained=this.might-before;
     const el=this.playerEl&&this.playerEl();
-    if(el)this.fxText(el,'怪力+'+n,'blk');
+    if(el)this.fxText(el,gained>0?'怪力+'+gained:'怪力已满','blk');
   },
   randomPotionKey(excludeKeys=[]){
     const exclude=new Set(excludeKeys);
@@ -1667,7 +1743,7 @@ Object.assign(G,{
     const e={key,n:d.n,sp:d.sp,sprite:d.sprite||"",maxHp,
       moves:d.moves,special:d.special||null,phase2:d.phase2||null,phase2done:false,
       regen:d.regen||0,grow:d.grow?{...d.grow}:null,summonOnly:d.summonOnly||0,
-      mi:rnd(0,d.moves.length-1),tc:0,block:0,str:0,weak:0,vuln:0,
+      mi:rnd(0,d.moves.length-1),tc:0,block:0,str:0,weak:0,vuln:0,burn:0,
       stealth:d.stealth||0,thorns:d.thorns||0,
       elite:d.elite||0,boss:d.boss||0};
     e.hp=e.maxHp;return e;
@@ -1717,9 +1793,11 @@ Object.assign(G,{
     this.enemies.forEach(e=>this.applyEnemyDifficulty(e,kind));
     // 玩家战斗态
     this.block=0;this.str=this.permStr;this.dex=0;this.weak=0;this.vuln=0;this.poison=0;
-    this.might=0;this.healMight=0;this.blockMight=0;this.genjutsu=0;this.chakraDrain=0;
+    this.might=0;this.healMight=0;this.blockMight=0;this.overhealPower=0;this.genjutsu=0;this.chakraDrain=0;
     this.clones=this.hasRelic('contract')?2:0;
-    this.nindoBlk=0;this.rampStr=0;this.rampSources=[];
+    this.nindoBlk=0;this.clonePerTurn=0;this.vulnDrawPower=0;this.vulnDrawReady=false;this.vulnDrawConsumed=false;this.retainBlock=0;
+    this.rampStr=0;this.rampSources=[];this.nextTurnEnergy=0;
+    this.attacksPlayed=0;this.skillsPlayed=0;
     this.turn=0;this.picked=null;this.busy=false;this.combatEnded=false;
     this._weakFresh=0;this._vulnFresh=0;
     this.drawPile=shuffle(this.deck.map(c=>({...c})));
@@ -1740,8 +1818,10 @@ Object.assign(G,{
   /* ----- 回合 ----- */
   startTurn(){
     this.turn++;this.stats.turns++;
-    if(this.turn>1)this.block=0;
+    if(this.turn>1&&!this.retainBlock)this.block=0;
+    const carriedEnergy=this.nextTurnEnergy||0;this.nextTurnEnergy=0;
     this.energy=3
+      +carriedEnergy
       +(this.hasRelic('scroll')?1:0)
       +(this.turn===1&&this.hasRelic('hiraishin')?1:0);
     if(this.turn===1&&this.hasRelic('hiraishin'))this.flashRelic('hiraishin');
@@ -1751,7 +1831,9 @@ Object.assign(G,{
       this.fxText(this.playerEl(),`查克拉-${chakraPenalty}`,'blk');
       this.genjutsu=0;this.chakraDrain=0;
     }
-    this.firstAtk=true;this.firstSkl=true;
+    this.firstAtk=true;this.firstSkl=true;this.attacksPlayed=0;this.skillsPlayed=0;
+    this.vulnDrawConsumed=false;this.vulnDrawReady=this.vulnDrawPower>0;
+    if(this.clonePerTurn){this.clones+=this.clonePerTurn;this.fxText(this.playerEl(),'影分身+'+this.clonePerTurn,'blk')}
     if(this.turn===1&&this.hasRelic('chakra_bead')){this.str+=1;this.flashRelic('chakra_bead')}
     if(this.nindoBlk)this.block+=this.nindoBlk;
     this.tickRamp();
@@ -1792,7 +1874,7 @@ Object.assign(G,{
     return !!(c.aoe||c.all||c.weak);
   },
   cardHasEnemyEffect(c){
-    return !!(c.dmg||c.vuln||c.tvuln||c.tweak||c.weak);
+    return !!(c.dmg||c.vuln||c.tvuln||c.tweak||c.weak||c.burn||c.doubleBurn||c.enemyStrDown||c.intentBlockPct);
   },
   cardNeedsTarget(c){
     return this.cardHasEnemyEffect(c)&&!this.cardTargetsAll(c);
@@ -1891,14 +1973,47 @@ Object.assign(G,{
     if(!this.combatActive()||c.t!=='atk'||!this.firstAtk)return 0;
     return (this.hasRelic('fuuma')?4:0)+(this.hasRelic('kyuubi_seal')?6:0);
   },
+  cardEffectiveHits(c){
+    const cloneHits=c.cloneSpend&&c.cloneExtraHits?Math.min(this.clones||0,c.cloneSpend)*c.cloneExtraHits:0;
+    const comboHits=c.comboHits&&this.skillsPlayed>0?c.comboHits:0;
+    return (c.hits||1)+cloneHits+comboHits;
+  },
+  cardConditionalBase(c,target){
+    let base=c.dmg||0;
+    if(c.damagePerClone)base+=Math.min(this.clones||0,c.cloneScaleCap||99)*c.damagePerClone;
+    if(target){
+      if(c.bonusVsBurn&&target.burn>0)base+=c.bonusVsBurn;
+      if(c.bonusVsWeak&&target.weak>0)base+=c.bonusVsWeak;
+      if(c.bonusVsVuln&&target.vuln>0)base+=c.bonusVsVuln;
+    }
+    return base;
+  },
+  intentAttackDamage(target){
+    const m=target&&target.intent;
+    if(!m||!m.a)return 0;
+    return this.calc(m.a,target,{vuln:this.vuln});
+  },
+  cardBlockAmount(c,target=null){
+    let block=c.blk||0;
+    if(c.blockPerAttacker){
+      const attackers=(this.enemies||[]).filter(e=>e.hp>0&&e.intent&&e.intent.a).length;
+      block+=attackers*c.blockPerAttacker;
+    }
+    if(c.intentBlockPct&&target)block+=Math.ceil(this.intentAttackDamage(target)*c.intentBlockPct);
+    if(c.blockIfWeak&&target&&target.weak>0)block+=c.blockIfWeak;
+    if(c.blockIfTargetAttacking&&target&&target.intent&&target.intent.a)block+=c.blockIfTargetAttacking;
+    if(c.blockPerMight)block+=Math.min(this.might||0,c.mightBlockCap||99)*c.blockPerMight;
+    if(block>0)block+=this.dex||0;
+    return Math.max(0,block);
+  },
   cardDamageText(c){
     const bonus=this.cardAttackBonus(c);
     const me={str:this.str||0,weak:this.weak||0};
     const alive=(this.enemies||[]).filter(e=>e.hp>0);
-    const targets=c.aoe?alive:[alive[0]||{vuln:0}];
+    const targets=alive.length?alive:[{vuln:0,weak:0,burn:0}];
     const vals=[...new Set((targets.length?targets:[{vuln:0}]).map(t=>{
-      let d=this.calc(c.dmg+bonus,me,t);
-      if(t.stealth)d=Math.ceil(d*0.5);
+      let d=this.calc(this.cardConditionalBase(c,t)+bonus,me,t);
+      if(t.stealth&&!c.ignoreStealth)d=Math.ceil(d*0.5);
       return d;
     }))].sort((a,b)=>a-b);
     return vals.length>1?`${vals[0]}-${vals[vals.length-1]}`:`${vals[0]||0}`;
@@ -1906,10 +2021,10 @@ Object.assign(G,{
   cardMightDamageText(c){
     if(!this.combatActive()||c.t!=='atk'||!this.might)return '';
     const alive=(this.enemies||[]).filter(e=>e.hp>0);
-    const targets=c.aoe?alive:[alive[0]||{vuln:0}];
+    const targets=alive.length?alive:[{vuln:0}];
     const vals=[...new Set((targets.length?targets:[{vuln:0}]).map(t=>{
-      let d=this.calc(this.might,{str:0,weak:this.weak||0},t);
-      if(t.stealth)d=Math.ceil(d*0.5);
+      let d=this.calc(this.might*(c.mightMultiplier||1),{str:0,weak:this.weak||0},t);
+      if(t.stealth&&!c.ignoreStealth)d=Math.ceil(d*0.5);
       return d;
     }))].sort((a,b)=>a-b);
     return vals.length>1?`${vals[0]}-${vals[vals.length-1]}`:`${vals[0]||0}`;
@@ -1920,24 +2035,52 @@ Object.assign(G,{
     const parts=[];
     if(c.dmg){
       const d=this.cardDamageText(c);
-      const dmg=c.hits>1?`<b>${d}</b>×<b>${c.hits}</b>`:`<b>${d}</b>`;
+      const hits=this.cardEffectiveHits(c);
+      const dmg=hits>1?`<b>${d}</b>×<b>${hits}</b>`:`<b>${d}</b>`;
       parts.push(`${c.aoe?'对<b>所有</b>敌人':''}造成 ${dmg} 点伤害`);
     }
-    if(c.blk)parts.push(`获得 <b>${Math.max(0,c.blk+(this.dex||0))}</b> 点格挡`);
+    if(c.blk||c.blockPerAttacker)parts.push(`获得 <b>${this.cardBlockAmount(c)}</b> 点格挡`);
+    if(c.intentBlockPct){
+      const vals=(this.enemies||[]).filter(e=>e.hp>0).map(e=>this.cardBlockAmount(c,e));
+      const unique=[...new Set(vals)].sort((a,b)=>a-b);
+      const value=unique.length>1?`${unique[0]}-${unique[unique.length-1]}`:`${unique[0]||0}`;
+      parts.push(`按目标攻击意图获得 <b>${value}</b> 点格挡`);
+    }
     if(c.draw)parts.push(`抽 <b>${c.draw}</b> 张牌`);
+    if(c.drawIfMulti)parts.push(`命中至少 2 名敌人时抽 <b>${c.drawIfMulti}</b> 张牌`);
+    if(c.drawIfVuln)parts.push(`目标有易伤时抽 <b>${c.drawIfVuln}</b> 张牌`);
+    if(c.drawIfDebuffed)parts.push(`任意敌人有负面状态时抽 <b>${c.drawIfDebuffed}</b> 张牌`);
+    if(c.drawIfTargetAttacking)parts.push(`目标准备攻击时抽 <b>${c.drawIfTargetAttacking}</b> 张牌`);
+    if(c.drawIfAnyAttacker)parts.push(`有敌人准备攻击时抽 <b>${c.drawIfAnyAttacker}</b> 张牌`);
+    if(c.lowHpDraw)parts.push(`生命不高于 50% 时抽 <b>${c.lowHpDraw}</b> 张牌`);
     if(c.energy)parts.push(`获得 <b>${c.energy}</b> 点查克拉`);
     if(c.heal)parts.push(`回复 <b>${c.heal}</b> 点生命`);
     if(c.cleanse)parts.push('清除自身中毒、虚弱、易伤');
     if(c.might)parts.push(`获得 <b>${c.might}</b> 层怪力`);
+    if(c.gainMightPerTarget)parts.push(`每命中 1 名敌人获得 <b>${c.gainMightPerTarget}</b> 层怪力`);
     if(c.healMight)parts.push(`每次打出回复牌获得 <b>${c.healMight}</b> 层怪力`);
     if(c.blockMight)parts.push(`每次打出格挡牌获得 <b>${c.blockMight}</b> 层怪力`);
     if(c.t==='atk'&&this.might){
       const m=this.cardMightDamageText(c);
-      parts.push(`消耗怪力额外造成 <b>${m}</b> 点伤害`);
+      parts.push(`${c.preserveMight?'释放但不消耗':'消耗'}怪力额外造成 <b>${m}</b> 点伤害`);
     }
+    if(c.t==='atk'&&!this.might&&c.preserveMight)parts.push('释放怪力但不消耗怪力');
+    if(c.mightMultiplier>1)parts.push(`本牌的怪力效果 ×<b>${c.mightMultiplier}</b>`);
+    if(c.bonusVsBurn)parts.push(`目标有灼烧时每段额外 +<b>${c.bonusVsBurn}</b> 伤害`);
+    if(c.bonusVsWeak)parts.push(`目标有虚弱时每段额外 +<b>${c.bonusVsWeak}</b> 伤害`);
+    if(c.bonusVsVuln)parts.push(`目标有易伤时每段额外 +<b>${c.bonusVsVuln}</b> 伤害`);
+    if(c.ignoreStealth)parts.push('无视潜行');
     if(c.str)parts.push(`力量 +<b>${c.str}</b>`);
     if(c.dex)parts.push(`身法 +<b>${c.dex}</b>`);
     if(c.clone)parts.push(`获得 <b>${c.clone}</b> 层影分身`);
+    if(c.cloneSpend)parts.push(`消耗至多 <b>${c.cloneSpend}</b> 层影分身追加攻击`);
+    if(c.clonePerTurn)parts.push(`每回合开始获得 <b>${c.clonePerTurn}</b> 层影分身`);
+    if(c.comboHits)parts.push(`本回合打出过技能牌时追加 <b>${c.comboHits}</b> 次攻击`);
+    if(c.damagePerClone)parts.push(`每层影分身使每段伤害 +<b>${c.damagePerClone}</b>(至多 ${c.cloneScaleCap||99} 层)`);
+    if(c.bonusHitsVsVuln)parts.push(`目标有易伤时追加 <b>${c.bonusHitsVsVuln}</b> 次攻击`);
+    if(c.blockIfWeak)parts.push(`目标有虚弱时获得 <b>${c.blockIfWeak}</b> 点格挡`);
+    if(c.blockIfTargetAttacking)parts.push(`目标准备攻击时额外获得 <b>${c.blockIfTargetAttacking}</b> 点格挡`);
+    if(c.blockPerMight)parts.push(`每层怪力额外获得 <b>${c.blockPerMight}</b> 点格挡(至多 ${c.mightBlockCap||99} 层)`);
     if(c.nindo)parts.push(`每回合开始获得 <b>${c.nindo}</b> 点格挡`);
     if(c.ramp)parts.push(`每回合开始力量 +<b>${c.ramp}</b>,持续 <b>${c.rampTurns||3}</b> 回合`);
     const bonus=this.statusBonus();
@@ -1946,6 +2089,17 @@ Object.assign(G,{
     const scope=this.cardTargetsAll(c)?'对所有敌人':'对目标';
     if(vuln)parts.push(`${scope}施加 <b>${vuln+bonus.v}</b> 层易伤`);
     if(weak)parts.push(`${scope}施加 <b>${weak+bonus.w}</b> 层虚弱`);
+    if(c.doubleBurn)parts.push('所有敌人的灼烧翻倍');
+    if(c.burn)parts.push(`${scope}施加 <b>${c.burn}</b> 层灼烧`);
+    if(c.burnBurst)parts.push(`引爆灼烧,每层额外造成 <b>${c.burnBurst}</b> 点伤害`);
+    if(c.enemyStrDown)parts.push(`使目标力量 -<b>${c.enemyStrDown}</b>`);
+    if(c.blockStrike)parts.push('消耗全部格挡并额外造成等量伤害');
+    if(c.overhealPower)parts.push('回复超过生命上限的数值转化为格挡(最多 2 层)');
+    if(c.vulnDrawPower)parts.push(`每回合首次施加易伤时抽 <b>${c.vulnDrawPower}</b> 张牌`);
+    if(c.retainBlock)parts.push('回合开始时不再失去格挡');
+    if(c.doubleMight)parts.push(`当前怪力翻倍(最多 ${c.doubleMightCap||20} 层)`);
+    if(c.nextEnergy)parts.push(`下回合查克拉 +<b>${c.nextEnergy}</b>`);
+    if(c.retain)parts.push('<b>保留</b>');
     if(c.self)parts.push(`自身受 <b>${c.self}</b> 点伤害`);
     if(c.ex)parts.push('<b>消耗</b>');
     return parts.length?parts.join(', '):c.d;
@@ -1962,10 +2116,10 @@ Object.assign(G,{
     }else if(raw>0){this.fxBlock(this.playerEl());SFX.blk()}
     return d;
   },
-  dealDamage(e,raw,pure=false){
+  dealDamage(e,raw,pure=false,ignoreStealth=false){
     let d=raw;
     const reflected=!pure?(e.thorns||0):0;
-    if(!pure&&e.stealth){
+    if(!pure&&e.stealth&&!ignoreStealth){
       d=Math.ceil(d*0.5);
       e.stealth=Math.max(0,e.stealth-1);
       this.fxText(this.enemyEl(this.enemies.indexOf(e)),'潜行减伤','blk');
@@ -2015,6 +2169,12 @@ Object.assign(G,{
   },
   execCard(c,target){
     this.energy-=c.c;
+    const aliveBefore=this.enemies.filter(e=>e.hp>0);
+    const targetWasVuln=!!(target&&target.vuln>0);
+    const targetWasAttacking=!!(target&&target.intent&&target.intent.a);
+    const hadDebuffedEnemy=aliveBefore.some(e=>e.weak>0||e.vuln>0||e.burn>0);
+    const wasLowHp=this.hp<=this.maxHp*.5;
+    const storedBlock=this.block;
     let bonus=0;
     if(c.t==='atk'&&this.firstAtk){
       if(this.hasRelic('fuuma')){bonus+=4;this.flashRelic('fuuma')}
@@ -2030,52 +2190,110 @@ Object.assign(G,{
     const statusBonus=this.statusBonus();
     if(c.healMight)this.healMight+=c.healMight;
     if(c.blockMight)this.blockMight+=c.blockMight;
-    const attackMight=c.t==='atk'&&c.dmg?(this.might||0):0;
+    const cloneSpent=c.dmg&&c.cloneSpend?Math.min(this.clones||0,c.cloneSpend):0;
+    const baseHitCount=(c.hits||1)+cloneSpent*(c.cloneExtraHits||0)+(c.comboHits&&this.skillsPlayed>0?c.comboHits:0);
+    if(cloneSpent){this.clones-=cloneSpent;this.fxText(this.playerEl(),`影分身-${cloneSpent}`,'blk')}
+    if(c.blockStrike&&storedBlock>0){this.block=0;this.fxText(this.playerEl(),`格挡-${storedBlock}`,'blk')}
+    const attackMight=c.t==='atk'&&c.dmg?(this.might||0)*(c.mightMultiplier||1):0;
+    let hitTargets=0,vulnApplied=false,targetTransformed=false;
     if(c.dmg){
       const ts=c.aoe?this.enemies.filter(e=>e.hp>0):[target];
       for(const t of ts){
         if(!t)continue;
+        hitTargets++;
+        const hitCount=baseHitCount+(c.bonusHitsVsVuln&&t.vuln>0?c.bonusHitsVsVuln:0);
         let transformed=false;
-        for(let h=0;h<c.hits;h++){
+        for(let h=0;h<hitCount;h++){
           if(t.hp<=0)break;
           const wasPhase2=t.phase2done;
-          this.dealDamage(t,this.calc(c.dmg+bonus,me,t));
+          this.dealDamage(t,this.calc(this.cardConditionalBase(c,t)+bonus,me,t),false,!!c.ignoreStealth);
           if(this.hp<=0)break;
-          if(!wasPhase2&&t.phase2done){transformed=true;break}
+          if(!wasPhase2&&t.phase2done){transformed=true;if(t===target)targetTransformed=true;break}
         }
         if(this.hp<=0)break;
         if(attackMight&&t.hp>0&&!transformed){
-          this.dealDamage(t,this.calc(attackMight,{str:0,weak:this.weak},t));
+          const wasPhase2=t.phase2done;
+          this.dealDamage(t,this.calc(attackMight,{str:0,weak:this.weak},t),false,!!c.ignoreStealth);
+          if(!wasPhase2&&t.phase2done){transformed=true;if(t===target)targetTransformed=true}
           if(this.hp<=0)break;
         }
-        if(c.vuln&&t.hp>0)t.vuln+=c.vuln+statusBonus.v;
+        if(c.burnBurst&&t.burn>0&&t.hp>0&&!transformed){
+          const layers=t.burn;t.burn=0;
+          const wasPhase2=t.phase2done;
+          this.dealDamage(t,this.calc(layers*c.burnBurst,{str:0,weak:this.weak},t));
+          if(!wasPhase2&&t.phase2done){transformed=true;if(t===target)targetTransformed=true}
+          if(this.hp<=0)break;
+        }
+        if(c.vuln&&t.hp>0){t.vuln+=c.vuln+statusBonus.v;vulnApplied=true}
       }
-      if(attackMight){
+      if(c.blockStrike&&storedBlock>0&&target&&target.hp>0&&!targetTransformed){
+        this.dealDamage(target,this.calc(storedBlock,{str:0,weak:this.weak},target));
+      }
+      if(attackMight&&!c.preserveMight){
         this.might=0;
         this.fxText(this.playerEl(),'怪力释放','blk');
+      }else if(attackMight){
+        this.fxText(this.playerEl(),'怪力连携','blk');
       }
+      if(c.gainMightPerTarget&&hitTargets)this.gainMight(hitTargets*c.gainMightPerTarget);
       if(this.hp<=0)return;
     }
-    if(c.tvuln)this.enemyTargets(c,target).forEach(t=>t.vuln+=c.tvuln+statusBonus.v);
+    const effectTargets=this.enemyTargets(c,target);
+    if(c.doubleBurn)effectTargets.forEach(t=>t.burn=Math.min(99,(t.burn||0)*2));
+    if(c.burn)effectTargets.forEach(t=>t.burn=Math.min(99,(t.burn||0)+c.burn));
+    if(c.tvuln){
+      const ts=this.enemyTargets(c,target);ts.forEach(t=>t.vuln+=c.tvuln+statusBonus.v);vulnApplied=ts.length>0||vulnApplied;
+    }
     if(c.tweak||c.weak){
       const w=(c.tweak||0)+(c.weak||0)+statusBonus.w;
       this.enemyTargets(c,target).forEach(t=>t.weak+=w);
     }
-    if(c.blk){
-      const b=c.blk+this.dex;this.block+=b;this.fxText(this.playerEl(),'+'+b,'blk');SFX.blk();
+    if(c.enemyStrDown)effectTargets.forEach(t=>t.str=Math.max(-6,t.str-c.enemyStrDown));
+    if(c.blk||c.blockPerAttacker||c.intentBlockPct||c.blockIfWeak||c.blockIfTargetAttacking||c.blockPerMight){
+      const b=this.cardBlockAmount(c,target);this.block+=b;this.fxText(this.playerEl(),'+'+b,'blk');SFX.blk();
       if(this.blockMight)this.gainMight(this.blockMight);
     }
     if(c.draw)this.draw(c.draw);
-    if(c.heal){this.heal(c.heal);this.fxText(this.playerEl(),'+'+c.heal,'heal');if(this.healMight)this.gainMight(this.healMight)}
+    if(c.drawIfMulti&&c.aoe&&aliveBefore.length>=2)this.draw(c.drawIfMulti);
+    if(c.drawIfVuln&&targetWasVuln)this.draw(c.drawIfVuln);
+    if(c.drawIfDebuffed&&hadDebuffedEnemy)this.draw(c.drawIfDebuffed);
+    if(c.drawIfTargetAttacking&&targetWasAttacking)this.draw(c.drawIfTargetAttacking);
+    if(c.drawIfAnyAttacker&&aliveBefore.some(e=>e.intent&&e.intent.a))this.draw(c.drawIfAnyAttacker);
+    if(c.lowHpDraw&&wasLowHp)this.draw(c.lowHpDraw);
+    if(vulnApplied&&this.vulnDrawReady){this.draw(this.vulnDrawPower);this.vulnDrawReady=false;this.vulnDrawConsumed=true;this.fxText(this.playerEl(),'洞察抽牌','blk')}
+    if(c.doubleMight&&this.might){
+      const before=this.might;this.might=Math.min(c.doubleMightCap||20,this.might*2);
+      this.fxText(this.playerEl(),'怪力+'+(this.might-before),'blk');
+    }
+    if(c.heal){
+      const missing=Math.max(0,this.maxHp-this.hp),overflow=Math.max(0,c.heal-missing);
+      this.heal(c.heal);this.fxText(this.playerEl(),'+'+Math.min(c.heal,missing),'heal');
+      if(this.overhealPower&&overflow){const b=overflow*this.overhealPower;this.block+=b;this.fxText(this.playerEl(),'盈疗 +'+b,'blk')}
+      if(this.healMight)this.gainMight(this.healMight);
+    }
     if(c.self){this.hp-=c.self;this.fxText(this.playerEl(),'-'+c.self);if(this.hp<=0){this.updateTopbar();return this.gameOver()}}
     if(c.cleanse){this.poison=0;this.weak=0;this.vuln=0}
     if(c.energy)this.energy+=c.energy;
+    if(c.nextEnergy)this.nextTurnEnergy+=c.nextEnergy;
     if(c.clone)this.clones+=c.clone;
     if(c.might)this.gainMight(c.might);
     if(c.str)this.str+=c.str;
     if(c.dex)this.dex+=c.dex;
     if(c.nindo)this.nindoBlk+=c.nindo;
+    if(c.clonePerTurn)this.clonePerTurn+=c.clonePerTurn;
+    if(c.vulnDrawPower){
+      const wasInactive=this.vulnDrawPower<=0;
+      this.vulnDrawPower+=c.vulnDrawPower;
+      if(wasInactive&&!this.vulnDrawConsumed)this.vulnDrawReady=true;
+    }
+    if(c.retainBlock)this.retainBlock=1;
     if(c.ramp)this.addRamp(c.ramp,c.rampTurns||3);
+    if(c.overhealPower){
+      const before=this.overhealPower;this.overhealPower=Math.min(2,this.overhealPower+c.overhealPower);
+      if(before===this.overhealPower)this.fxText(this.playerEl(),'盈疗已满','blk');
+    }
+    if(c.t==='atk')this.attacksPlayed++;
+    if(c.t==='skl')this.skillsPlayed++;
     $('combat-log').textContent=`使出「${c.n.replace('⁺','')}」!`;
   },
   checkWin(){
@@ -2089,10 +2307,17 @@ Object.assign(G,{
     return false;
   },
   applyEnemyStartEffects(e){
-    if(!e.regen||e.hp<=0||e.hp>=e.maxHp)return '';
-    const h=Math.min(e.regen,e.maxHp-e.hp);
-    e.hp+=h;this.fxText(this.enemyEl(this.enemies.indexOf(e)),'+'+h,'heal');
-    return `再生 +${h}`;
+    if(e.hp<=0)return '';
+    const parts=[];
+    if(e.burn>0){
+      const d=e.burn;e.burn=Math.max(0,e.burn-1);
+      this.dealDamage(e,d,true);parts.push(`灼烧 -${d}`);
+    }
+    if(e.hp>0&&e.regen&&e.hp<e.maxHp){
+      const h=Math.min(e.regen,e.maxHp-e.hp);
+      e.hp+=h;this.fxText(this.enemyEl(this.enemies.indexOf(e)),'+'+h,'heal');parts.push(`再生 +${h}`);
+    }
+    return parts.join(', ');
   },
   applyEnemyGrowth(e){
     const g=e.grow;
@@ -2154,7 +2379,8 @@ Object.assign(G,{
       this.clones=Math.max(0,this.clones-1);
       this.fxText(this.playerEl(),'影分身-1','blk');
     }
-    this.discardPile.push(...this.hand);this.hand=[];
+    const retained=this.hand.filter(c=>c.retain&&!c.unplayable);
+    this.discardPile.push(...this.hand.filter(c=>!retained.includes(c)));this.hand=retained;
     $('endturn').classList.add('enemyturn');
     this.banner('敌 方 行 动');
     this.renderCombat();
@@ -2174,8 +2400,14 @@ Object.assign(G,{
       const e=acts[i++];
       if(e.hp<=0)return step();
       e.block=0;
-      const m=e.intent,ei=this.enemies.indexOf(e);
+      const ei=this.enemies.indexOf(e);
       const regenText=this.applyEnemyStartEffects(e);
+      if(e.hp<=0){
+        this.renderCombat();
+        if(this.checkWin())return;
+        return setTimeout(step,320);
+      }
+      const m=e.intent;
       const uEl=document.querySelector(`[data-ei="${ei}"]`);
       if(uEl)uEl.classList.add('lunge-l');
       setTimeout(()=>{
@@ -2258,7 +2490,7 @@ Object.assign(G,{
   },
   stTags(o,isPlayer){
     const T=[];
-    const add=(name,val,buff)=>T.push(`<button type="button" class="stag ${buff?'buff':'debuff'}" onclick="event.stopPropagation();toast('<b>${name}</b>:${esc(KW[name]||'')}')">${name}${val}</button>`);
+    const add=(name,val,buff)=>T.push(`<button type="button" class="stag ${buff?'buff':'debuff'}" data-kw="${name}" aria-label="${esc(name+': '+(KW[name]||''))}" aria-describedby="keyword-tip" onmouseenter="G.showKeyword(event,this)" onmouseleave="G.hideKeyword()" onfocus="G.showKeyword(event,this)" onblur="G.hideKeyword()" onclick="event.preventDefault();event.stopPropagation();G.showKeyword(event,this,true)">${name}${val}</button>`);
     if(o.str)add('力量',o.str,o.str>0);
     if(o.weak)add('虚弱',o.weak,false);
     if(o.vuln)add('易伤',o.vuln,false);
@@ -2266,6 +2498,7 @@ Object.assign(G,{
     if(o.grow)add('蓄势','',true);
     if(o.stealth)add('潜行',o.stealth,true);
     if(o.thorns)add('反伤',o.thorns,true);
+    if(o.burn)add('灼烧',o.burn,false);
     if(isPlayer){
       if(this.might)add('怪力',this.might,true);
       if(this.dex)add('身法',this.dex,true);
@@ -2274,6 +2507,11 @@ Object.assign(G,{
       if(this.rampStr)add('九尾',this.rampStr,true);
       if(this.healMight)add('医术',this.healMight,true);
       if(this.blockMight)add('聚力',this.blockMight,true);
+      if(this.overhealPower)add('盈疗',this.overhealPower,true);
+      if(this.nextTurnEnergy)add('蓄能',this.nextTurnEnergy,true);
+      if(this.clonePerTurn)add('分身术式',this.clonePerTurn,true);
+      if(this.vulnDrawPower)add('洞察',this.vulnDrawPower,true);
+      if(this.retainBlock)add('固守','',true);
       if(this.genjutsu)add('幻术',this.genjutsu,false);
       if(this.chakraDrain)add('查克拉封印',this.chakraDrain,false);
       if(this.poison)add('中毒',this.poison,false);
@@ -2345,6 +2583,7 @@ document.addEventListener('click',e=>{
 let cardLongPress=null;
 document.addEventListener('pointerdown',e=>{
   if(e.pointerType==='mouse')return;
+  if(e.target.closest&&e.target.closest('.kw'))return;
   const card=e.target.closest&&e.target.closest('.card');if(!card)return;
   if(cardLongPress)clearTimeout(cardLongPress.timer);
   const x=e.clientX,y=e.clientY;
@@ -2368,6 +2607,7 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('keydown',e=>{
   if(e.repeat||(e.key!=='Enter'&&e.key!==' '))return;
+  if(e.target.closest&&e.target.closest('button,a,input,select,textarea'))return;
   const target=e.target.closest&&e.target.closest('[role="button"]');if(!target)return;
   e.preventDefault();target.dispatchEvent(new MouseEvent('click',{bubbles:true}));
 });

@@ -1,0 +1,84 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+
+const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match => match[1]);
+new Function(scripts.join('\n'));
+
+function readConst(name, nextName) {
+  const pattern = new RegExp(`const ${name} = (\\{[\\s\\S]*?\\n\\});\\nconst ${nextName}`);
+  const match = html.match(pattern);
+  if (!match) throw new Error(`Cannot extract ${name}`);
+  return vm.runInNewContext(`(${match[1]})`);
+}
+
+const characters = readConst('CHARACTERS', 'CHARACTER_EVENT_CARDS');
+const cards = readConst('CARDS', 'TYPE_LABEL');
+const mkCardSource = html.match(/function mkCard\([\s\S]*?\n}/)?.[0] || '';
+const upgradeCardSource = html.match(/function upgradeCard\([\s\S]*?\n}/)?.[0] || '';
+const errors = [];
+const assert = (condition, message) => {
+  if (!condition) errors.push(message);
+};
+
+for (const [key, character] of Object.entries(characters)) {
+  const starter = character.deck.map(cardKey => cards[cardKey]);
+  assert(starter.length === 10, `${key}: starter deck must contain 10 cards`);
+  assert(character.deck.filter(cardKey => cardKey === 'taijutsu').length === 4, `${key}: starter deck must contain 4 basic attacks`);
+  assert(character.deck.filter(cardKey => cardKey === 'kawarimi').length === 4, `${key}: starter deck must contain 4 basic defenses`);
+  assert(starter.filter(card => card?.chars?.includes(key)).length === 2, `${key}: starter deck must contain 2 exclusive cards`);
+
+  const pool = Object.values(cards).filter(card => card.r > 0 && card.r < 4 && (!card.chars || card.chars.includes(key)));
+  const rarity = [1, 2, 3].map(value => pool.filter(card => card.r === value).length);
+  assert(pool.length === 39, `${key}: expected 39 available reward cards, got ${pool.length}`);
+  assert(rarity[0] > rarity[1] && rarity[1] > rarity[2], `${key}: rarity counts must descend, got ${rarity.join('/')}`);
+}
+
+const ignoredShapeFields = new Set(['n', 'ic', 'art', 'd', 'up', 'chars', 'r', 'c']);
+const shape = card => Object.keys(card)
+  .filter(field => !ignoredShapeFields.has(field) && card[field])
+  .sort()
+  .join('+');
+const shapeGroups = new Map();
+for (const [key, card] of Object.entries(cards)) {
+  if (card.t === 'curse' || card.r === 0) continue;
+  const signature = shape(card);
+  if (!shapeGroups.has(signature)) shapeGroups.set(signature, []);
+  shapeGroups.get(signature).push(`${key}(${card.n})`);
+  assert(card.up && typeof card.up.d === 'string', `${key}: reward card must define an upgraded description`);
+}
+for (const group of shapeGroups.values()) {
+  assert(group.length === 1, `duplicate field shape: ${group.join(' = ')}`);
+}
+
+const cardFactory = vm.runInNewContext(
+  `${mkCardSource}\n${upgradeCardSource}\n({mkCard, upgradeCard})`,
+  { CARDS: cards },
+);
+for (const [key, definition] of Object.entries(cards)) {
+  const base = cardFactory.mkCard(key, false);
+  for (const [field, value] of Object.entries(definition)) {
+    if (field === 'up' || field === 'chars') continue;
+    assert(Object.is(base[field], value), `${key}: mkCard base mismatch for ${field}`);
+  }
+  if (!definition.up) continue;
+  const upgraded = cardFactory.mkCard(key, true);
+  assert(upgraded.upgraded === true, `${key}: upgraded instance is not marked upgraded`);
+  assert(upgraded.n === `${definition.up.n || definition.n}⁺`, `${key}: upgraded name mismatch`);
+  for (const [field, value] of Object.entries(definition.up)) {
+    if (field === 'n') continue;
+    assert(Object.is(upgraded[field], value), `${key}: mkCard upgrade mismatch for ${field}`);
+  }
+}
+
+const requiredKeywords = ['怪力', '影分身', '灼烧', '引爆', '保留', '盈疗', '洞察', '固守'];
+for (const keyword of requiredKeywords) {
+  assert(html.includes(`"${keyword}":`), `missing keyword explanation: ${keyword}`);
+}
+
+if (errors.length) {
+  console.error(errors.map(error => `- ${error}`).join('\n'));
+  process.exit(1);
+}
+
+console.log(`Card data verification passed: ${Object.keys(cards).length} cards, 39 reward cards per character, 0 duplicate field-shape collisions.`);
