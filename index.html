@@ -168,18 +168,19 @@ button{font-family:inherit}
 @keyframes shake{0%,100%{transform:none}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(4px,-2px)}}
 
 #player-side{flex:0 1 var(--combat-player-w);min-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:10px 4px 14px;z-index:2}
-#enemy-side{flex:0 1 var(--combat-enemy-w);display:flex;align-items:flex-end;justify-content:center;padding:10px 8px 14px;flex-wrap:nowrap;gap:clamp(2px,.8vw,12px);z-index:2}
+#enemy-side{flex:0 1 var(--combat-enemy-w);display:flex;align-items:stretch;justify-content:center;padding:10px 8px 14px;flex-wrap:nowrap;gap:clamp(2px,.8vw,12px);z-index:2}
 
 .unit{display:flex;flex-direction:column;align-items:center;position:relative;transition:opacity .5s}
 .unit.dead{opacity:0;pointer-events:none}
-.unit .intent{font-size:13px;min-height:20px;margin-bottom:3px;color:var(--paper-dim);
+.enemy-slot{position:relative;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;padding-top:30px}
+.enemy-slot>.unit{flex:0 0 auto}
+.enemy-slot>.intent{font-size:13px;min-height:20px;margin-bottom:3px;color:var(--paper-dim);
   background:rgba(0,0,0,.45);padding:1px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
-#enemy-side .unit{padding-top:30px}
-#enemy-side .unit .intent{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:4;
+.enemy-slot>.intent{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:4;
   margin:0;white-space:nowrap;max-width:250px;overflow:hidden;text-overflow:ellipsis}
-#enemy-side .unit.dead .intent{display:none}
-.unit .intent b{color:#ff6b5b;font-size:14.5px}
-.unit .intent .ib{color:var(--block)}
+.enemy-slot.dead>.intent{display:none}
+.enemy-slot>.intent b{color:#ff6b5b;font-size:14.5px}
+.enemy-slot>.intent .ib{color:var(--block)}
 .frame{position:relative;display:flex;align-items:flex-end;justify-content:center;
   background:none;border:0;box-shadow:none;transition:transform .15s,filter .15s;overflow:visible}
 .frame.sprite-frame{width:190px;height:250px}
@@ -361,9 +362,9 @@ button{font-family:inherit}
   .unit.elite .frame.sprite-frame{width:130px;height:166px}
   .unit.boss .frame.sprite-frame{width:150px;height:190px}.unit.boss .frame .face{font-size:54px}
   .unit.boss .frame.emoji-frame{width:100px;height:100px}
-  #enemy-side .unit{padding-top:27px}
-  #enemy-side .unit .intent{max-width:138px;font-size:11px}
-  #enemy-side .unit .intent b{font-size:12px}
+  .enemy-slot{padding-top:27px}
+  .enemy-slot>.intent{max-width:138px;font-size:11px}
+  .enemy-slot>.intent b{font-size:12px}
   #player-side{min-width:120px}
   #hand{height:calc(var(--card-h) + 18px)}
 }
@@ -449,8 +450,8 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
 #stage{background-position:center 58%;isolation:isolate}.stage-ground{display:none}#stage::before{content:"";position:absolute;left:0;right:0;bottom:0;height:38%;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(4,5,4,.16) 45%,rgba(3,4,3,.7))}
 #stage::after{z-index:5;background:radial-gradient(ellipse at center 72%,transparent 36%,rgba(0,0,0,.48) 100%),repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.01) 3px 6px)}
 #player-side,#enemy-side{z-index:6;padding-bottom:12px}.unit{filter:drop-shadow(0 14px 10px rgba(0,0,0,.55))}.unit .frame.sprite-frame{transition:transform .2s ease,filter .2s ease}.unit.targetable:hover .frame{transform:translateY(-4px);filter:drop-shadow(0 0 12px rgba(240,106,29,.7))}
-.unit .intent{min-width:108px;min-height:30px;padding:5px 10px 4px;border-radius:3px;border:1px solid rgba(240,228,195,.25);background:rgba(9,10,8,.9);box-shadow:0 5px 16px rgba(0,0,0,.5);color:#bcb49e;font-family:"PingFang SC",sans-serif}.unit .intent::before{content:"敌方意图";display:block;font-size:7px;line-height:1;letter-spacing:.15em;color:#69685e;margin-bottom:2px}.unit .intent b{color:#ff7264}.unit .intent:hover{border-color:var(--gold);color:var(--paper)}
-#enemy-side .unit{padding-top:48px}#enemy-side .unit .intent{top:0;max-width:210px}.uname{min-width:126px;margin-top:2px;padding:5px 10px 4px;text-align:center;background:rgba(8,9,7,.88);border-top:1px solid rgba(240,228,195,.24);font-size:12px;letter-spacing:.12em;text-shadow:0 2px 4px #000}
+.enemy-slot>.intent{min-width:108px;min-height:30px;padding:5px 10px 4px;border-radius:3px;border:1px solid rgba(240,228,195,.25);background:rgba(9,10,8,.9);box-shadow:0 5px 16px rgba(0,0,0,.5);color:#bcb49e;font-family:"PingFang SC",sans-serif}.enemy-slot>.intent::before{content:"敌方意图";display:block;font-size:7px;line-height:1;letter-spacing:.15em;color:#69685e;margin-bottom:2px}.enemy-slot>.intent b{color:#ff7264}.enemy-slot>.intent:hover{border-color:var(--gold);color:var(--paper)}
+.enemy-slot{padding-top:48px}.enemy-slot>.intent{top:0;max-width:210px}.uname{min-width:126px;margin-top:2px;padding:5px 10px 4px;text-align:center;background:rgba(8,9,7,.88);border-top:1px solid rgba(240,228,195,.24);font-size:12px;letter-spacing:.12em;text-shadow:0 2px 4px #000}
 .hpbar{width:126px;height:13px;margin-top:0;border-radius:1px;border:1px solid #080808;background:#070707;box-shadow:0 3px 8px rgba(0,0,0,.55)}.hpbar i{border-radius:0;background:linear-gradient(90deg,#8d1e21,#e04c48 72%,#ff7a66)}.hpbar.pb i{background:linear-gradient(90deg,#176d8b,#44bce7 72%,#8ce1ff)}.hptx{margin-top:-13px;z-index:2;color:#fff;font:bold 9px "PingFang SC",sans-serif;text-shadow:0 1px 3px #000;pointer-events:none}.strow{margin-top:8px}.stag{min-height:18px;border-radius:2px;font-family:"PingFang SC",sans-serif;font-size:9px;background:rgba(8,9,7,.88)}
 #turn-banner{top:39%;font-size:28px;letter-spacing:.38em;padding:12px;background:linear-gradient(90deg,transparent,rgba(9,10,8,.88),transparent);border-top:1px solid rgba(223,178,86,.3);border-bottom:1px solid rgba(223,178,86,.3)}
 #target-hint{top:16px;width:max-content;max-width:80%;left:50%;right:auto;transform:translateX(-50%);padding:7px 14px;background:rgba(9,10,8,.88);border:1px solid var(--naruto);font-family:"PingFang SC",sans-serif;font-size:10px;border-radius:2px}
@@ -488,7 +489,7 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
   :root{--card-w:132px;--card-h:194px;--card-art-h:78px}
   #topbar{min-height:82px;padding:5px 8px;flex-wrap:wrap}.hud-vitals{width:100%;justify-content:center;height:35px}.hud-route{margin-left:0;padding-left:0;border:0}.hud-kit{margin-left:auto}.tstat{height:30px;padding:3px 7px}.hud-label{display:none!important}
   .title-shell{display:block;padding:26px 18px;overflow-y:auto}.title-hero{max-width:none;margin-bottom:24px}.title-desc{max-width:680px;margin:16px 0}.title-features{display:none}.title-roster{padding:0}.char-card{min-height:350px}.char-portrait{height:74%}
-  #stage{--combat-player-w:46%;--combat-enemy-w:54%}.frame.sprite-frame{width:140px;height:180px}.unit.player .frame.sprite-frame{width:145px;height:184px}.unit.elite .frame.sprite-frame{width:150px;height:190px}.unit.boss .frame.sprite-frame{width:170px;height:215px}.uname,.hpbar{min-width:105px;width:105px}.unit .intent{min-width:90px}.card .ds{font-size:8.8px}.card .ds.middesc{font-size:8.2px}.card .ds.longdesc{font-size:7.7px}
+  #stage{--combat-player-w:46%;--combat-enemy-w:54%}.frame.sprite-frame{width:140px;height:180px}.unit.player .frame.sprite-frame{width:145px;height:184px}.unit.elite .frame.sprite-frame{width:150px;height:190px}.unit.boss .frame.sprite-frame{width:170px;height:215px}.uname,.hpbar{min-width:105px;width:105px}.enemy-slot>.intent{min-width:90px}.card .ds{font-size:8.8px}.card .ds.middesc{font-size:8.2px}.card .ds.longdesc{font-size:7.7px}
 }
 @media (max-width:620px){
   :root{--card-w:116px;--card-h:172px;--card-art-h:64px}
@@ -496,7 +497,7 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
   #screen-title{justify-content:flex-start}.title-shell{padding:20px 14px}.title-kicker{margin-bottom:12px}.title-kanji{width:54px;height:64px;font-size:36px}.title-main{font-size:42px}.title-sub{font-size:8px}.title-desc{font-size:11.5px;line-height:1.65;margin:13px 0 18px}.roster-heading h2{font-size:18px}
   .char-grid{display:grid;grid-template-columns:1fr;gap:8px}.char-card{min-height:168px}.char-portrait{width:52%;height:115%;left:auto;right:-2%;top:-7%;object-position:center}.char-card::before{background:linear-gradient(90deg,rgba(9,10,8,.96) 0 48%,transparent 78%)}.char-card-body{top:0;bottom:0;width:68%;padding:20px 12px;background:linear-gradient(90deg,rgba(8,9,7,.98) 0 72%,transparent);display:flex;flex-direction:column;justify-content:center}.char-index{font-size:20px}.char-name{font-size:18px}.char-desc{min-height:auto}.roster-note{display:none}
   #screen-map{padding:16px 8px 0}.map-toolbar{top:-16px}.map-head{padding-inline:8px}.map-head .sec-t{font-size:15px}.map-legend{gap:3px}.map-legend span{font-size:8px;padding:3px 5px}#map-wrap{padding:10px 12px 20px}
-  #stage{min-height:255px;--combat-player-w:44%;--combat-enemy-w:56%;background-position:center bottom}.frame.sprite-frame{width:104px;height:132px}.unit.player .frame.sprite-frame{width:108px;height:136px}.unit.elite .frame.sprite-frame{width:110px;height:142px}.unit.boss .frame.sprite-frame{width:125px;height:158px}#enemy-side{gap:0;padding-inline:0}.unit .intent{min-width:72px;max-width:105px!important;padding:3px 5px;font-size:9px}.unit .intent::before{font-size:6px}.uname,.hpbar{min-width:84px;width:84px}.uname{font-size:9px;padding:3px}.hpbar{height:11px}.hptx{margin-top:-11px;font-size:8px}.strow{max-width:100px;gap:2px}.stag{font-size:7px;padding:0 3px}.technique-callout b{font-size:16px;padding:5px 14px}
+  #stage{min-height:255px;--combat-player-w:44%;--combat-enemy-w:56%;background-position:center bottom}.frame.sprite-frame{width:104px;height:132px}.unit.player .frame.sprite-frame{width:108px;height:136px}.unit.elite .frame.sprite-frame{width:110px;height:142px}.unit.boss .frame.sprite-frame{width:125px;height:158px}#enemy-side{gap:0;padding-inline:0}.enemy-slot>.intent{min-width:72px;max-width:105px!important;padding:3px 5px;font-size:9px}.enemy-slot>.intent::before{font-size:6px}.uname,.hpbar{min-width:84px;width:84px}.uname{font-size:9px;padding:3px}.hpbar{height:11px}.hptx{margin-top:-11px;font-size:8px}.strow{max-width:100px;gap:2px}.stag{font-size:7px;padding:0 3px}.technique-callout b{font-size:16px;padding:5px 14px}
   #combat-info{height:31px;padding:3px 6px}.pilebtn{font-size:0;padding:2px 6px}.pilebtn span,.pilebtn::first-letter{font-size:10px}#combat-log{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#hand-outer{gap:5px;padding:4px 5px 7px}#orb{width:48px;height:48px;min-width:48px;font-size:17px}#orb::before{width:36px;height:36px}#endturn{min-width:58px;width:58px;height:50px;padding:5px;font-size:10px}.card .nm{font-size:calc(var(--card-name-size,12px)*.82)!important}.card .art{margin-bottom:2px}.card .tband{font-size:6px;margin-top:-8px}.card .ds{font-size:7.8px;line-height:1.18;padding:5px 3px}.card .ds.middesc{font-size:7.3px}.card .ds.longdesc{font-size:6.8px}.card .rar{font-size:5.8px}.card .gem{width:25px;height:25px;font-size:12px}
   #screen-shop,#screen-rest,#screen-event,#screen-reward{padding:14px}.shop-shell,.rest-shell,#reward-list{padding:16px 10px}.rest-choices{grid-template-columns:1fr;gap:8px}.rest-choice{min-height:108px}.event-box{padding:20px 15px}.ritem{min-width:0;width:100%;font-size:12px}.shop-relic{width:132px;min-height:160px}
 }
@@ -2535,13 +2536,15 @@ Object.assign(G,{
       const dead=e.hp<=0;
       const pickedTarget=this.picked!==null&&this.hand[this.picked]&&this.cardNeedsTarget(this.hand[this.picked]);
       const targetAttrs=pickedTarget&&!dead?'role="button" tabindex="0"':'';
-      return `<div class="unit ${dead?'dead':''} ${e.elite?'elite':''} ${e.boss?'boss':''} ${!dead?'targetable':''} ${pickedTarget&&!dead?'target-glow':''}" ${targetAttrs} data-ei="${i}" onclick="G.clickEnemy(${i})">
+      return `<div class="enemy-slot ${dead?'dead':''}">
         <button type="button" class="intent" onclick="event.stopPropagation();G.explainIntent(${i})">${dead?'':this.intentHTML(e)+' <span style="opacity:.65;font-size:11px">'+(e.intent?e.intent.txt:'')+'</span>'}</button>
-        ${unitFrame(e.sp,e.sprite,e.n)}
-        <div class="uname">${e.n} ${e.block?`<span class="ub">🛡️${e.block}</span>`:''}</div>
-        <div class="hpbar"><i style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></i></div>
-        <div class="hptx">${Math.max(0,e.hp)} / ${e.maxHp}</div>
-        <div class="strow">${this.stTags(e)}</div>
+        <div class="unit ${dead?'dead':''} ${e.elite?'elite':''} ${e.boss?'boss':''} ${!dead?'targetable':''} ${pickedTarget&&!dead?'target-glow':''}" ${targetAttrs} data-ei="${i}" onclick="G.clickEnemy(${i})">
+          ${unitFrame(e.sp,e.sprite,e.n)}
+          <div class="uname">${e.n} ${e.block?`<span class="ub">🛡️${e.block}</span>`:''}</div>
+          <div class="hpbar"><i style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></i></div>
+          <div class="hptx">${Math.max(0,e.hp)} / ${e.maxHp}</div>
+          <div class="strow">${this.stTags(e)}</div>
+        </div>
       </div>`;
     }).join('');
     // 手牌(扇形)
