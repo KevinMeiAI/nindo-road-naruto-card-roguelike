@@ -656,24 +656,24 @@ const CHARACTER_EVENT_CARDS = {
 
 /* t:atk/skl/pwr/curse  r:0起始 1普通 2稀有 3传说  ex:消耗 */
 const CARDS = {
-  taijutsu:{n:"体术连击",t:"atk",c:1,r:0,ic:"👊",art:"assets/card-art/taijutsu.jpg",d:"造成 <b>6</b> 点伤害",dmg:6,up:{d:"造成 <b>9</b> 点伤害",dmg:9}},
-  kawarimi:{n:"替身术",t:"skl",c:1,r:0,ic:"🪵",art:"assets/card-art/kawarimi.jpg",d:"获得 <b>5</b> 点格挡",blk:5,up:{d:"获得 <b>8</b> 点格挡",blk:8}},
+  taijutsu:{n:"体术连击",t:"atk",c:1,r:0,ic:"👊",art:"assets/card-art/taijutsu-v2.jpg",d:"造成 <b>6</b> 点伤害",dmg:6,up:{d:"造成 <b>9</b> 点伤害",dmg:9}},
+  kawarimi:{n:"替身术",t:"skl",c:1,r:0,ic:"🪵",art:"assets/card-art/kawarimi-v2.jpg",d:"获得 <b>5</b> 点格挡",blk:5,up:{d:"获得 <b>8</b> 点格挡",blk:8}},
   rasengan:{n:"螺旋丸",t:"atk",c:2,r:0,ic:"🌀",art:"assets/card-art/rasengan-v2.jpg",d:"造成 <b>12</b> 点伤害",dmg:12,chars:["naruto"],up:{n:"大玉螺旋丸",d:"造成 <b>17</b> 点伤害",dmg:17}},
-  lion_combo:{n:"狮子连弹",t:"atk",c:1,r:0,ic:"🦁",art:"assets/card-art/lion_combo.jpg",d:"造成 <b>7</b> 点伤害",dmg:7,chars:["sasuke"],up:{d:"造成 <b>10</b> 点伤害",dmg:10}},
-  chidori_seed:{n:"千鸟雏形",t:"atk",c:1,r:0,ic:"⚡",art:"assets/card-art/chidori_seed.jpg",d:"造成 <b>6</b> 点伤害,施加 <b>1</b> 层易伤",dmg:6,vuln:1,chars:["sasuke"],up:{d:"造成 <b>8</b> 点伤害,施加 <b>2</b> 层易伤",dmg:8,vuln:2}},
-  power_punch:{n:"怪力拳",t:"atk",c:1,r:0,ic:"💥",art:"assets/card-art/power_punch.jpg",d:"造成 <b>8</b> 点伤害",dmg:8,chars:["sakura"],up:{d:"造成 <b>11</b> 点伤害",dmg:11}},
-  palm_heal:{n:"掌仙术",t:"skl",c:1,r:0,ic:"💚",art:"assets/card-art/palm_heal.jpg",d:"获得 <b>5</b> 点格挡,回复 <b>2</b> 点生命,获得 <b>1</b> 层怪力",blk:5,heal:2,might:1,chars:["sakura"],up:{d:"获得 <b>7</b> 点格挡,回复 <b>3</b> 点生命,获得 <b>2</b> 层怪力",blk:7,heal:3,might:2}},
+  lion_combo:{n:"狮子连弹",t:"atk",c:1,r:0,ic:"🦁",art:"assets/card-art/lion_combo-v2.jpg",d:"造成 <b>7</b> 点伤害",dmg:7,chars:["sasuke"],up:{d:"造成 <b>10</b> 点伤害",dmg:10}},
+  chidori_seed:{n:"千鸟雏形",t:"atk",c:1,r:0,ic:"⚡",art:"assets/card-art/chidori_seed-v2.jpg",d:"造成 <b>6</b> 点伤害,施加 <b>1</b> 层易伤",dmg:6,vuln:1,chars:["sasuke"],up:{d:"造成 <b>8</b> 点伤害,施加 <b>2</b> 层易伤",dmg:8,vuln:2}},
+  power_punch:{n:"怪力拳",t:"atk",c:1,r:0,ic:"💥",art:"assets/card-art/power_punch-v2.jpg",d:"造成 <b>8</b> 点伤害",dmg:8,chars:["sakura"],up:{d:"造成 <b>11</b> 点伤害",dmg:11}},
+  palm_heal:{n:"掌仙术",t:"skl",c:1,r:0,ic:"💚",art:"assets/card-art/palm_heal-v2.jpg",d:"获得 <b>5</b> 点格挡,回复 <b>2</b> 点生命,获得 <b>1</b> 层怪力",blk:5,heal:2,might:1,chars:["sakura"],up:{d:"获得 <b>7</b> 点格挡,回复 <b>3</b> 点生命,获得 <b>2</b> 层怪力",blk:7,heal:3,might:2}},
   /* —— 普通 —— */
-  kunai:{n:"苦无投掷",t:"atk",c:0,r:1,ic:"🗡️",art:"assets/card-art/kunai.jpg",d:"造成 <b>3</b> 点伤害",dmg:3,up:{d:"造成 <b>5</b> 点伤害",dmg:5}},
-  renda:{n:"木叶旋风",t:"atk",c:1,r:1,ic:"🌪️",art:"assets/card-art/renda.jpg",d:"造成 <b>3</b>×<b>2</b> 点伤害。目标有虚弱时获得 <b>4</b> 点格挡",dmg:3,hits:2,blockIfWeak:4,up:{d:"造成 <b>4</b>×<b>2</b> 点伤害。目标有虚弱时获得 <b>6</b> 点格挡",dmg:4,blockIfWeak:6}},
-  bakufu:{n:"起爆符",t:"atk",c:1,r:1,ic:"🧧",art:"assets/card-art/bakufu.jpg",d:"造成 <b>7</b> 点伤害,施加 <b>1</b> 层易伤",dmg:7,vuln:1,up:{d:"造成 <b>9</b> 点伤害,施加 <b>2</b> 层易伤",dmg:9,vuln:2}},
-  shuriken:{n:"手里剑乱舞",t:"atk",c:1,r:1,ic:"✴️",art:"assets/card-art/shuriken.jpg",d:"对<b>所有</b>敌人造成 <b>4</b> 点伤害。若命中至少 2 名敌人,抽 <b>1</b> 张牌",dmg:4,aoe:1,drawIfMulti:1,up:{d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害。若命中至少 2 名敌人,抽 <b>1</b> 张牌",dmg:6}},
-  smoke:{n:"烟雾弹",t:"skl",c:1,r:1,ic:"💨",art:"assets/card-art/smoke.jpg",d:"获得 <b>5</b> 点格挡。若有敌人准备攻击,抽 <b>1</b> 张牌",blk:5,drawIfAnyAttacker:1,up:{d:"获得 <b>8</b> 点格挡。若有敌人准备攻击,抽 <b>1</b> 张牌",blk:8}},
-  fuuin:{n:"封印术",t:"skl",c:1,r:1,ic:"🈲",art:"assets/card-art/fuuin.jpg",d:"对所有敌人施加 <b>2</b> 层虚弱",weak:2,all:1,up:{d:"对所有敌人施加 <b>3</b> 层虚弱",weak:3}},
-  shunshin:{n:"瞬身术",t:"skl",c:0,r:1,ic:"⚡",art:"assets/card-art/shunshin.jpg",d:"抽 <b>2</b> 张牌",draw:2,up:{d:"抽 <b>3</b> 张牌",draw:3}},
-  guard:{n:"铁壁防御",t:"skl",c:2,r:1,ic:"🛡️",art:"assets/card-art/guard.jpg",d:"获得 <b>11</b> 点格挡",blk:11,up:{d:"获得 <b>15</b> 点格挡",blk:15}},
-sharingan_copy:{n:"看破",t:"skl",c:1,r:1,ic:"👁️",art:"assets/card-art/sharingan_copy.jpg",d:"获得 <b>3</b> 点格挡。目标准备攻击时额外 +<b>5</b>。施加 <b>1</b> 层虚弱",blk:3,blockIfTargetAttacking:5,tweak:1,chars:["sasuke"],up:{d:"获得 <b>4</b> 点格挡。目标准备攻击时额外 +<b>7</b>。施加 <b>1</b> 层虚弱",blk:4,blockIfTargetAttacking:7}},
-  kage_shuriken:{n:"影手里剑",t:"atk",c:2,r:1,ic:"✴️",art:"assets/card-art/kage_shuriken.jpg",d:"造成 <b>12</b> 点伤害。若目标有易伤,抽 <b>2</b> 张牌",dmg:12,drawIfVuln:2,up:{d:"造成 <b>16</b> 点伤害。若目标有易伤,抽 <b>2</b> 张牌",dmg:16}},
+  kunai:{n:"苦无投掷",t:"atk",c:0,r:1,ic:"🗡️",art:"assets/card-art/kunai-v2.jpg",d:"造成 <b>3</b> 点伤害",dmg:3,up:{d:"造成 <b>5</b> 点伤害",dmg:5}},
+  renda:{n:"木叶旋风",t:"atk",c:1,r:1,ic:"🌪️",art:"assets/card-art/renda-v2.jpg",d:"造成 <b>3</b>×<b>2</b> 点伤害。目标有虚弱时获得 <b>4</b> 点格挡",dmg:3,hits:2,blockIfWeak:4,up:{d:"造成 <b>4</b>×<b>2</b> 点伤害。目标有虚弱时获得 <b>6</b> 点格挡",dmg:4,blockIfWeak:6}},
+  bakufu:{n:"起爆符",t:"atk",c:1,r:1,ic:"🧧",art:"assets/card-art/bakufu-v2.jpg",d:"造成 <b>7</b> 点伤害,施加 <b>1</b> 层易伤",dmg:7,vuln:1,up:{d:"造成 <b>9</b> 点伤害,施加 <b>2</b> 层易伤",dmg:9,vuln:2}},
+  shuriken:{n:"手里剑乱舞",t:"atk",c:1,r:1,ic:"✴️",art:"assets/card-art/shuriken-v2.jpg",d:"对<b>所有</b>敌人造成 <b>4</b> 点伤害。若命中至少 2 名敌人,抽 <b>1</b> 张牌",dmg:4,aoe:1,drawIfMulti:1,up:{d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害。若命中至少 2 名敌人,抽 <b>1</b> 张牌",dmg:6}},
+  smoke:{n:"烟雾弹",t:"skl",c:1,r:1,ic:"💨",art:"assets/card-art/smoke-v2.jpg",d:"获得 <b>5</b> 点格挡。若有敌人准备攻击,抽 <b>1</b> 张牌",blk:5,drawIfAnyAttacker:1,up:{d:"获得 <b>8</b> 点格挡。若有敌人准备攻击,抽 <b>1</b> 张牌",blk:8}},
+  fuuin:{n:"封印术",t:"skl",c:1,r:1,ic:"🈲",art:"assets/card-art/fuuin-v2.jpg",d:"对所有敌人施加 <b>2</b> 层虚弱",weak:2,all:1,up:{d:"对所有敌人施加 <b>3</b> 层虚弱",weak:3}},
+  shunshin:{n:"瞬身术",t:"skl",c:0,r:1,ic:"⚡",art:"assets/card-art/shunshin-v2.jpg",d:"抽 <b>2</b> 张牌",draw:2,up:{d:"抽 <b>3</b> 张牌",draw:3}},
+  guard:{n:"铁壁防御",t:"skl",c:2,r:1,ic:"🛡️",art:"assets/card-art/guard-v2.jpg",d:"获得 <b>11</b> 点格挡",blk:11,up:{d:"获得 <b>15</b> 点格挡",blk:15}},
+  sharingan_copy:{n:"看破",t:"skl",c:1,r:1,ic:"👁️",art:"assets/card-art/sharingan_copy.jpg",d:"获得 <b>3</b> 点格挡。目标准备攻击时额外 +<b>5</b>。施加 <b>1</b> 层虚弱",blk:3,blockIfTargetAttacking:5,tweak:1,chars:["sasuke"],up:{d:"获得 <b>4</b> 点格挡。目标准备攻击时额外 +<b>7</b>。施加 <b>1</b> 层虚弱",blk:4,blockIfTargetAttacking:7}},
+  kage_shuriken:{n:"影手里剑",t:"atk",c:2,r:1,ic:"✴️",art:"assets/card-art/kage_shuriken-v2.jpg",d:"造成 <b>12</b> 点伤害。若目标有易伤,抽 <b>2</b> 张牌",dmg:12,drawIfVuln:2,up:{d:"造成 <b>16</b> 点伤害。若目标有易伤,抽 <b>2</b> 张牌",dmg:16}},
   uchiha_shuriken:{n:"宇智波手里剑",t:"atk",c:1,r:1,ic:"✴️",art:"assets/card-art/uchiha_shuriken.jpg",d:"造成 <b>2</b>×<b>3</b> 点伤害。目标有易伤时追加 1 次攻击",dmg:2,hits:3,bonusHitsVsVuln:1,chars:["sasuke"],up:{d:"造成 <b>3</b>×<b>3</b> 点伤害。目标有易伤时追加 1 次攻击",dmg:3}},
   katon_spark:{n:"火遁·火花",t:"atk",c:1,r:1,ic:"🔥",art:"assets/card-art/katon_spark.jpg",d:"对<b>所有</b>敌人造成 <b>3</b> 点伤害,施加 <b>2</b> 层灼烧",dmg:3,burn:2,aoe:1,chars:["sasuke"],up:{d:"对<b>所有</b>敌人造成 <b>5</b> 点伤害,施加 <b>3</b> 层灼烧",dmg:5,burn:3}},
   wire_feint:{n:"操具·钢丝束缚",t:"skl",c:1,r:1,ic:"🧵",art:"assets/card-art/wire_feint.jpg",d:"获得 <b>4</b> 点格挡,对目标施加 <b>1</b> 层虚弱",blk:4,tweak:1,chars:["sasuke"],up:{d:"获得 <b>6</b> 点格挡,对目标施加 <b>1</b> 层虚弱",blk:6}},
@@ -681,13 +681,13 @@ sharingan_copy:{n:"看破",t:"skl",c:1,r:1,ic:"👁️",art:"assets/card-art/sha
   revenge_focus:{n:"复仇意志",t:"pwr",c:1,r:1,ic:"🖤",art:"assets/card-art/revenge_focus.jpg",d:"力量 +<b>1</b>,自身受 <b>2</b> 点伤害",str:1,self:2,chars:["sasuke"],up:{d:"力量 +<b>1</b>",self:0}},
   kawazu_tataki:{n:"蛙组手",t:"atk",c:1,r:1,ic:"🐸",art:"assets/card-art/kawazu_tataki.jpg",d:"无视潜行,造成 <b>8</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:8,tweak:1,ignoreStealth:1,chars:["naruto"],up:{d:"无视潜行,造成 <b>11</b> 点伤害,施加 <b>1</b> 层虚弱",dmg:11}},
   bunshin_feint:{n:"分身佯攻",t:"skl",c:1,r:1,ic:"👥",art:"assets/card-art/bunshin_feint.jpg",d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>1</b> 层虚弱",blk:6,weak:1,all:1,chars:["naruto"],up:{d:"获得 <b>8</b> 点格挡,对所有敌人施加 <b>1</b> 层虚弱",blk:8}},
-field_dressing:{n:"战地包扎",t:"skl",c:1,r:1,ic:"🩹",art:"assets/card-art/field_dressing.jpg",d:"回复 <b>3</b> 点生命。<b>消耗</b>",heal:3,ex:1,chars:["sakura"],up:{d:"回复 <b>6</b> 点生命。<b>消耗</b>",heal:6}},
+  field_dressing:{n:"战地包扎",t:"skl",c:1,r:1,ic:"🩹",art:"assets/card-art/field_dressing.jpg",d:"回复 <b>3</b> 点生命。<b>消耗</b>",heal:3,ex:1,chars:["sakura"],up:{d:"回复 <b>6</b> 点生命。<b>消耗</b>",heal:6}},
   chakra_gloves:{n:"查克拉护手",t:"skl",c:0,r:1,ic:"💠",art:"assets/card-art/chakra_gloves.jpg",d:"获得 <b>3</b> 点格挡。每层怪力额外 +<b>1</b>(至多 4 层)。<b>保留</b>",blk:3,blockPerMight:1,mightBlockCap:4,retain:1,chars:["sakura"],up:{d:"获得 <b>5</b> 点格挡。每层怪力额外 +<b>1</b>(至多 4 层)。<b>保留</b>",blk:5}},
   precise_punch:{n:"精准重拳",t:"atk",c:1,r:1,ic:"👊",art:"assets/card-art/precise_punch.jpg",d:"造成 <b>6</b> 点伤害。目标有虚弱时额外造成 <b>6</b> 点伤害",dmg:6,bonusVsWeak:6,chars:["sakura"],up:{d:"造成 <b>8</b> 点伤害。目标有虚弱时额外造成 <b>8</b> 点伤害",dmg:8,bonusVsWeak:8}},
   ground_slam:{n:"碎地冲击",t:"atk",c:1,r:1,ic:"🌋",art:"assets/card-art/ground_slam.jpg",d:"对<b>所有</b>敌人造成 <b>4</b> 点伤害。每命中 1 名敌人,获得 <b>1</b> 层怪力",dmg:4,aoe:1,gainMightPerTarget:1,chars:["sakura"],up:{d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害。每命中 1 名敌人,获得 <b>1</b> 层怪力",dmg:6}},
   medical_guard:{n:"医疗架势",t:"pwr",c:1,r:1,ic:"💚",art:"assets/card-art/medical_guard.jpg",d:"身法 +<b>1</b>,回复 <b>2</b> 点生命。每次打出回复牌获得 <b>1</b> 层怪力",dex:1,heal:2,healMight:1,chars:["sakura"],up:{d:"身法 +<b>1</b>,回复 <b>5</b> 点生命。每次打出回复牌获得 <b>2</b> 层怪力",heal:5,healMight:2}},
-  chakra_step:{n:"查克拉步",t:"skl",c:0,r:1,ic:"🔵",art:"assets/card-art/chakra_step.jpg",d:"获得 <b>2</b> 点格挡,抽 <b>1</b> 张牌",blk:2,draw:1,up:{d:"获得 <b>4</b> 点格挡,抽 <b>1</b> 张牌",blk:4}},
-  wire_trap:{n:"钢丝陷阱",t:"skl",c:1,r:1,ic:"🧵",art:"assets/card-art/wire_trap.jpg",d:"获得 <b>4</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:4,tvuln:1,all:1,up:{d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>2</b> 层易伤",blk:6,tvuln:2}},
+  chakra_step:{n:"查克拉步",t:"skl",c:0,r:1,ic:"🔵",art:"assets/card-art/chakra_step-v2.jpg",d:"获得 <b>2</b> 点格挡,抽 <b>1</b> 张牌",blk:2,draw:1,up:{d:"获得 <b>4</b> 点格挡,抽 <b>1</b> 张牌",blk:4}},
+  wire_trap:{n:"钢丝陷阱",t:"skl",c:1,r:1,ic:"🧵",art:"assets/card-art/wire_trap-v2.jpg",d:"获得 <b>4</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:4,tvuln:1,all:1,up:{d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>2</b> 层易伤",blk:6,tvuln:2}},
   focus_fist:{n:"蓄力正拳",t:"skl",c:1,r:1,ic:"💥",art:"assets/card-art/focus_fist.jpg",d:"获得 <b>4</b> 点格挡,获得 <b>3</b> 层怪力",blk:4,might:3,chars:["sakura"],up:{d:"获得 <b>6</b> 点格挡,获得 <b>4</b> 层怪力",blk:6,might:4}},
   clone_assault:{n:"分身突击",t:"atk",c:1,r:1,ic:"👥",art:"assets/card-art/clone_assault.jpg",d:"造成 <b>5</b> 点伤害。消耗至多 1 层影分身,追加 1 次攻击",dmg:5,cloneSpend:1,cloneExtraHits:1,chars:["naruto"],up:{d:"造成 <b>7</b> 点伤害。消耗至多 1 层影分身,追加 1 次攻击",dmg:7}},
   transformation_feint:{n:"变身佯动",t:"skl",c:0,r:1,ic:"🎭",art:"assets/card-art/transformation_feint.jpg",d:"获得 <b>3</b> 点格挡。若任意敌人有负面状态,抽 <b>1</b> 张牌。<b>保留</b>",blk:3,drawIfDebuffed:1,retain:1,chars:["naruto"],up:{d:"获得 <b>5</b> 点格挡。若任意敌人有负面状态,抽 <b>1</b> 张牌。<b>保留</b>",blk:5}},
@@ -706,15 +706,15 @@ field_dressing:{n:"战地包扎",t:"skl",c:1,r:1,ic:"🩹",art:"assets/card-art/
   iryou:{n:"医疗忍术",t:"skl",c:1,r:2,ic:"💚",art:"assets/card-art/iryou.jpg",d:"回复 <b>5</b> 点生命,获得 <b>2</b> 层怪力。<b>消耗</b>",heal:5,might:2,ex:1,chars:["sakura"],up:{d:"回复 <b>8</b> 点生命,获得 <b>3</b> 层怪力。<b>消耗</b>",heal:8,might:3}},
   raiton:{n:"雷遁·麻痹术",t:"skl",c:1,r:1,ic:"🌩️",art:"assets/card-art/raiton.jpg",d:"对目标施加 <b>1</b> 层易伤、<b>1</b> 层虚弱",tvuln:1,tweak:1,chars:["sasuke"],up:{d:"对目标施加 <b>2</b> 层易伤、<b>1</b> 层虚弱",tvuln:2}},
   katon:{n:"火遁·豪火球",t:"atk",c:2,r:2,ic:"🔥",art:"assets/card-art/katon.jpg",d:"对<b>所有</b>敌人造成 <b>7</b> 点伤害。敌人已有灼烧时额外造成 <b>4</b> 点伤害,再施加 <b>3</b> 层灼烧",dmg:7,bonusVsBurn:4,burn:3,aoe:1,chars:["sasuke"],up:{d:"对<b>所有</b>敌人造成 <b>10</b> 点伤害。敌人已有灼烧时额外造成 <b>6</b> 点伤害,再施加 <b>4</b> 层灼烧",dmg:10,bonusVsBurn:6,burn:4}},
-  chakra_focus:{n:"查克拉炼成",t:"skl",c:0,r:2,ic:"🔵",art:"assets/card-art/chakra_focus.jpg",d:"获得 <b>2</b> 点查克拉。<b>消耗</b>",energy:2,ex:1,up:{d:"获得 <b>3</b> 点查克拉。<b>消耗</b>",energy:3}},
+  chakra_focus:{n:"查克拉炼成",t:"skl",c:0,r:2,ic:"🔵",art:"assets/card-art/chakra_focus-v2.jpg",d:"获得 <b>2</b> 点查克拉。<b>消耗</b>",energy:2,ex:1,up:{d:"获得 <b>3</b> 点查克拉。<b>消耗</b>",energy:3}},
   sennin:{n:"仙人模式",t:"pwr",c:3,r:2,ic:"🐸",art:"assets/card-art/sennin.jpg",d:"力量 +<b>1</b>,身法 +<b>2</b>",str:1,dex:2,chars:["naruto"],up:{d:"力量 +<b>1</b>,身法 +<b>3</b>",dex:3}},
   nindo:{n:"我的忍道",t:"pwr",c:1,r:1,ic:"🍥",art:"assets/card-art/nindo.jpg",d:"每回合开始获得 <b>2</b> 点格挡",nindo:2,chars:["naruto"],up:{d:"每回合开始获得 <b>3</b> 点格挡",nindo:3}},
   hosenka:{n:"火遁·凤仙火",t:"atk",c:1,r:1,ic:"🔥",art:"assets/card-art/hosenka.jpg",d:"造成 <b>2</b>×<b>3</b> 点伤害,施加 <b>2</b> 层灼烧",dmg:2,hits:3,burn:2,chars:["sasuke"],up:{d:"造成 <b>3</b>×<b>3</b> 点伤害,施加 <b>3</b> 层灼烧",dmg:3,burn:3}},
-  shadow_bind:{n:"影缚术",t:"skl",c:1,r:2,ic:"🕳️",art:"assets/card-art/shadow_bind.jpg",d:"对所有敌人施加 <b>2</b> 层虚弱,抽 <b>1</b> 张牌",weak:2,draw:1,all:1,up:{d:"对所有敌人施加 <b>3</b> 层虚弱,抽 <b>1</b> 张牌",weak:3}},
-  doton_wall:{n:"土遁·土流壁",t:"skl",c:1,r:2,ic:"🪨",art:"assets/card-art/doton_wall.jpg",d:"获得 <b>8</b> 点格挡。<b>保留</b>",blk:8,retain:1,up:{d:"获得 <b>11</b> 点格挡,抽 <b>1</b> 张牌。<b>保留</b>",blk:11,draw:1}},
+  shadow_bind:{n:"影缚术",t:"skl",c:1,r:2,ic:"🕳️",art:"assets/card-art/shadow_bind-v2.jpg",d:"对所有敌人施加 <b>2</b> 层虚弱,抽 <b>1</b> 张牌",weak:2,draw:1,all:1,up:{d:"对所有敌人施加 <b>3</b> 层虚弱,抽 <b>1</b> 张牌",weak:3}},
+  doton_wall:{n:"土遁·土流壁",t:"skl",c:1,r:2,ic:"🪨",art:"assets/card-art/doton_wall-v2.jpg",d:"获得 <b>8</b> 点格挡。<b>保留</b>",blk:8,retain:1,up:{d:"获得 <b>11</b> 点格挡,抽 <b>1</b> 张牌。<b>保留</b>",blk:11,draw:1}},
   sage_kata:{n:"仙术体术",t:"atk",c:2,r:1,ic:"🐸",art:"assets/card-art/sage_kata.jpg",d:"无视潜行,造成 <b>10</b> 点伤害。目标有虚弱时额外造成 <b>8</b> 点伤害",dmg:10,bonusVsWeak:8,ignoreStealth:1,chars:["naruto"],up:{d:"无视潜行,造成 <b>14</b> 点伤害。目标有虚弱时额外造成 <b>10</b> 点伤害",dmg:14,bonusVsWeak:10}},
-  chakra_surge:{n:"查克拉奔流",t:"skl",c:0,r:2,ic:"💧",art:"assets/card-art/chakra_surge.jpg",d:"获得 <b>1</b> 点查克拉,抽 <b>1</b> 张牌。<b>消耗</b>",energy:1,draw:1,ex:1,up:{d:"获得 <b>2</b> 点查克拉,抽 <b>1</b> 张牌。<b>消耗</b>",energy:2}},
-  seal_reinforce:{n:"封印加固",t:"pwr",c:1,r:2,ic:"🈲",art:"assets/card-art/seal_reinforce.jpg",d:"身法 +<b>1</b>,每回合开始获得 <b>2</b> 点格挡",dex:1,nindo:2,up:{d:"身法 +<b>1</b>,每回合开始获得 <b>3</b> 点格挡",nindo:3}},
+  chakra_surge:{n:"查克拉奔流",t:"skl",c:0,r:2,ic:"💧",art:"assets/card-art/chakra_surge-v2.jpg",d:"获得 <b>1</b> 点查克拉,抽 <b>1</b> 张牌。<b>消耗</b>",energy:1,draw:1,ex:1,up:{d:"获得 <b>2</b> 点查克拉,抽 <b>1</b> 张牌。<b>消耗</b>",energy:2}},
+  seal_reinforce:{n:"封印加固",t:"pwr",c:1,r:2,ic:"🈲",art:"assets/card-art/seal_reinforce-v2.jpg",d:"身法 +<b>1</b>,每回合开始获得 <b>2</b> 点格挡",dex:1,nindo:2,up:{d:"身法 +<b>1</b>,每回合开始获得 <b>3</b> 点格挡",nindo:3}},
   odama_chain:{n:"大玉连弹",t:"atk",c:2,r:1,ic:"🌀",art:"assets/card-art/odama_chain.jpg",d:"造成 <b>4</b>×<b>3</b> 点伤害。每层影分身使每段伤害 +<b>1</b>(至多 3 层)",dmg:4,hits:3,damagePerClone:1,cloneScaleCap:3,chars:["naruto"],up:{d:"造成 <b>5</b>×<b>3</b> 点伤害。每层影分身使每段伤害 +<b>2</b>(至多 3 层)",dmg:5,damagePerClone:2}},
   sharingan_focus:{n:"写轮眼洞察",t:"pwr",c:1,r:2,ic:"👁️",art:"assets/card-art/sharingan_focus.jpg",d:"身法 +<b>1</b>。每回合首次施加易伤时,抽 <b>1</b> 张牌",dex:1,vulnDrawPower:1,chars:["sasuke"],up:{d:"身法 +<b>1</b>。每回合首次施加易伤时,抽 <b>2</b> 张牌",vulnDrawPower:2}},
   chidori_stream:{n:"千鸟流",t:"skl",c:1,r:2,ic:"⚡",art:"assets/card-art/chidori_stream.jpg",d:"获得 <b>7</b> 点格挡,对所有敌人施加 <b>2</b> 层灼烧",blk:7,burn:2,all:1,chars:["sasuke"],up:{d:"获得 <b>10</b> 点格挡,对所有敌人施加 <b>3</b> 层灼烧",blk:10,burn:3}},
@@ -753,7 +753,7 @@ field_dressing:{n:"战地包扎",t:"skl",c:1,r:1,ic:"🩹",art:"assets/card-art/
   heaven_kick:{n:"天守脚",t:"atk",c:3,r:3,ic:"🦶",art:"assets/card-art/heaven_kick.jpg",d:"对<b>所有</b>敌人造成 <b>20</b> 点伤害",dmg:20,aoe:1,chars:["sakura"],up:{d:"对<b>所有</b>敌人造成 <b>27</b> 点伤害",dmg:27}},
   hundred_heal_release:{n:"百豪·解放",t:"skl",c:2,r:3,ic:"💎",art:"assets/card-art/hundred_heal_release.jpg",d:"当前怪力翻倍(最多 20 层),回复 <b>6</b> 点生命并清除中毒、虚弱、易伤。<b>消耗</b>",doubleMight:1,doubleMightCap:20,heal:6,cleanse:1,ex:1,chars:["sakura"],up:{d:"当前怪力翻倍(最多 20 层),回复 <b>10</b> 点生命并清除中毒、虚弱、易伤。<b>消耗</b>",heal:10}},
   /* —— 诅咒 —— */
-  jyuin:{n:"咒印之痕",t:"curse",c:0,r:9,ic:"🕸️",d:"无法打出。占据手牌。",unplayable:1},
+  jyuin:{n:"咒印之痕",t:"curse",c:0,r:9,ic:"🕸️",art:"assets/card-art/jyuin.jpg",d:"无法打出。占据手牌。",unplayable:1},
 };
 const TYPE_LABEL={atk:"攻 击",skl:"技 能",pwr:"能 力",curse:"诅 咒"};
 const RAR_LABEL={1:"",2:"稀有",3:"传说",9:"诅咒",0:""};
@@ -1099,7 +1099,7 @@ function annotateKeywords(html){
 function cardHTML(c,extra="",style=""){
   const rawDesc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
   const desc=annotateKeywords(rawDesc);
-  const art=c.art?`<img src="${esc(c.art)}" alt="">`:`<span class="art-seal">忍</span><span class="art-glyph">${c.ic}</span>`;
+  const art=`<img src="${esc(c.art)}" alt="">`;
   const keyboard=String(extra).split(/\s+/).includes('inhand')?'role="button" tabindex="0"':'';
   return `<div ${keyboard} data-card-key="${esc(c.key)}" data-upgraded="${c.upgraded?1:0}" oncontextmenu="event.preventDefault();event.stopPropagation();G.previewUpgrade('${c.key}',${c.upgraded?1:0});return false" class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
     <div class="gem">${c.unplayable?'✕':c.c}</div>

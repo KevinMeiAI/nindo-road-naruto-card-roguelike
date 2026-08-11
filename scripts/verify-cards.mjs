@@ -56,6 +56,11 @@ const cardFactory = vm.runInNewContext(
   { CARDS: cards },
 );
 for (const [key, definition] of Object.entries(cards)) {
+  assert(typeof definition.art === 'string' && definition.art.length > 0, `${key}: missing card artwork path`);
+  if (definition.art) {
+    const artworkUrl = new URL(`../${definition.art}`, import.meta.url);
+    assert(fs.existsSync(artworkUrl), `${key}: artwork file does not exist: ${definition.art}`);
+  }
   const base = cardFactory.mkCard(key, false);
   for (const [field, value] of Object.entries(definition)) {
     if (field === 'up' || field === 'chars') continue;
