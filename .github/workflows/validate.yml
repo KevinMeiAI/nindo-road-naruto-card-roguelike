@@ -1,0 +1,31 @@
+name: Validate game
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify runtime assets
+        run: node scripts/verify-assets.mjs
+      - name: Verify card data
+        run: node scripts/verify-cards.mjs
+      - name: Verify deterministic RNG
+        run: node scripts/verify-rng.mjs
+      - name: Verify gameplay rules
+        run: node scripts/verify-gameplay.mjs
