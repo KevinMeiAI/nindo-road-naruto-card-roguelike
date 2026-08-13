@@ -898,100 +898,120 @@ const ENEMIES = {
 const ACTS=[
   {name:"第一章 · 木叶外围",sub:"波之国边境的雾气中,杀气若隐若现",
    pool:["otonin","snake","nukenin","puppet","kiri"],
+   encounters:[
+     {id:"sound_scout",min:1,max:5,w:4,enemies:["otonin"]},{id:"wild_snake",min:1,max:6,w:3,enemies:["snake"]},
+     {id:"mist_assassin",min:1,max:8,w:3,enemies:["kiri"]},{id:"missing_nin",min:2,max:9,w:3,enemies:["nukenin"]},
+     {id:"war_puppet",min:3,max:10,w:3,enemies:["puppet"]},{id:"mist_patrol",min:3,max:12,w:3,enemies:["kiri","otonin"]},
+     {id:"venom_blades",min:4,max:12,w:2,enemies:["snake","nukenin"]},{id:"puppet_screen",min:5,max:12,w:2,enemies:["puppet","otonin"]}
+   ],
    elites:[["oni1","oni2"],["haku"]],boss:["zabuza"],bossName:"桃地再不斩",
    clearText:"再不斩的断刀深深插进泥土。雾气散开,通往音忍据点的路出现了。"},
   {name:"第二章 · 音忍据点",sub:"咒印的气息越来越浓,大蛇丸就在最深处",
    pool:["oto_elite","spider","jirobo","twins","twins2"],
+   encounters:[
+     {id:"curse_guard",min:1,max:5,w:4,enemies:["oto_elite"]},{id:"spider_archer",min:1,max:7,w:3,enemies:["spider"]},
+     {id:"earth_bulwark",min:1,max:8,w:3,enemies:["jirobo"]},{id:"sakon_raid",min:2,max:8,w:3,enemies:["twins"]},
+     {id:"ukon_raid",min:2,max:8,w:3,enemies:["twins2"]},{id:"sound_four_pair",min:3,max:12,w:3,enemies:["twins","twins2"]},
+     {id:"web_and_wall",min:4,max:12,w:2,enemies:["spider","jirobo"]},{id:"curse_escort",min:5,max:12,w:2,enemies:["oto_elite","twins2"]}
+   ],
    elites:[["kimimaro"],["twins","twins2"]],boss:["orochimaru"],bossName:"大蛇丸",
    clearText:"大蛇丸的蛇影遁入地底,残破卷轴上却露出晓组织的暗号。新的追踪开始了。"},
   {name:"第三章 · 晓之阴影",sub:"黑底红云在夜色中翻涌,真正的试炼才刚开始",
    pool:["zetsu","iwa_bomber","ame_hunter","puppet_master","chakra_leech"],
+   encounters:[
+     {id:"zetsu_probe",min:1,max:5,w:4,enemies:["zetsu"]},{id:"clay_raider",min:1,max:7,w:3,enemies:["iwa_bomber"]},
+     {id:"rain_hunter",min:1,max:8,w:3,enemies:["ame_hunter"]},{id:"sand_puppeteer",min:2,max:9,w:3,enemies:["puppet_master"]},
+     {id:"chakra_predator",min:2,max:9,w:3,enemies:["chakra_leech"]},{id:"rain_explosion",min:3,max:12,w:3,enemies:["ame_hunter","iwa_bomber"]},
+     {id:"spore_leech",min:4,max:12,w:2,enemies:["zetsu","chakra_leech"]},{id:"puppet_bombing",min:5,max:12,w:2,enemies:["puppet_master","iwa_bomber"]}
+   ],
    elites:[["kisame"],["deidara"]],boss:["itachi"],bossName:"宇智波鼬"},
 ];
 
 const MAP_RULES={
   rows:12,cols:6,paths:5,
   noEliteBefore:3,minElitePerRoute:2,maxElitePerRoute:4,maxUnknownPerRoute:4,
-  guaranteedRestFrom:3,guaranteedRestTo:9,
+  guaranteedRestFrom:3,guaranteedRestTo:10,
   weights:{fight:38,unknown:23,shop:9,rest:12,elite:18},
-  unknown:{event:.58,fight:.25,shop:.10,chest:.07},
-  potionDrop:{fight:.4,elite:.75},
-  shopRelicSlots:2
+  unknown:{event:.62,fight:.28,shop:.10},
+  potionDrop:{fight:.3,elite:.55},
+  combatGold:{fight:[18,30],elite:[45,60]},
+  shop:{common:65,rare:115,legendary:175,relic:175,potion:50},
+  shopRelicSlots:2,eventRecentWindow:3,encounterRecentWindow:2
 };
 
 const EVENTS = [
-  {ic:"🍜",title:"一乐拉面",text:"路过的拉面摊飘来熟悉的香味。大叔笑着招手:「来一碗吗?算你便宜点。」",
+  {id:"ichiraku",acts:[0,1],weight:3,ic:"🍜",title:"一乐拉面",text:"路过的拉面摊飘来熟悉的香味。大叔笑着招手:「来一碗吗?算你便宜点。」",
    opts:[
      {t:"🍥 大吃一顿(回复 18 点生命)",f:g=>{g.heal(18);return "热汤下肚,浑身暖洋洋的。"}},
      {t:"💪 加练再吃(最大生命 +6)",f:g=>{g.maxHp+=6;g.hp+=6;return "你扎完马步才坐下,身体更结实了。"}},
    ]},
-  {ic:"📦",title:"神秘卷轴",text:"树洞里藏着一个上锁的卷轴箱,封条上画着陌生的咒文。",
+  {id:"sealed_scroll",acts:[0,1,2],weight:3,ic:"📦",title:"神秘卷轴",text:"树洞里藏着一个上锁的卷轴箱,封条上画着陌生的咒文。",
    opts:[
      {t:"📜 强行解开(获得 1 张随机稀有卡,受 6 点伤害)",f:g=>{g.eventDamage(6);if(g.hp<=0)return null;const c=g.randomCard(2);g.deck.push(c);return `咒印反噬了你,但你领悟了「${c.n}」!`}},
      {t:"🚶 不碰为妙(离开)",f:g=>"小心驶得万年船。"},
    ]},
-  {ic:"🤕",title:"受伤的同伴",text:"一名木叶同伴倒在路边,腿上中了苦无,看见你时眼睛亮了起来。",
+  {id:"wounded_ally",acts:[0,1],weight:2,oncePerRun:true,ic:"🤕",title:"受伤的同伴",text:"一名木叶同伴倒在路边,腿上中了苦无,看见你时眼睛亮了起来。",
    opts:[
      {t:"🪙 出 50 金币雇人护送他(获得随机忍具)",cond:g=>g.gold>=50,f:g=>{g.gold-=50;const r=g.randomRelic();if(!r){g.gold+=80;return "你已经收集了所有忍具,他回赠你 80 金币!"}g.addRelic(r);return `同伴感激地塞给你他的「${RELICS[r].n}」。`}},
      {t:"🩹 亲自帮他包扎(受 5 点伤害,最大生命 +4)",f:g=>{g.eventDamage(5);if(g.hp<=0)return null;g.maxHp+=4;return "你撕下衣袖为他止血,他教了你一招护体心法。"}},
      {t:"🚶 任务要紧(离开)",f:g=>"忍者的世界,有时只能硬下心肠。"},
    ]},
-  {ic:"⛩️",title:"荒废的神社",text:"半倒的鸟居后是一座小神社,功德箱积满灰尘,神像的眼睛似乎在注视你。",
+  {id:"abandoned_shrine",acts:[0,1],weight:2,ic:"⛩️",title:"荒废的神社",text:"半倒的鸟居后是一座小神社,功德箱积满灰尘,神像的眼睛似乎在注视你。",
    opts:[
      {t:"🙏 虔诚参拜(移除 1 张卡牌)",cond:g=>g.canRemoveCard(),f:g=>{g.pendingRemove=true;return null}},
      {t:"🪙 搜刮功德箱(+55 金币,受 9 点伤害)",f:g=>{g.gold+=55;g.eventDamage(9);if(g.hp<=0)return null;return "你刚抓起铜钱,房梁突然塌了一角砸在背上……"}},
    ]},
-  {ic:"🕸️",title:"咒印的低语",text:"一块漆黑的石碑上刻着禁术,触碰它的瞬间,强大的力量顺着指尖涌入,同时有什么阴冷的东西爬上了后颈……",
+  {id:"curse_whisper",acts:[1,2],weight:2,oncePerRun:true,ic:"🕸️",title:"咒印的低语",text:"一块漆黑的石碑上刻着禁术,触碰它的瞬间,强大的力量顺着指尖涌入,同时有什么阴冷的东西爬上了后颈……",
    opts:[
      {t:"😈 接受力量(获得 1 张随机传说卡 + 1 张「咒印之痕」诅咒)",f:g=>{const c=g.randomCard(3);g.deck.push(c);g.deck.push(mkCard('jyuin'));return `你领悟了「${c.n}」——但咒印也烙进了你的卡组。`}},
      {t:"🍥 拒绝诱惑(回复 8 点生命)",f:g=>{g.heal(8);return "「想变强,就用自己的方式!」你后退一步,心境反而澄明。"}},
    ]},
-  {ic:"🎰",title:"流浪赌徒",text:"一个白发男人摇着骰盅冲你挑眉:「小鬼,赌一把吗?押 30 金币,赢了翻三倍。」",
+  {id:"wandering_gambler",acts:[0,1,2],weight:1,ic:"🎰",title:"流浪赌徒",text:"一个白发男人摇着骰盅冲你挑眉:「小鬼,赌一把吗?押 30 金币,赢了翻三倍。」",
    opts:[
      {t:"🎲 押 30 金币(50% 赢 90,50% 血本无归)",cond:g=>g.gold>=30,f:g=>{g.gold-=30;if(gameRandom()<0.5){g.gold+=90;return "骰子停住——你赢了!男人肉痛地数出 90 金币。"}return "骰子停住……男人笑着收走了你的钱:「下次再来啊。」"}},
      {t:"🚶 赌博有害(离开)",f:g=>"男人耸耸肩,继续吆喝下一个路人。"},
    ]},
-  {ic:"📘",title:"卡卡西特训",text:"卡卡西合上亲热天堂,露出一只写轮眼:「只练一招,但要练到能活下来。」",
+  {id:"kakashi_training",acts:[0,1],weight:2,oncePerRun:true,ic:"📘",title:"卡卡西特训",text:"卡卡西合上亲热天堂,露出一只写轮眼:「只练一招,但要练到能活下来。」",
    opts:[
      {t:"📘 复盘战术(随机升级 1 张卡牌)",f:g=>{const cs=g.deck.filter(c=>!c.upgraded&&c.t!=='curse');if(!cs.length)return "卡卡西看了半天:「你已经没有能临时突破的招式了。」";const c=pick(cs);upgradeCard(c);return `卡卡西指出了破绽,「${c.n}」升级了。`}},
      {t:"💥 实战演练(受 7 点伤害,获得随机稀有卡)",f:g=>{g.eventDamage(7);if(g.hp<=0)return null;const c=g.randomCard(2);g.deck.push(c);return `你被雷切的余波震退,却领悟了「${c.n}」。`}},
      {t:"🚶 今天先到这里",f:g=>"卡卡西点点头:「能判断何时撤退,也是忍者的素质。」"},
    ]},
-  {ic:"🐸",title:"妙木山试炼",text:"深作仙人要求你坐在蛤蟆油前一动不动。空气里满是自然能量的低鸣。",
+  {id:"mount_myoboku",acts:[1,2],weight:1,oncePerRun:true,ic:"🐸",title:"妙木山试炼",text:"深作仙人要求你坐在蛤蟆油前一动不动。空气里满是自然能量的低鸣。",
    opts:[
      {t:"🌿 进入静坐(最大生命 +5,随机升级 1 张技能牌)",f:g=>{g.maxHp+=5;g.hp+=5;const cs=g.deck.filter(c=>!c.upgraded&&c.t==='skl');if(cs.length)upgradeCard(pick(cs));return "你没有变成石像,反而让查克拉流动更稳定。"}},
      {t:"🐸 强行吸收(获得 1 张随机传说卡,受 10 点伤害)",f:g=>{g.eventDamage(10);if(g.hp<=0)return null;const c=g.randomCard(3);g.deck.push(c);return `自然能量几乎吞没意识,你强行记住了「${c.n}」。`}},
    ]},
-  {ic:"🖤",title:"黑市卷轴",text:"戴斗笠的商人摊开黑色卷轴:「木叶禁售,但你看起来很需要。」",
+  {id:"black_market_scroll",acts:[1,2],weight:2,ic:"🖤",title:"黑市卷轴",text:"戴斗笠的商人摊开黑色卷轴:「木叶禁售,但你看起来很需要。」",
    opts:[
      {t:"🪙 买下卷轴(花 60 金币,获得随机稀有卡)",cond:g=>g.gold>=60,f:g=>{g.gold-=60;const c=g.randomCard(2);g.deck.push(c);return `你买下卷轴,学会了「${c.n}」。`}},
      {t:"😈 偷偷拓印(获得随机稀有卡 + 咒印之痕)",f:g=>{const c=g.randomCard(2);g.deck.push(c);g.deck.push(mkCard('jyuin'));return `拓印成功,「${c.n}」入手,但卷轴上的咒文也缠上了你。`}},
      {t:"🚶 不和黑市交易",f:g=>"你记下商人的脸,决定以后再处理。"},
    ]},
-  {ic:"🏥",title:"医疗班营地",text:"前线医疗班正在转移伤员,有人认出了你的护额,示意你坐下处理伤势。",
+  {id:"medical_camp",acts:[0,1,2],weight:3,ic:"🏥",title:"医疗班营地",text:"前线医疗班正在转移伤员,有人认出了你的护额,示意你坐下处理伤势。",
    opts:[
      {t:"🩹 接受治疗(回复 22 点生命)",f:g=>{g.heal(22);return "绿色查克拉覆盖伤口,疼痛明显缓和。"}},
      {t:"🕸️ 清理咒印(移除 1 张诅咒)",cond:g=>g.canRemoveCard()&&g.deck.some(c=>c.t==='curse'),f:g=>{const i=g.deck.findIndex(c=>c.t==='curse');const c=g.removeCardAt(i);return c?`医疗忍者切断了「${c.n}」的查克拉残留。`:"卡组已经不能继续精简。"}},
      {t:"🍙 交出兵粮丸(换取随机秘药)",cond:g=>g.potions.includes('heisyo'),f:g=>{const i=g.potions.indexOf('heisyo');if(i<0)return "你身上没有兵粮丸可以留下。";g.potions.splice(i,1);const p=g.randomPotionKey(['heisyo']);g.addPotion(p);return `你留下兵粮丸,医疗班回赠一份「${POTIONS[p].n}」。`}},
    ]},
-  {ic:"🏞️",title:"终末之谷",text:"巨像之间水声轰鸣。你想起两个名字,也想起力量与羁绊从来不是同一条路。",
+  {id:"valley_of_the_end",acts:[1,2],weight:1,oncePerRun:true,ic:"🏞️",title:"终末之谷",text:"巨像之间水声轰鸣。你想起两个名字,也想起力量与羁绊从来不是同一条路。",
    opts:[
      {t:"🍥 坚持自己的道路(获得角色专属能力牌)",f:g=>{const c=mkCard(g.characterEventCard('resolve'));g.deck.push(c);return `你握紧护额,把动摇压回心底,领悟了「${c.n}」。`}},
      {t:"🔥 借用危险力量(获得角色专属传说牌,受 8 点伤害)",f:g=>{g.eventDamage(8);if(g.hp<=0)return null;const c=mkCard(g.characterEventCard('risky'));g.deck.push(c);return `狂暴的查克拉涌入经络,你掌握了「${c.n}」。`}},
    ]},
-  {ic:"🏜️",title:"砂隐求援",text:"砂隐忍者被傀儡残骸困住,请求你护送他们穿过峡谷。",
+  {id:"sand_rescue",acts:[1,2],weight:2,oncePerRun:true,ic:"🏜️",title:"砂隐求援",text:"砂隐忍者被傀儡残骸困住,请求你护送他们穿过峡谷。",
    opts:[
      {t:"🛡️ 护送他们(受 6 点伤害,获得随机忍具)",f:g=>{g.eventDamage(6);if(g.hp<=0)return null;const r=g.randomRelic();if(!r){g.gold+=60;return "他们没有更多忍具,只好凑出 60 金币作为谢礼。"}g.addRelic(r);return `砂隐忍者把「${RELICS[r].n}」交给了你。`}},
      {t:"🪙 提供物资(花 40 金币,最大生命 +6)",cond:g=>g.gold>=40,f:g=>{g.gold-=40;g.maxHp+=6;g.hp+=6;return "你分出补给,也换来一套沙漠呼吸法。"}},
      {t:"🚶 任务优先",f:g=>"你留下路线情报,继续追踪自己的目标。"},
    ]},
-  {ic:"💰",title:"地下换金所",text:"昏暗小屋里贴满通缉令。老板抬眼:「卖情报,买命,都可以。」",
+  {id:"bounty_station",acts:[1,2],weight:2,ic:"💰",title:"地下换金所",text:"昏暗小屋里贴满通缉令。老板抬眼:「卖情报,买命,都可以。」",
    opts:[
      {t:"💰 出售情报(+70 金币,最大生命 -4)",f:g=>{g.gold+=70;g.maxHp-=4;g.hp=Math.min(g.hp,g.maxHp);return "情报换来沉甸甸的钱袋,也让你暴露了一点行踪。"}},
      {t:"📦 买一件来路不明的忍具(花 140 金币)",cond:g=>g.gold>=140,f:g=>{g.gold-=140;const r=g.randomRelic();if(!r){g.gold+=100;return "货架已经空了,老板退回 100 金币。"}g.addRelic(r);return `你拿走了「${RELICS[r].n}」,没有追问来源。`}},
      {t:"🚶 离开",f:g=>"这里的空气让人不舒服。"},
    ]},
-  {ic:"🐦",title:"情报乌鸦",text:"一只乌鸦落在树枝上,脚环里夹着密信。它没有飞走,像是在等你选择。",
+  {id:"intel_crow",acts:[0,1,2],weight:2,ic:"🐦",title:"情报乌鸦",text:"一只乌鸦落在树枝上,脚环里夹着密信。它没有飞走,像是在等你选择。",
    opts:[
      {t:"📨 读取密信(获得随机卡牌并当场升级它)",f:g=>{const c=g.randomCard(1);upgradeCard(c);g.deck.push(c);return `密信里记着一套战法,你获得了「${c.n}」。`}},
      {t:"🍙 喂它兵粮丸(花 20 金币,获得随机秘药)",cond:g=>g.gold>=20,f:g=>{const p=g.randomPotionKey();if(g.addPotion(p)){g.gold-=20;return `乌鸦叼回一瓶「${POTIONS[p].n}」。`}return "乌鸦飞了一圈,发现你已经塞不下更多秘药。"}},
@@ -1038,6 +1058,14 @@ const resetGameplayRng=(seed,state=seed,calls=0)=>GAME_RNG.reset(seed,state,call
 const gameRandom=()=>GAME_RNG.next();
 const rnd=(a,b)=>a+Math.floor(gameRandom()*(b-a+1));
 const pick=a=>a[Math.floor(gameRandom()*a.length)];
+function weightedPick(items,weight=value=>value.weight||value.w||1){
+  if(!items.length)return null;
+  const total=items.reduce((sum,item)=>sum+Math.max(0,Number(weight(item))||0),0);
+  if(total<=0)return pick(items);
+  let roll=gameRandom()*total;
+  for(const item of items){roll-=Math.max(0,Number(weight(item))||0);if(roll<=0)return item}
+  return items[items.length-1];
+}
 const visualRandom=()=>Math.random();
 const visualRnd=(a,b)=>a+Math.floor(visualRandom()*(b-a+1));
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -1220,10 +1248,10 @@ const G={
       });
       const activeNode=this.activeNode?plainClone(this.activeNode):null;
       localStorage.setItem(SAVE_KEY,JSON.stringify({
-        version:4,character:this.character,hp:this.hp,maxHp:this.maxHp,gold:this.gold,
+        version:5,character:this.character,hp:this.hp,maxHp:this.maxHp,gold:this.gold,
         act:this.act,row:this.row,curCol:this.curCol,mapRows:this.mapRows,
         deck:this.deck.map(c=>({key:c.key,upgraded:!!c.upgraded})),relics:this.relics,potions:this.potions,stats:this.stats,
-        permStr:this.permStr,removeCount:this.removeCount,
+        permStr:this.permStr,removeCount:this.removeCount,seenEvents:this.seenEvents||[],eventHistory:this.eventHistory||[],encounterHistory:this.encounterHistory||[],
         runSeed:GAME_RNG.seed,rngState:GAME_RNG.state,rngCalls:GAME_RNG.calls,activeNode,nodes
       }));
     }catch(e){}
@@ -1232,7 +1260,7 @@ const G={
   readSave(){
     try{
       const s=JSON.parse(localStorage.getItem(SAVE_KEY));
-      if(!s||![2,3,4].includes(s.version)||!own(CHARACTERS,s.character)||!Array.isArray(s.deck)||!s.nodes||typeof s.nodes!=='object'||Array.isArray(s.nodes))return null;
+      if(!s||![2,3,4,5].includes(s.version)||!own(CHARACTERS,s.character)||!Array.isArray(s.deck)||!s.nodes||typeof s.nodes!=='object'||Array.isArray(s.nodes))return null;
       return s;
     }catch(e){return null}
   },
@@ -1300,6 +1328,10 @@ const G={
     this.stats={dmg:stat('dmg'),kills:stat('kills'),cards:stat('cards'),turns:stat('turns'),elites:stat('elites')};
     this.permStr=boundedInt(s.permStr,0,0,99);
     this.removeCount=boundedInt(s.removeCount,0,0,999);
+    const eventIds=new Set(EVENTS.map(ev=>ev.id));
+    this.seenEvents=[...new Set((Array.isArray(s.seenEvents)?s.seenEvents:[]).filter(id=>eventIds.has(id)))];
+    this.eventHistory=(Array.isArray(s.eventHistory)?s.eventHistory:[]).filter(id=>eventIds.has(id)).slice(-12);
+    this.encounterHistory=(Array.isArray(s.encounterHistory)?s.encounterHistory:[]).filter(id=>typeof id==='string').slice(-8);
     this.mapRows=MAP_RULES.rows;this.nodes=nodes;
     this.pendingRemove=false;this._ended=false;this.combatEnded=false;this.busy=false;this.picked=null;
     const rawActive=s.activeNode;
@@ -1378,6 +1410,7 @@ const G={
     this.maxHp=C.hp;this.hp=C.hp;this.gold=C.gold;
     this.act=0;this.row=0;this.curCol=-1;this.activeNode=null;
     this.relics=[];this.potions=['heisyo'];this.pendingRemove=false;
+    this.seenEvents=[];this.eventHistory=[];this.encounterHistory=[];
     this.stats={dmg:0,kills:0,cards:0,turns:0,elites:0};
     this.permStr=0;this.removeCount=0;
     this.deck=C.deck.map(k=>mkCard(k));
@@ -1563,11 +1596,22 @@ const G={
     const C=MAP_RULES,ROWS=C.rows,COLS=C.cols,PATHS=C.paths;
     const nodes={};   // "r-c" -> {r,c,t,edges:Set}
     const key=(r,c)=>r+'-'+c;
+    const edgeCrosses=(fromKey,toCol)=>{
+      const from=nodes[fromKey];if(!from)return false;
+      return Object.values(nodes).filter(n=>n.r===from.r).some(other=>[...other.edges].some(nextKey=>{
+        const next=nodes[nextKey];
+        if(!next||next.r!==from.r+1||other===from||next.c===toCol)return false;
+        return (from.c-other.c)*(toCol-next.c)<0;
+      }));
+    };
     for(let p=0;p<PATHS;p++){
       let c=rnd(0,COLS-1);
       let prev=null;
       for(let r=1;r<=ROWS;r++){
-        if(r>1)c=Math.max(0,Math.min(COLS-1,c+rnd(-1,1)));
+        if(r>1){
+          const candidates=shuffle([-1,0,1].map(delta=>Math.max(0,Math.min(COLS-1,c+delta))).filter((v,i,a)=>a.indexOf(v)===i));
+          c=candidates.find(nextCol=>!edgeCrosses(prev,nextCol))??c;
+        }
         const k=key(r,c);
         if(!nodes[k])nodes[k]={r,c,t:null,edges:new Set(),from:new Set()};
         if(prev&&prev!==k){nodes[prev].edges.add(k);nodes[k].from.add(prev)}
@@ -1579,19 +1623,50 @@ const G={
     const starts=Object.keys(nodes).filter(k=>nodes[k].r===1);
     const routes=[];
     const walk=(k,path=[])=>{
-      if(routes.length>=1500)return;
       const p=path.concat(k);
       if(k==='boss'){routes.push(p);return}
       nodes[k].edges.forEach(nk=>walk(nk,p));
     };
     starts.forEach(k=>walk(k));
-    const chestRow=rnd(4,ROWS-2);
-    let restRow=rnd(C.guaranteedRestFrom,Math.min(C.guaranteedRestTo,ROWS-1));
-    while(restRow===chestRow)restRow=rnd(C.guaranteedRestFrom,Math.min(C.guaranteedRestTo,ROWS-1));
     const routeCount=(route,t)=>route.filter(k=>nodes[k]&&nodes[k].t===t).length;
-    const routesWith=k=>routes.filter(r=>r.includes(k));
+    const routesByNode=new Map(Object.keys(nodes).map(k=>[k,[]]));
+    routes.forEach(route=>route.forEach(k=>routesByNode.get(k).push(route)));
+    const routesWith=k=>routesByNode.get(k)||[];
+    const nodesByRow=new Map(Array.from({length:ROWS+1},(_,i)=>[i+1,Object.values(nodes).filter(n=>n.r===i+1)]));
     const hasIncomingType=(n,t)=>[...n.from].some(k=>nodes[k]&&nodes[k].t===t);
     const hasNeighborType=(n,t)=>hasIncomingType(n,t)||[...n.edges].some(k=>nodes[k]&&nodes[k].t===t);
+    const cutComponents=r=>{
+      const cutKeys=Object.keys(nodes).filter(k=>nodes[k].r===r||nodes[k].r===r+1);
+      const graph=new Map(cutKeys.map(k=>[k,new Set()]));
+      cutKeys.filter(k=>nodes[k].r===r).forEach(k=>nodes[k].edges.forEach(next=>{
+        if(graph.has(next)){graph.get(k).add(next);graph.get(next).add(k)}
+      }));
+      const components=[],seen=new Set();
+      cutKeys.forEach(start=>{
+        if(seen.has(start)||!graph.get(start).size)return;
+        const stack=[start],component=[];seen.add(start);
+        while(stack.length){const k=stack.pop();component.push(k);graph.get(k).forEach(next=>{if(!seen.has(next)){seen.add(next);stack.push(next)}})}
+        components.push(component);
+      });
+      return components;
+    };
+    const assignRouteCut=(type,rows,avoidRows=new Set())=>{
+      const options=shuffle(rows.filter(r=>r>=2&&r<ROWS&&!avoidRows.has(r)&&!avoidRows.has(r+1)).map(r=>({r,components:cutComponents(r)})))
+        .filter(option=>option.components.length>=2).sort((a,b)=>b.components.length-a.components.length);
+      const option=options[0];if(!option)return null;
+      const offset=rnd(0,1);
+      option.components.forEach((component,index)=>{
+        const selectedRow=(index+offset)%2===0?option.r:option.r+1;
+        component.filter(k=>nodes[k].r===selectedRow).forEach(k=>nodes[k].t=type);
+      });
+      return new Set([option.r,option.r+1]);
+    };
+    const chestRows=assignRouteCut('chest',Array.from({length:ROWS-5},(_,i)=>i+4));
+    const restCandidates=Array.from({length:C.guaranteedRestTo-C.guaranteedRestFrom},(_,i)=>i+C.guaranteedRestFrom);
+    const restAvoid=new Set();
+    (chestRows||[]).forEach(r=>{restAvoid.add(r);restAvoid.add(r-1);restAvoid.add(r+1)});
+    const restRows=assignRouteCut('rest',restCandidates,restAvoid);
+    if(!chestRows||!restRows){if(attempt<80)return this.genMap(attempt+1);throw new Error('无法生成资源切面')}
     const weightedType=(includeElite=true)=>{
       const entries=Object.entries(C.weights).filter(([t])=>includeElite||t!=='elite');
       const sum=entries.reduce((s,[,w])=>s+w,0);
@@ -1601,12 +1676,12 @@ const G={
     };
     const canUse=(k,t)=>{
       const n=nodes[k];
+      if(['chest','rest'].includes(n.t))return n.t===t;
       if(t==='elite'&&n.r<=C.noEliteBefore)return false;
-      if(t==='rest'&&(n.r===chestRow||n.r===restRow-1||n.r===restRow+1))return false;
       if(t==='rest'&&hasIncomingType(n,'rest'))return false;
       if(t==='elite'){
         if(hasNeighborType(n,'elite'))return false;
-        const rowNodes=Object.values(nodes).filter(x=>x.r===n.r);
+        const rowNodes=nodesByRow.get(n.r)||[];
         if(rowNodes.length>1&&rowNodes.every(x=>x===n||x.t==='elite'))return false;
         if(routesWith(k).some(r=>routeCount(r,'elite')>=C.maxElitePerRoute))return false;
       }
@@ -1616,21 +1691,16 @@ const G={
     for(let r=1;r<=ROWS;r++){
       const row=Object.entries(nodes).filter(([,n])=>n.r===r);
       row.forEach(([k,n])=>{
+        if(n.t)return;
         if(r===1){n.t='fight';return}
-        if(r===chestRow){n.t='chest';return}
-        if(r===restRow){n.t='rest';return}
         const first=weightedType(false);
         const choices=[first,'fight','unknown','shop','rest'];
         n.t=choices.find(t=>canUse(k,t))||'fight';
       });
-      if(r!==chestRow&&r!==restRow&&!row.some(([,n])=>n.t==='fight'||n.t==='elite')){
-        const f=row.find(([k])=>canUse(k,'fight'));
+      if(!row.some(([,n])=>n.t==='fight'||n.t==='elite')){
+        const f=row.find(([,n])=>!['chest','rest'].includes(n.t));
         if(f)f[1].t='fight';
       }
-    }
-    if(!Object.values(nodes).some(n=>n.t==='rest')){
-      const restSpot=shuffle(Object.entries(nodes).filter(([k,n])=>k!=='boss'&&n.r>2&&n.r!==chestRow&&!hasNeighborType(n,'rest')))[0];
-      if(restSpot)restSpot[1].t='rest';
     }
     const minElites=C.minElitePerRoute||0;
     let guard=0;
@@ -1676,12 +1746,15 @@ const G={
         const m=nodes[next];
         return !m||!((n.t==='elite'&&m.t==='elite')||(n.t==='rest'&&m.t==='rest'));
       });
+    })&&Array.from({length:ROWS},(_,i)=>i+1).every(r=>{
+      const row=Object.values(nodes).filter(n=>n.r===r);
+      return row.length<2||!['chest','rest'].some(type=>row.every(n=>n.t===type));
     });
     if(!graphValid){
-      if(attempt<60)return this.genMap(attempt+1);
+      if(attempt<80)return this.genMap(attempt+1);
       throw new Error('无法生成满足路线约束的地图');
     }
-    this.mapRows=ROWS;this.mapChestRow=chestRow;this.mapRestRow=restRow;this.mapRoutes=routes;
+    this.mapRows=ROWS;this.mapRoutes=routes;
     this.nodes=nodes;
   },
   renderMap(){
@@ -1730,11 +1803,10 @@ const G={
   },
   resolveUnknown(n){
     const r=gameRandom(),U=MAP_RULES.unknown;
-    let t='event';
+    let t;
     if(r<U.event)t='event';
     else if(r<U.event+U.fight)t='fight';
-    else if(r<U.event+U.fight+U.shop)t='shop';
-    else t='chest';
+    else t='shop';
     n.t=t;n.revealed=true;
     return t;
   },
@@ -1935,6 +2007,14 @@ Object.assign(G,{
     if(!e.summonOnly)e.str+=this.enemyStartStr(kind);
     this.enhanceEnemyGrowth(e,kind);
   },
+  rollEncounter(){
+    const A=ACTS[this.act],eligible=(A.encounters||[]).filter(enc=>this.row>=(enc.min||1)&&this.row<=(enc.max||MAP_RULES.rows));
+    const recent=new Set((this.encounterHistory||[]).slice(-MAP_RULES.encounterRecentWindow));
+    const fresh=eligible.filter(enc=>!recent.has(enc.id));
+    const encounter=weightedPick(fresh.length?fresh:eligible)||{id:'fallback',enemies:[pick(A.pool)]};
+    this.encounterHistory=[...(this.encounterHistory||[]),encounter.id].slice(-8);
+    return encounter;
+  },
   startCombat(kind){
     this.combatKind=kind;
     const A=ACTS[this.act];
@@ -1942,9 +2022,8 @@ Object.assign(G,{
     if(kind==='boss')this.enemies=A.boss.map(mk);
     else if(kind==='elite')this.enemies=pick(A.elites).map(mk);
     else{
-      const dbl=this.row>=3&&gameRandom()<(this.act>=1?0.6:0.5);
-      this.enemies=[mk(pick(A.pool))];
-      if(dbl)this.enemies.push(mk(pick(A.pool)));
+      const encounter=this.rollEncounter();
+      this.enemies=encounter.enemies.map(mk);
     }
     this.enemies.forEach(e=>this.applyEnemyDifficulty(e,kind));
     // 玩家战斗态
@@ -2844,7 +2923,8 @@ Object.assign(G,{
     SFX.win();
     this._pendingPotion=null;this._cardPicked=false;
     if(kind==='boss')return this.bossReward();
-    let gold=kind==='elite'?rnd(50,70):rnd(20,34);
+    const goldRange=MAP_RULES.combatGold[kind]||MAP_RULES.combatGold.fight;
+    let gold=rnd(goldRange[0],goldRange[1]);
     let goldMul=1;
     if(this.hasRelic('dice'))goldMul+=0.4;
     if(this.hasRelic('mission_pass'))goldMul+=0.2;
@@ -3067,9 +3147,10 @@ Object.assign(G,{
       this.shopPotion=payload.potion&&own(POTIONS,payload.potion)?payload.potion:null;
       this.removeUsed=!!payload.removeUsed;
     }else{
+      const prices=MAP_RULES.shop;
       this.shopCards=this.randomCards(2,1);
       this.shopCards.push(this.randomCard(2,this.shopCards.map(c=>c.key)));
-      this.shopPrices=this.shopCards.map(c=>c.r>=3?165:(c.r===2?110:60));
+      this.shopPrices=this.shopCards.map(c=>c.r>=3?prices.legendary:(c.r===2?prices.rare:prices.common));
       this.shopRelics=this.randomRelics(MAP_RULES.shopRelicSlots);
       this.shopPotion=this.randomPotionKey();
       this.removeUsed=false;
@@ -3088,6 +3169,7 @@ Object.assign(G,{
   renderShop(){
     const aff=p=>this.gold>=p?'':'cant';
     const removePrice=this.removePrice();
+    const prices=MAP_RULES.shop;
     let h=`<div class="shop-shell"><div class="act-banner">TRAVELING MERCHANT / 行商补给</div><div class="sec-t">行商的帐篷</div>
       <div class="sec-s">“钱可以买不到忍道，但能让你活着走得更远。” · 持有 <b style="color:var(--gold)">${this.gold}</b> 金币</div>
       <div class="divider"></div><div class="shop-section-title">忍术卷轴</div><div class="cgrid shop-shelf">`;
@@ -3101,11 +3183,11 @@ Object.assign(G,{
       h+=this.shopRelics.map((k,i)=>{
         if(!k)return `<div class="shop-relic sold"><div class="ric">✓</div><div class="rname">已售出</div><div class="rdesc">这件忍具已经收入囊中</div></div>`;
         const r=RELICS[k];
-        return `<div class="shop-relic" role="button" tabindex="0" onclick="G.buyRelic(${i})"><div class="ric">${r.ic}</div><div class="rname">${r.n}</div><div class="rdesc">${r.d}</div><div class="price ${aff(150)}">🪙 150</div></div>`;
+        return `<div class="shop-relic" role="button" tabindex="0" onclick="G.buyRelic(${i})"><div class="ric">${r.ic}</div><div class="rname">${r.n}</div><div class="rdesc">${r.d}</div><div class="price ${aff(prices.relic)}">🪙 ${prices.relic}</div></div>`;
       }).join('');
     }
     if(this.shopPotion){const p=POTIONS[this.shopPotion];
-      h+=`<div class="shop-relic" role="button" tabindex="0" onclick="G.buyPotion()" style="border-color:var(--chakra)"><div class="ric">${p.ic}</div><div class="rname" style="color:var(--chakra)">${p.n}</div><div class="rdesc">${p.d}</div><div class="price ${aff(45)}">🪙 45</div></div>`}
+      h+=`<div class="shop-relic" role="button" tabindex="0" onclick="G.buyPotion()" style="border-color:var(--chakra)"><div class="ric">${p.ic}</div><div class="rname" style="color:var(--chakra)">${p.n}</div><div class="rdesc">${p.d}</div><div class="price ${aff(prices.potion)}">🪙 ${prices.potion}</div></div>`}
     const removeUnavailable=this.removeUsed||!this.canRemoveCard();
     h+=`<div class="shop-relic ${removeUnavailable?'sold':''}" role="button" tabindex="0" onclick="G.buyRemove()"><div class="ric">🗑️</div><div class="rname">删卡服务</div><div class="rdesc">${this.canRemoveCard()?`从卡组中永久移除一张卡牌,至少保留 ${MIN_DECK_SIZE} 张`:`卡组至少需要保留 ${MIN_DECK_SIZE} 张卡牌`}</div><div class="price ${aff(removePrice)}">🪙 ${removePrice}</div></div>`;
     h+=`</div><div class="center" style="margin-top:18px"><button class="btn ghost" onclick="G.backToMap()">离开商店</button></div></div>`;
@@ -3119,15 +3201,15 @@ Object.assign(G,{
   },
   buyRelic(i){
     if(!this.shopRelics||!this.shopRelics[i])return;
-    if(this.gold<150)return toast('金币不足');
-    this.gold-=150;const r=this.shopRelics[i];this.shopRelics[i]=null;
+    const price=MAP_RULES.shop.relic;if(this.gold<price)return toast('金币不足');
+    this.gold-=price;const r=this.shopRelics[i];this.shopRelics[i]=null;
     this.addRelic(r);this.saveShopState();SFX.gold();toast(`获得「${RELICS[r].n}」`);this.renderShop();
   },
   buyPotion(){
     if(!this.shopPotion)return;
-    if(this.gold<45)return toast('金币不足');
+    const price=MAP_RULES.shop.potion;if(this.gold<price)return toast('金币不足');
     if(!this.addPotion(this.shopPotion))return;
-    this.gold-=45;this.shopPotion=null;
+    this.gold-=price;this.shopPotion=null;
     this.saveShopState();SFX.gold();this.updateTopbar();this.renderShop();
   },
   buyRemove(){
@@ -3144,16 +3226,32 @@ Object.assign(G,{
   },
 
   /* ---------- 奇遇 ---------- */
+  eligibleEvents(){
+    const seen=new Set(this.seenEvents||[]),recent=new Set((this.eventHistory||[]).slice(-MAP_RULES.eventRecentWindow));
+    const eligible=EVENTS.map((event,index)=>({event,index})).filter(({event})=>(!event.acts||event.acts.includes(this.act))&&(!event.oncePerRun||!seen.has(event.id)));
+    const fresh=eligible.filter(({event})=>!recent.has(event.id));
+    return fresh.length?fresh:eligible;
+  },
+  rollEventIndex(){
+    const picked=weightedPick(this.eligibleEvents(),entry=>entry.event.weight||1);
+    return picked?picked.index:EVENTS.findIndex(event=>!event.acts||event.acts.includes(this.act));
+  },
   openEvent(payload=null){
     let state=payload;
     if(!state){
-      state={eventIndex:rnd(0,EVENTS.length-1),stage:'choice',result:null};
+      const eventIndex=this.rollEventIndex(),event=EVENTS[eventIndex];
+      if(!event)return false;
+      this.seenEvents=[...new Set([...(this.seenEvents||[]),event.id])];
+      this.eventHistory=[...(this.eventHistory||[]),event.id].slice(-12);
+      state={eventId:event.id,stage:'choice',result:null};
       if(this.activeNode){this.activeNode.phase='event';this.activeNode.payload=state}
       this.saveRun();
     }
-    const eventIndex=boundedInt(state.eventIndex,-1,0,EVENTS.length-1);
+    const eventIndex=typeof state.eventId==='string'
+      ?EVENTS.findIndex(event=>event.id===state.eventId)
+      :boundedInt(state.eventIndex,-1,0,EVENTS.length-1);
     const ev=EVENTS[eventIndex];if(!ev)return false;
-    this._event=ev;this._eventIndex=eventIndex;
+    this._event=ev;this._eventId=ev.id;
     if(state.stage==='remove'){
       show('screen-event');
       this.openEventRemovePicker();
@@ -3181,10 +3279,10 @@ Object.assign(G,{
     if(this.pendingRemove){
       this.pendingRemove=false;
       if(!this.canRemoveCard())return this.backToMap();
-      if(this.activeNode){this.activeNode.payload={eventIndex:this._eventIndex,stage:'remove',result:null};this.saveRun()}
+      if(this.activeNode){this.activeNode.payload={eventId:this._eventId,stage:'remove',result:null};this.saveRun()}
       return this.openEventRemovePicker();
     }
-    if(this.activeNode){this.activeNode.payload={eventIndex:this._eventIndex,stage:'resolved',result:r||''};this.saveRun()}
+    if(this.activeNode){this.activeNode.payload={eventId:this._eventId,stage:'resolved',result:r||''};this.saveRun()}
     $('event-box').innerHTML=`<div class="eic">${this._event.ic}</div>
       <p>${r}</p><button class="btn" onclick="G.backToMap()">继续前进</button>`;
   },
@@ -3232,7 +3330,7 @@ Object.assign(G,{
     show('screen-end');
   },
 });
-window.G=G;window.CHARACTERS=CHARACTERS;window.CARDS=CARDS;window.RELICS=RELICS;window.BOSS_RELICS=BOSS_RELICS;window.POTIONS=POTIONS;window.ENEMIES=ENEMIES;window.ACTS=ACTS;window.MAP_RULES=MAP_RULES;window.mkCard=mkCard;window.upgradeCard=upgradeCard;
+window.G=G;window.CHARACTERS=CHARACTERS;window.CARDS=CARDS;window.RELICS=RELICS;window.BOSS_RELICS=BOSS_RELICS;window.POTIONS=POTIONS;window.ENEMIES=ENEMIES;window.ACTS=ACTS;window.MAP_RULES=MAP_RULES;window.EVENTS=EVENTS;window.mkCard=mkCard;window.upgradeCard=upgradeCard;
 G.renderContinue();
 </script>
 </body>

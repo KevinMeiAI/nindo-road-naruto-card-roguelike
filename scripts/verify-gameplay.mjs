@@ -5,20 +5,32 @@ const assert = (condition, message) => {
   if (!condition) throw new Error(message);
 };
 
-function enumerateRoutes(nodes) {
-  const starts = Object.keys(nodes).filter(key => nodes[key].r === 1);
-  const routes = [];
-  const visit = (key, path = [], seen = new Set()) => {
-    assert(!seen.has(key), `map contains a cycle at ${key}`);
-    const nextSeen = new Set(seen).add(key);
-    const nextPath = [...path, key];
-    if (key === 'boss') { routes.push(nextPath); return; }
-    const edges = [...nodes[key].edges];
-    assert(edges.length > 0, `non-boss node ${key} is a dead end`);
-    edges.forEach(next => visit(next, nextPath, nextSeen));
-  };
-  starts.forEach(start => visit(start));
-  return routes;
+function allPathRanges(nodes, types) {
+  const ranges = new Map();
+  const ordered = Object.keys(nodes).sort((a, b) => nodes[b].r - nodes[a].r);
+  for (const key of ordered) {
+    const node = nodes[key];
+    const edges = [...node.edges];
+    if (key !== 'boss') assert(edges.length > 0, `non-boss node ${key} is a dead end`);
+    const result = {};
+    for (const type of types) {
+      const own = node.t === type ? 1 : 0;
+      if (!edges.length) result[type] = {min: own, max: own};
+      else {
+        const next = edges.map(edge => {
+          assert(nodes[edge], `map edge points to missing node ${edge}`);
+          assert(ranges.has(edge), `map contains a non-forward edge from ${key} to ${edge}`);
+          return ranges.get(edge)[type];
+        });
+        result[type] = {
+          min: own + Math.min(...next.map(value => value.min)),
+          max: own + Math.max(...next.map(value => value.max)),
+        };
+      }
+    }
+    ranges.set(key, result);
+  }
+  return ranges;
 }
 
 function verifyMap(seed) {
@@ -26,26 +38,116 @@ function verifyMap(seed) {
   G.genMap();
   const {nodes} = G;
   const rules = context.MAP_RULES;
-  const routes = enumerateRoutes(nodes);
-  assert(routes.length > 0, `seed ${seed}: no route reaches boss`);
-  for (const route of routes) {
-    const types = route.map(key => nodes[key].t);
-    const count = type => types.filter(value => value === type).length;
-    assert(count('elite') >= rules.minElitePerRoute, `seed ${seed}: route misses minimum elites`);
-    assert(count('elite') <= rules.maxElitePerRoute, `seed ${seed}: route exceeds maximum elites`);
-    assert(count('rest') >= 1, `seed ${seed}: route has no rest`);
-    assert(count('chest') === 1, `seed ${seed}: route must have exactly one chest`);
-    assert(count('unknown') <= rules.maxUnknownPerRoute, `seed ${seed}: route exceeds unknown limit`);
-    for (let i = 0; i < route.length - 1; i++) {
-      const node = nodes[route[i]], next = nodes[route[i + 1]];
+  const starts = Object.keys(nodes).filter(key => nodes[key].r === 1);
+  assert(starts.length > 0, `seed ${seed}: no route starts`);
+  const pathRanges = allPathRanges(nodes, ['elite', 'rest', 'chest', 'unknown']);
+  let decisionRows = 0;
+  for (let row = 1; row <= rules.rows; row++) {
+    const rowNodes = Object.values(nodes).filter(node => node.r === row);
+    const types = new Set(rowNodes.map(node => node.t));
+    if (types.size > 1) decisionRows++;
+    if (rowNodes.length > 1) {
+      assert(!rowNodes.every(node => node.t === 'chest'), `seed ${seed}: whole row ${row} is chest`);
+      assert(!rowNodes.every(node => node.t === 'rest'), `seed ${seed}: whole row ${row} is rest`);
+    }
+    if (row < rules.rows) {
+      const edges = rowNodes.flatMap(node => [...node.edges]
+        .map(next => ({from: node, to: nodes[next]}))
+        .filter(edge => edge.to?.r === row + 1));
+      for (let a = 0; a < edges.length; a++) for (let b = a + 1; b < edges.length; b++) {
+        const first = edges[a], second = edges[b];
+        if (first.from === second.from || first.to === second.to) continue;
+        assert((first.from.c - second.from.c) * (first.to.c - second.to.c) >= 0, `seed ${seed}: crossing edges at row ${row}`);
+      }
+    }
+  }
+  assert(decisionRows >= 6, `seed ${seed}: only ${decisionRows} rows offer distinct node types`);
+  for (const start of starts) {
+    const {elite: elites, rest: rests, chest: chests, unknown: unknowns} = pathRanges.get(start);
+    assert(elites.min >= rules.minElitePerRoute, `seed ${seed}: route misses minimum elites`);
+    assert(elites.max <= rules.maxElitePerRoute, `seed ${seed}: route exceeds maximum elites`);
+    assert(rests.min >= 1, `seed ${seed}: route has no rest`);
+    assert(chests.min === 1 && chests.max === 1, `seed ${seed}: route must have exactly one chest`);
+    assert(unknowns.max <= rules.maxUnknownPerRoute, `seed ${seed}: route exceeds unknown limit`);
+  }
+  for (const node of Object.values(nodes)) {
+    if (node.t === 'elite') assert(node.r > rules.noEliteBefore, `seed ${seed}: elite appears too early`);
+    for (const nextKey of node.edges) {
+      const next = nodes[nextKey];
       assert(!(node.t === 'elite' && next.t === 'elite'), `seed ${seed}: consecutive elites`);
       assert(!(node.t === 'rest' && next.t === 'rest'), `seed ${seed}: consecutive rests`);
-      if (node.t === 'elite') assert(node.r > rules.noEliteBefore, `seed ${seed}: elite appears too early`);
     }
   }
 }
 
 for (let seed = 1; seed <= 10000; seed++) verifyMap(seed);
+
+for (const act of [0, 1, 2]) {
+  for (const floor of [1, 6, 12]) {
+    G.act = act;
+    G.row = floor;
+    G.seenEvents = [];
+    G.eventHistory = [];
+    const recentEvents = [];
+    for (let seed = 1; seed <= 200; seed++) {
+      resetRng(seed);
+      const index = G.rollEventIndex();
+      const event = context.EVENTS[index];
+      assert(event && event.acts.includes(act), `act ${act}: ineligible event ${event?.id}`);
+      assert(!recentEvents.slice(-context.MAP_RULES.eventRecentWindow).includes(event.id), `act ${act}: event repeated inside recent window`);
+      recentEvents.push(event.id);
+      G.eventHistory.push(event.id);
+    }
+
+    G.encounterHistory = [];
+    const recentEncounters = [];
+    for (let seed = 1; seed <= 200; seed++) {
+      resetRng(seed);
+      const encounter = G.rollEncounter();
+      assert(encounter.min <= G.row && encounter.max >= G.row, `act ${act}: encounter ${encounter.id} outside floor range`);
+      assert(!recentEncounters.slice(-context.MAP_RULES.encounterRecentWindow).includes(encounter.id), `act ${act}: encounter repeated inside recent window`);
+      recentEncounters.push(encounter.id);
+    }
+  }
+
+  const onceEvent = context.EVENTS.find(event => event.oncePerRun && event.acts.includes(act));
+  if (onceEvent) {
+    G.seenEvents = [onceEvent.id];
+    G.eventHistory = [];
+    assert(!G.eligibleEvents().some(({event}) => event.id === onceEvent.id), `act ${act}: once-per-run event remained eligible`);
+  }
+}
+
+const eventIds = context.EVENTS.map(event => event.id);
+assert(new Set(eventIds).size === eventIds.length, 'event ids must be unique');
+assert(context.EVENTS.every(event => event.id && event.acts?.length && event.weight > 0), 'events must define stable ids, acts and positive weights');
+
+resetRng(424242);
+G.character = 'sasuke';
+G.maxHp = 74;
+G.hp = 51;
+G.gold = 123;
+G.act = 1;
+G.row = 4;
+G.curCol = 2;
+G.deck = [context.mkCard('taijutsu'), context.mkCard('chidori', true)];
+G.relics = ['fuuma'];
+G.potions = ['heisyo'];
+G.stats = {dmg: 12, kills: 2, cards: 5, turns: 3, elites: 1};
+G.permStr = 1;
+G.removeCount = 2;
+G.seenEvents = ['wounded_ally'];
+G.eventHistory = ['ichiraku', 'wounded_ally'];
+G.encounterHistory = ['curse_guard', 'spider_archer'];
+G.genMap();
+G.activeNode = {key: Object.keys(G.nodes).find(key => G.nodes[key].r === 4), nodeType: 'event', phase: 'event', payload: {eventId: 'wounded_ally', stage: 'choice', result: null}};
+G.saveRun();
+const saved = G.readSave();
+assert(saved?.version === 5, 'save round trip must use schema v5');
+assert(JSON.stringify(saved.seenEvents) === JSON.stringify(G.seenEvents), 'save round trip must preserve seen events');
+assert(JSON.stringify(saved.eventHistory) === JSON.stringify(G.eventHistory), 'save round trip must preserve event history');
+assert(JSON.stringify(saved.encounterHistory) === JSON.stringify(G.encounterHistory), 'save round trip must preserve encounter history');
+assert(saved.activeNode?.payload?.eventId === 'wounded_ally', 'save round trip must preserve a stable active event id');
 
 const characters = ['naruto', 'sasuke', 'sakura'];
 for (const character of characters) {
@@ -143,10 +245,11 @@ assert(phaseTarget.phase2done && phaseTarget.hp === 50, 'lethal damage must tran
 assert(phaseTarget.block === 0 && phaseTarget.burn === 0 && phaseTarget.weak === 0 && phaseTarget.vuln === 0, 'boss phase transition must clear block and negative statuses');
 
 assert(html.includes("!this.availableNodeKeys().has(k)"), 'enterNode must validate route reachability');
-assert(html.includes("version:4"), 'save schema must persist active nodes');
+assert(html.includes("version:5"), 'save schema must persist active nodes and histories');
+assert(html.includes('seenEvents:this.seenEvents||[]'), 'save schema must persist event history');
 assert(html.includes("this.activeNode.payload.cardPicked=true"), 'selected reward state must be persisted');
 assert(html.includes("option.cond&&!option.cond(this)"), 'event choices must revalidate conditions');
 assert(html.includes("dealDamage(t,layers*c.burnBurst,'status')"), 'burn detonation must use status damage');
 assert(rngState().calls > 0, 'gameplay verification should exercise the real RNG');
 
-console.log('Gameplay verification passed: 10,000 maps, rewards, first-hit relics, healing cap, damage kinds, boss phase rules.');
+console.log('Gameplay verification passed: 10,000 maps, event/encounter pools, rewards, healing, damage and boss rules.');
