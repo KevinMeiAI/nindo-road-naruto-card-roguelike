@@ -168,6 +168,79 @@ for (const character of characters) {
 }
 
 G.character = 'naruto';
+G.maxHp = 80;
+G.hp = 80;
+G.gold = 500;
+G.deck = [context.mkCard('taijutsu'), context.mkCard('kawarimi')];
+G.relics = [];
+G.potions = [];
+G.permStr = 0;
+assert(G.addRelic('headband') === true && G.addRelic('headband') === false, 'relic acquisition must reject duplicates');
+assert(G.relics.filter(key => key === 'headband').length === 1 && G.permStr === 1, 'duplicate relic effects must not stack');
+
+const rewardCard = {key: 'rasengan', upgraded: false};
+G.activeNode = {key: '1-0', nodeType: 'fight', phase: 'reward', payload: {
+  rewardType: 'combat', choices: [rewardCard], cardPicked: false, selectedCard: null,
+  potion: 'heisyo', potionTaken: false,
+}};
+const rewardDeckSize = G.deck.length;
+assert(G.takeCard(0) === true, 'first card reward claim must succeed');
+assert(G.takeCard(0) !== true && G.deck.length === rewardDeckSize + 1, 'card reward must be claimable only once');
+assert(G.takePotion() === true, 'first potion reward claim must succeed');
+assert(G.takePotion() === false && G.potions.length === 1, 'potion reward must be claimable only once');
+
+G.gold = 500;
+G.deck = [context.mkCard('taijutsu'), context.mkCard('kawarimi')];
+G.relics = [];
+G.potions = [];
+G.shopCards = [context.mkCard('rasengan')];
+G.shopPrices = [65];
+G.shopRelics = ['headband'];
+G.shopPotion = 'heisyo';
+G.removeUsed = false;
+G.activeNode = {key: '1-0', nodeType: 'shop', phase: 'shop', payload: {
+  cards: [{key: 'rasengan', upgraded: false}], prices: [65], relics: ['headband'], potion: 'heisyo', removeUsed: false,
+}};
+assert(G.buyCard(0) === true && G.buyCard(0) === false && G.gold === 435, 'shop card must charge and award exactly once');
+assert(G.buyRelic(0) === true && G.buyRelic(0) === false && G.gold === 260, 'shop relic must charge and award exactly once');
+assert(G.buyPotion() === true && G.buyPotion() === false && G.gold === 210, 'shop potion must charge and award exactly once');
+
+G.relics = [];
+G.gold = 0;
+G.activeNode = {key: '4-0', nodeType: 'chest', phase: 'chest', payload: null};
+assert(G.openChest() === true, 'opening a fresh chest must succeed');
+const chestState = JSON.stringify({payload: G.activeNode.payload, relics: G.relics, gold: G.gold, rng: rngState()});
+assert(G.openChest() === true, 'reopening a resolved chest must restore its view');
+assert(JSON.stringify({payload: G.activeNode.payload, relics: G.relics, gold: G.gold, rng: rngState()}) === chestState, 'reopening a chest must not reroll or duplicate its reward');
+
+const event = context.EVENTS.find(item => item.id === 'ichiraku');
+G.maxHp = 80;
+G.hp = 80;
+G.activeNode = {key: '5-0', nodeType: 'event', phase: 'event', payload: {eventIndex: context.EVENTS.indexOf(event), stage: 'choice', result: null}};
+assert(G.openEvent(G.activeNode.payload) === true, 'legacy indexed event saves must still restore');
+assert(G.activeNode.payload.eventId === event.id && !('eventIndex' in G.activeNode.payload), 'legacy event saves must migrate to a stable event id');
+G.activeNode = {key: '5-0', nodeType: 'event', phase: 'event', payload: {eventId: event.id, stage: 'choice', result: null}};
+G._event = event;
+G._eventId = event.id;
+assert(G.eventChoice(1) === true && G.maxHp === 86, 'first event choice must resolve its effect');
+assert(G.eventChoice(1) === false && G.maxHp === 86, 'resolved event choices must not execute twice');
+
+G.hp = 10;
+G.maxHp = 100;
+G.relics = [];
+G.activeNode = {key: '6-0', nodeType: 'rest', phase: 'rest', payload: {resolved: false}};
+assert(G.restHeal(9999) === true && G.hp === 40, 'rest healing must compute its own bounded amount');
+assert(G.restHeal(9999) === false && G.hp === 40, 'a rest choice must resolve only once');
+
+G.deck = [context.mkCard('taijutsu'), context.mkCard('kawarimi')];
+let pickedCards = 0;
+G.pickFromDeck('test', card => !card.upgraded, () => { pickedCards++; });
+context.upgradeCard(G.deck[0]);
+G._dp(0);
+assert(pickedCards === 0, 'deck picker must revalidate its filter at execution time');
+G.closeOverlay();
+
+G.character = 'naruto';
 G.act = 0;
 G.row = 1;
 G.relics = ['fuuma', 'kyuubi_seal'];
@@ -247,8 +320,6 @@ assert(phaseTarget.block === 0 && phaseTarget.burn === 0 && phaseTarget.weak ===
 assert(html.includes("!this.availableNodeKeys().has(k)"), 'enterNode must validate route reachability');
 assert(html.includes("version:5"), 'save schema must persist active nodes and histories');
 assert(html.includes('seenEvents:this.seenEvents||[]'), 'save schema must persist event history');
-assert(html.includes("this.activeNode.payload.cardPicked=true"), 'selected reward state must be persisted');
-assert(html.includes("option.cond&&!option.cond(this)"), 'event choices must revalidate conditions');
 assert(html.includes("dealDamage(t,layers*c.burnBurst,'status')"), 'burn detonation must use status damage');
 assert(rngState().calls > 0, 'gameplay verification should exercise the real RNG');
 
