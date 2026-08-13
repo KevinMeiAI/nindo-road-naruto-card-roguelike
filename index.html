@@ -936,7 +936,7 @@ const EVENTS = [
    ]},
   {ic:"🎰",title:"流浪赌徒",text:"一个白发男人摇着骰盅冲你挑眉:「小鬼,赌一把吗?押 30 金币,赢了翻三倍。」",
    opts:[
-     {t:"🎲 押 30 金币(50% 赢 90,50% 血本无归)",cond:g=>g.gold>=30,f:g=>{g.gold-=30;if(Math.random()<0.5){g.gold+=90;return "骰子停住——你赢了!男人肉痛地数出 90 金币。"}return "骰子停住……男人笑着收走了你的钱:「下次再来啊。」"}},
+     {t:"🎲 押 30 金币(50% 赢 90,50% 血本无归)",cond:g=>g.gold>=30,f:g=>{g.gold-=30;if(gameRandom()<0.5){g.gold+=90;return "骰子停住——你赢了!男人肉痛地数出 90 金币。"}return "骰子停住……男人笑着收走了你的钱:「下次再来啊。」"}},
      {t:"🚶 赌博有害(离开)",f:g=>"男人耸耸肩,继续吆喝下一个路人。"},
    ]},
   {ic:"📘",title:"卡卡西特训",text:"卡卡西合上亲热天堂,露出一只写轮眼:「只练一招,但要练到能活下来。」",
@@ -989,11 +989,44 @@ const EVENTS = [
 <script>
 /* ====================== 工具 & 音效 ====================== */
 const $=id=>document.getElementById(id);
-const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
-const pick=a=>a[Math.floor(Math.random()*a.length)];
 const SAVE_KEY='nindo-road-save-v2';
 const MIN_DECK_SIZE=6;
 const MAX_CARDS_PER_TURN=100;
+const UINT32_MAX=0xffffffff;
+function normalizeSeed(value,fallback=0x9e3779b9){
+  const n=Number(value);
+  const seed=Number.isFinite(n)?(Math.trunc(n)>>>0):fallback;
+  return seed||fallback;
+}
+function createSeededRng(seed,state=seed,calls=0){
+  const rng={seed:1,state:1,calls:0,
+    reset(nextSeed,nextState=nextSeed,nextCalls=0){
+      this.seed=normalizeSeed(nextSeed);
+      this.state=normalizeSeed(nextState,this.seed);
+      this.calls=Number.isInteger(nextCalls)&&nextCalls>=0?nextCalls:0;
+      return this;
+    },
+    next(){
+      let x=this.state;
+      x^=x<<13;x^=x>>>17;x^=x<<5;
+      this.state=x>>>0;this.calls++;
+      return this.state/4294967296;
+    }};
+  return rng.reset(seed,state,calls);
+}
+function freshRunSeed(){
+  const data=new Uint32Array(1);
+  if(globalThis.crypto&&typeof globalThis.crypto.getRandomValues==='function')globalThis.crypto.getRandomValues(data);
+  else data[0]=(Date.now()^Math.trunc((globalThis.performance?.now?.()||0)*1000))>>>0;
+  return normalizeSeed(data[0]);
+}
+const GAME_RNG=createSeededRng(0x9e3779b9);
+const resetGameplayRng=(seed,state=seed,calls=0)=>GAME_RNG.reset(seed,state,calls);
+const gameRandom=()=>GAME_RNG.next();
+const rnd=(a,b)=>a+Math.floor(gameRandom()*(b-a+1));
+const pick=a=>a[Math.floor(gameRandom()*a.length)];
+const visualRandom=()=>Math.random();
+const visualRnd=(a,b)=>a+Math.floor(visualRandom()*(b-a+1));
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
 const boundedInt=(v,fallback,min,max)=>{
   const n=Number(v);
@@ -1008,7 +1041,8 @@ function cardWidth(){
   if(!CARD_W_CACHE)CARD_W_CACHE=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-w'))||126;
   return CARD_W_CACHE;
 }
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(gameRandom()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function visualShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(visualRandom()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const screen=$(id);screen.classList.add('active');
@@ -1030,7 +1064,7 @@ const SFX={
   noise(dur=.12,vol=.14,delay=0){
     if(!this.on||!this.ac())return;const c=this.ctx,t=c.currentTime+delay;
     const len=c.sampleRate*dur,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);
-    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+    for(let i=0;i<len;i++)d[i]=(visualRandom()*2-1)*(1-i/len);
     const s=c.createBufferSource();s.buffer=buf;
     const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=1800;
     const g=c.createGain();g.gain.value=vol;
@@ -1163,10 +1197,11 @@ const G={
         nodes[k]={r:n.r,c:n.c,t:n.t,revealed:!!n.revealed,edges:[...n.edges],from:[...n.from]};
       });
       localStorage.setItem(SAVE_KEY,JSON.stringify({
-        version:2,character:this.character,hp:this.hp,maxHp:this.maxHp,gold:this.gold,
+        version:3,character:this.character,hp:this.hp,maxHp:this.maxHp,gold:this.gold,
         act:this.act,row:this.row,curCol:this.curCol,mapRows:this.mapRows,
         deck:this.deck.map(c=>({key:c.key,upgraded:!!c.upgraded})),relics:this.relics,potions:this.potions,stats:this.stats,
-        permStr:this.permStr,removeCount:this.removeCount,nodes
+        permStr:this.permStr,removeCount:this.removeCount,
+        runSeed:GAME_RNG.seed,rngState:GAME_RNG.state,rngCalls:GAME_RNG.calls,nodes
       }));
     }catch(e){}
   },
@@ -1174,7 +1209,7 @@ const G={
   readSave(){
     try{
       const s=JSON.parse(localStorage.getItem(SAVE_KEY));
-      if(!s||s.version!==2||!own(CHARACTERS,s.character)||!Array.isArray(s.deck)||!s.nodes||typeof s.nodes!=='object'||Array.isArray(s.nodes))return null;
+      if(!s||![2,3].includes(s.version)||!own(CHARACTERS,s.character)||!Array.isArray(s.deck)||!s.nodes||typeof s.nodes!=='object'||Array.isArray(s.nodes))return null;
       return s;
     }catch(e){return null}
   },
@@ -1219,6 +1254,9 @@ const G={
     const topologyValid=starts.length>0&&reachable.has('boss')&&Object.keys(nodes).every(k=>reachable.has(k)&&reachesBoss.has(k));
     if(!topologyValid){this.clearSave();this.renderContinue();return toast('存档路线已损坏,请开始新冒险')}
     SFX.ac();this.character=s.character;
+    const runSeed=Number.isInteger(s.runSeed)&&s.runSeed>0&&s.runSeed<=UINT32_MAX?s.runSeed:freshRunSeed();
+    const rngState=Number.isInteger(s.rngState)&&s.rngState>0&&s.rngState<=UINT32_MAX?s.rngState:runSeed;
+    resetGameplayRng(runSeed,rngState,boundedInt(s.rngCalls,0,0,999999999));
     this.maxHp=boundedInt(s.maxHp,this.char().hp,1,9999);
     this.hp=boundedInt(s.hp,this.maxHp,1,this.maxHp);
     this.gold=boundedInt(s.gold,0,0,999999);this.act=act;
@@ -1238,7 +1276,7 @@ const G={
     this.removeCount=boundedInt(s.removeCount,0,0,999);
     this.mapRows=MAP_RULES.rows;this.nodes=nodes;
     this.pendingRemove=false;this._ended=false;this.combatEnded=false;this.busy=false;this.picked=null;
-    $('topbar').classList.add('on');this.updateTopbar();this.renderMap();show('screen-map');
+    $('topbar').classList.add('on');this.updateTopbar();this.renderMap();show('screen-map');this.saveRun();
     toast('已恢复上次的冒险');
   },
   returnToTitle(){
@@ -1301,6 +1339,7 @@ const G={
   newRun(charKey=null){
     SFX.ac();
     this.clearSave();
+    resetGameplayRng(freshRunSeed());
     this.character=own(CHARACTERS,charKey)?charKey:(own(CHARACTERS,this.character)?this.character:'naruto');
     const C=this.char();
     this._ended=false;this.combatEnded=false;
@@ -1356,8 +1395,8 @@ const G={
   },
   randomCard(minR=1,excludeKeys=[]){
     let tier;
-    if(minR===1){const r=Math.random();tier=r<.62?1:(r<.92?2:3)}
-    else if(minR===2){const r=Math.random();tier=r<.7?2:3}
+    if(minR===1){const r=gameRandom();tier=r<.62?1:(r<.92?2:3)}
+    else if(minR===2){const r=gameRandom();tier=r<.7?2:3}
     else tier=3;
     const exclude=new Set(excludeKeys);
     return this.randomCardOfTier(tier,exclude,minR);
@@ -1379,7 +1418,7 @@ const G={
     return cards;
   },
   maybeUpgradeRewardCard(c,chance){
-    if(c&&!c.upgraded&&c.t!=='curse'&&Math.random()<chance)upgradeCard(c);
+    if(c&&!c.upgraded&&c.t!=='curse'&&gameRandom()<chance)upgradeCard(c);
     return c;
   },
   rewardUpgradeChance(kind){
@@ -1395,11 +1434,11 @@ const G={
   },
   combatRewardTiers(kind){
     if(kind==='elite'){
-      const tiers=[0,0,0].map(()=>Math.random()<0.15?3:2);
+      const tiers=[0,0,0].map(()=>gameRandom()<0.15?3:2);
       return shuffle(tiers);
     }
     return [0,0,0].map(()=>{
-      const r=Math.random();
+      const r=gameRandom();
       return r<0.82?1:(r<0.98?2:3);
     });
   },
@@ -1518,7 +1557,7 @@ const G={
     const weightedType=(includeElite=true)=>{
       const entries=Object.entries(C.weights).filter(([t])=>includeElite||t!=='elite');
       const sum=entries.reduce((s,[,w])=>s+w,0);
-      let r=Math.random()*sum;
+      let r=gameRandom()*sum;
       for(const [t,w] of entries){r-=w;if(r<=0)return t}
       return 'fight';
     };
@@ -1574,7 +1613,7 @@ const G={
     const optionalEliteChance=C.weights.elite/Object.values(C.weights).reduce((s,w)=>s+w,0);
     shuffle(Object.keys(nodes)).forEach(k=>{
       const n=nodes[k];
-      if(k!=='boss'&&n.r<ROWS&&['fight','unknown'].includes(n.t)&&Math.random()<optionalEliteChance&&canUse(k,'elite'))n.t='elite';
+      if(k!=='boss'&&n.r<ROWS&&['fight','unknown'].includes(n.t)&&gameRandom()<optionalEliteChance&&canUse(k,'elite'))n.t='elite';
     });
     const pathRange=(start,type)=>{
       const memo=new Map();
@@ -1652,7 +1691,7 @@ const G={
     requestAnimationFrame(()=>{sc.scrollTop=sc.scrollHeight*(1-(this.row+1.6)/(rows+2))});
   },
   resolveUnknown(n){
-    const r=Math.random(),U=MAP_RULES.unknown;
+    const r=gameRandom(),U=MAP_RULES.unknown;
     let t='event';
     if(r<U.event)t='event';
     else if(r<U.event+U.fight)t='fight';
@@ -1686,7 +1725,7 @@ const G={
     this.viewCards('我的卡组',this.deck,`攻击 ${count('atk')} · 技能 ${count('skl')} · 能力 ${count('pwr')} · 诅咒 ${count('curse')} · 平均费用 ${avg}`);
   },
   viewPile(which){
-    if(which==='draw')this.viewCards('抽牌堆(顺序已隐藏)',shuffle([...this.drawPile]));
+    if(which==='draw')this.viewCards('抽牌堆(顺序已隐藏)',visualShuffle([...this.drawPile]));
     else if(which==='discard')this.viewCards('弃牌堆',this.discardPile);
     else this.viewCards('消耗堆',this.exhaustPile||[]);
   },
@@ -1798,7 +1837,7 @@ Object.assign(G,{
     if(kind==='boss')this.enemies=A.boss.map(mk);
     else if(kind==='elite')this.enemies=pick(A.elites).map(mk);
     else{
-      const dbl=this.row>=3&&Math.random()<(this.act>=1?0.6:0.5);
+      const dbl=this.row>=3&&gameRandom()<(this.act>=1?0.6:0.5);
       this.enemies=[mk(pick(A.pool))];
       if(dbl)this.enemies.push(mk(pick(A.pool)));
     }
@@ -2473,8 +2512,8 @@ Object.assign(G,{
     const r=anchor.getBoundingClientRect(),a=$('app').getBoundingClientRect();
     const f=document.createElement('div');
     f.className='fdmg '+cls;f.textContent=txt;
-    f.style.left=(r.left-a.left+r.width/2-16+rnd(-14,14))+'px';
-    f.style.top=(r.top-a.top+rnd(0,16))+'px';
+    f.style.left=(r.left-a.left+r.width/2-16+visualRnd(-14,14))+'px';
+    f.style.top=(r.top-a.top+visualRnd(0,16))+'px';
     $('app').appendChild(f);setTimeout(()=>f.remove(),900);
   },
   cardPlayFx(c){
@@ -2670,7 +2709,7 @@ Object.assign(G,{
       const r=this.randomRelic();
       if(r){this.addRelic(r);html+=`<div class="ritem noclick">${RELICS[r].ic} 获得忍具「${RELICS[r].n}」<br><span style="color:var(--paper-dim);font-size:12.5px">${RELICS[r].d}</span></div>`}
     }
-    if(Math.random()<(kind==='elite'?MAP_RULES.potionDrop.elite:MAP_RULES.potionDrop.fight)){
+    if(gameRandom()<(kind==='elite'?MAP_RULES.potionDrop.elite:MAP_RULES.potionDrop.fight)){
       const pk=this.randomPotionKey();
       this._pendingPotion=pk;
       html+=`<div class="ritem" role="button" tabindex="0" id="potion-take" onclick="G.takePotion()">${POTIONS[pk].ic} 拾取秘药「${POTIONS[pk].n}」— ${POTIONS[pk].d}</div>`;
