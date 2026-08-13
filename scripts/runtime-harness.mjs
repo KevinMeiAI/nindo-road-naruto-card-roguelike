@@ -82,12 +82,15 @@ export function loadGameRuntime() {
   context.addEventListener = () => {};
   context.innerWidth = 1440;
   context.innerHeight = 900;
-  vm.runInContext(scripts.join('\n'), context, {filename: 'index.html'});
+  vm.runInContext(`${scripts.join('\n')}\n;globalThis.__GAME_TEST_API__={G,CHARACTERS,CARDS,RELICS,BOSS_RELICS,POTIONS,ENEMIES,ACTS,MAP_RULES,EVENTS,mkCard,upgradeCard};`, context, {filename: 'index.html'});
+  const testApi = context.__GAME_TEST_API__;
+  delete context.__GAME_TEST_API__;
+  Object.assign(context, testApi);
 
   return {
     context,
     html,
-    G: context.G,
+    G: testApi.G,
     resetRng(seed, state = seed, calls = 0) {
       vm.runInContext(`resetGameplayRng(${seed >>> 0},${state >>> 0},${calls})`, context);
     },

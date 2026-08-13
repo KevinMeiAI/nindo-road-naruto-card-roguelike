@@ -321,6 +321,8 @@ assert(html.includes("!this.availableNodeKeys().has(k)"), 'enterNode must valida
 assert(html.includes("version:5"), 'save schema must persist active nodes and histories');
 assert(html.includes('seenEvents:this.seenEvents||[]'), 'save schema must persist event history');
 assert(html.includes("dealDamage(t,layers*c.burnBurst,'status')"), 'burn detonation must use status damage');
+assert(html.includes('t.textContent=String(m)'), 'toast messages must render as plain text');
+assert(!html.includes('window.CARDS=') && !html.includes('window.EVENTS='), 'content tables must not be exported on window');
 assert(rngState().calls > 0, 'gameplay verification should exercise the real RNG');
 
 console.log('Gameplay verification passed: 10,000 maps, event/encounter pools, rewards, healing, damage and boss rules.');

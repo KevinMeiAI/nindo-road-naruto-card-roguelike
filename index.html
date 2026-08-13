@@ -320,7 +320,7 @@ button,[role="button"]{font-family:inherit;user-select:none;-webkit-user-select:
 #toast{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:90;
   background:rgba(0,0,0,.92);border:1px solid var(--naruto);color:var(--paper);
   padding:8px 20px;border-radius:5px;font-size:13.5px;opacity:0;transition:opacity .25s;pointer-events:none;
-  max-width:88%;text-align:center;line-height:1.5}
+  max-width:88%;text-align:center;line-height:1.5;white-space:pre-line}
 #toast.show{opacity:1}
 .shop-relic{width:138px;background:var(--panel);border:1px solid var(--gold);border-radius:9px;
   padding:13px 9px;text-align:center;cursor:pointer}
@@ -1089,8 +1089,8 @@ function show(id){
   const screen=$(id);screen.classList.add('active');
   if(window.G&&Number.isInteger(G.act))screen.dataset.act=G.act;
 }
-function toast(m){const t=$('toast');t.innerHTML=m;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1900)}
-function esc(s){return String(s).replace(/"/g,'&quot;')}
+function toast(m){const t=$('toast');t.textContent=String(m);t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1900)}
+function esc(s){return String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
 
 const SFX={
   on:true,ctx:null,
@@ -1182,7 +1182,7 @@ function annotateKeywords(html,interactive=false){
   }).join('');
 }
 function cardHTML(c,extra="",style="",options={}){
-  const rawDesc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
+  const rawDesc=(typeof G!=='undefined'&&G.cardDesc)?G.cardDesc(c):c.d;
   const desc=annotateKeywords(rawDesc,!!options.keywordInteractive);
   const eager=!!options.eager;
   const art=`<img src="${esc(runtimeAssetPath(c.art))}" alt="" loading="${eager?'eager':'lazy'}" decoding="async">`;
@@ -1207,6 +1207,10 @@ function unitFrame(icon,sprite,name=""){
 const G={
   sfxOn:true,
   toggleSfx(){SFX.on=!SFX.on;$('sfx-btn').textContent=SFX.on?'🔊':'🔇';},
+  showRelic(k){
+    const relic=this.relicData(k);if(!relic)return false;
+    toast(`${relic.n}\n${relic.d}`);return true;
+  },
   showKeyword(ev,el,pin=false){
     const name=el&&el.dataset&&el.dataset.kw;
     if(!name||!KW[name])return;
@@ -1530,7 +1534,7 @@ const G={
     $('t-floor').textContent=`📍 ${ACTS[this.act].name.slice(0,3)} · ${this.row}/${(this.mapRows||7)+1} 层`;
     $('t-deck').textContent=this.deck.length;
     $('relicbar').innerHTML=this.relics.map(k=>{const r=this.relicData(k);
-      return `<button class="relic-i" data-relic="${k}" onclick="toast('<b>${esc(r.n)}</b><br>${esc(r.d)}')">${r.ic}</button>`}).join('');
+      return `<button class="relic-i" data-relic="${esc(k)}" aria-label="${esc(`${r.n}: ${r.d}`)}" onclick="G.showRelic(this.dataset.relic)">${r.ic}</button>`}).join('');
     let ph='';
     for(let i=0;i<2;i++){
       const k=this.potions[i];
@@ -2214,7 +2218,7 @@ Object.assign(G,{
     }
     if(m.genjutsu||m.drain)parts.push('查克拉惩罚合计最多 2 点');
     if(m.a&&this.enemies.filter(x=>x.hp>0).length>1)parts.push('实际伤害可能受前序敌人的状态效果影响');
-    toast(`<b>${e.n} · ${m.txt}</b><br>${parts.join('<br>')||'蓄势待发'}`);
+    toast(`${e.n} · ${m.txt}\n${parts.join('\n')||'蓄势待发'}`);
   },
   playCardAt(idx,target){
     const c=this.hand[idx];if(!c||c.c>this.energy)return;
@@ -2759,7 +2763,7 @@ Object.assign(G,{
     const stage=$('stage');if(!stage)return;
     const fx=document.createElement('div');
     fx.className=`technique-callout ${c.t}`;
-    fx.innerHTML=`<small>${TYPE_LABEL[c.t]||'忍术'} / NINJUTSU</small><b>${c.n.replace('⁺','')}</b>`;
+    fx.innerHTML=`<small>${esc(TYPE_LABEL[c.t]||'忍术')} / NINJUTSU</small><b>${esc(c.n.replace('⁺',''))}</b>`;
     stage.appendChild(fx);setTimeout(()=>fx.remove(),1050);
   },
   fxSlash(anchor){
@@ -3308,15 +3312,15 @@ Object.assign(G,{
       return true;
     }
     if(state.stage==='resolved'){
-      $('event-box').innerHTML=`<div class="eic">${ev.ic}</div><p>${state.result||'你继续踏上了旅途。'}</p><button class="btn" onclick="G.backToMap()">继续前进</button>`;
+      $('event-box').innerHTML=`<div class="eic">${esc(ev.ic)}</div><p>${esc(state.result||'你继续踏上了旅途。')}</p><button class="btn" onclick="G.backToMap()">继续前进</button>`;
       show('screen-event');return true;
     }
-    $('event-box').innerHTML=`<div class="eic">${ev.ic}</div>
-      <div class="sec-t" style="font-size:19px;letter-spacing:.18em">${ev.title}</div>
-      <p>${ev.text}</p>
+    $('event-box').innerHTML=`<div class="eic">${esc(ev.ic)}</div>
+      <div class="sec-t" style="font-size:19px;letter-spacing:.18em">${esc(ev.title)}</div>
+      <p>${esc(ev.text)}</p>
       <div class="eopts">${ev.opts.map((o,i)=>{
         const ok=!o.cond||o.cond(this);
-        return `<button class="btn ghost" ${ok?'':'disabled'} onclick="G.eventChoice(${i})">${o.t}</button>`}).join('')}</div>`;
+        return `<button class="btn ghost" ${ok?'':'disabled'} onclick="G.eventChoice(${i})">${esc(o.t)}</button>`}).join('')}</div>`;
     show('screen-event');
     return true;
   },
@@ -3339,8 +3343,8 @@ Object.assign(G,{
       return this.openEventRemovePicker();
     }
     this.activeNode.payload={eventId:this._eventId,stage:'resolved',result:r||''};this.saveRun();
-    $('event-box').innerHTML=`<div class="eic">${this._event.ic}</div>
-      <p>${r}</p><button class="btn" onclick="G.backToMap()">继续前进</button>`;
+    $('event-box').innerHTML=`<div class="eic">${esc(this._event.ic)}</div>
+      <p>${esc(r||'你继续踏上了旅途。')}</p><button class="btn" onclick="G.backToMap()">继续前进</button>`;
     return true;
   },
   openEventRemovePicker(){
@@ -3396,7 +3400,7 @@ Object.assign(G,{
     show('screen-end');
   },
 });
-window.G=G;window.CHARACTERS=CHARACTERS;window.CARDS=CARDS;window.RELICS=RELICS;window.BOSS_RELICS=BOSS_RELICS;window.POTIONS=POTIONS;window.ENEMIES=ENEMIES;window.ACTS=ACTS;window.MAP_RULES=MAP_RULES;window.EVENTS=EVENTS;window.mkCard=mkCard;window.upgradeCard=upgradeCard;
+window.G=G;
 G.renderContinue();
 </script>
 </body>
