@@ -1107,6 +1107,9 @@ function upgradeCard(c){
   const up=CARDS[c.key].up||{};Object.assign(c,up);c.upgraded=true;
   c.n=(up.n||CARDS[c.key].n)+"⁺";
 }
+const cardRef=c=>c?{key:c.key,upgraded:!!c.upgraded}:null;
+const cardFromRef=ref=>ref&&own(CARDS,ref.key)?mkCard(ref.key,!!ref.upgraded):null;
+const plainClone=value=>value==null?value:JSON.parse(JSON.stringify(value));
 function cardNameSize(name){
   const len=[...String(name).replace(/[⁺+]/g,'')].length;
   if(len<=4)return 13;
@@ -1196,12 +1199,13 @@ const G={
       Object.entries(this.nodes).forEach(([k,n])=>{
         nodes[k]={r:n.r,c:n.c,t:n.t,revealed:!!n.revealed,edges:[...n.edges],from:[...n.from]};
       });
+      const activeNode=this.activeNode?plainClone(this.activeNode):null;
       localStorage.setItem(SAVE_KEY,JSON.stringify({
-        version:3,character:this.character,hp:this.hp,maxHp:this.maxHp,gold:this.gold,
+        version:4,character:this.character,hp:this.hp,maxHp:this.maxHp,gold:this.gold,
         act:this.act,row:this.row,curCol:this.curCol,mapRows:this.mapRows,
         deck:this.deck.map(c=>({key:c.key,upgraded:!!c.upgraded})),relics:this.relics,potions:this.potions,stats:this.stats,
         permStr:this.permStr,removeCount:this.removeCount,
-        runSeed:GAME_RNG.seed,rngState:GAME_RNG.state,rngCalls:GAME_RNG.calls,nodes
+        runSeed:GAME_RNG.seed,rngState:GAME_RNG.state,rngCalls:GAME_RNG.calls,activeNode,nodes
       }));
     }catch(e){}
   },
@@ -1209,7 +1213,7 @@ const G={
   readSave(){
     try{
       const s=JSON.parse(localStorage.getItem(SAVE_KEY));
-      if(!s||![2,3].includes(s.version)||!own(CHARACTERS,s.character)||!Array.isArray(s.deck)||!s.nodes||typeof s.nodes!=='object'||Array.isArray(s.nodes))return null;
+      if(!s||![2,3,4].includes(s.version)||!own(CHARACTERS,s.character)||!Array.isArray(s.deck)||!s.nodes||typeof s.nodes!=='object'||Array.isArray(s.nodes))return null;
       return s;
     }catch(e){return null}
   },
@@ -1217,7 +1221,7 @@ const G={
     const wrap=$('continue-wrap');if(!wrap)return;
     const s=this.readSave();
     const act=s?boundedInt(s.act,0,0,ACTS.length-1):0;
-    const row=s?(strictInt(s.row,0,MAP_RULES.rows)??0):0;
+    const row=s?boundedInt(s.row,0,0,MAP_RULES.rows+1):0;
     wrap.innerHTML=s?`<button class="btn blue" onclick="G.continueRun()">继续上次地图进度 · ${CHARACTERS[s.character].n} ${act+1}-${row}</button>`:'';
   },
   continueRun(){
@@ -1260,8 +1264,11 @@ const G={
     this.maxHp=boundedInt(s.maxHp,this.char().hp,1,9999);
     this.hp=boundedInt(s.hp,this.maxHp,1,this.maxHp);
     this.gold=boundedInt(s.gold,0,0,999999);this.act=act;
-    const savedRow=strictInt(s.row,0,MAP_RULES.rows),savedCol=strictInt(s.curCol,-1,MAP_RULES.cols-1);
-    if(savedRow===null||savedCol===null||(savedRow===0&&savedCol!==-1)||(savedRow>0&&!nodes[`${savedRow}-${savedCol}`])){
+    const savedRow=Number(s.row),savedCol=Number(s.curCol);
+    const savedPosition=savedRow===0&&savedCol===-1
+      ? null
+      : Object.entries(nodes).find(([,n])=>n.r===savedRow&&n.c===savedCol);
+    if(!Number.isFinite(savedRow)||!Number.isFinite(savedCol)||(savedRow===0&&savedCol!==-1)||(savedRow>0&&!savedPosition)){
       this.clearSave();this.renderContinue();return toast('存档位置已损坏,请开始新冒险');
     }
     this.row=savedRow;this.curCol=savedCol;
@@ -1276,13 +1283,19 @@ const G={
     this.removeCount=boundedInt(s.removeCount,0,0,999);
     this.mapRows=MAP_RULES.rows;this.nodes=nodes;
     this.pendingRemove=false;this._ended=false;this.combatEnded=false;this.busy=false;this.picked=null;
-    $('topbar').classList.add('on');this.updateTopbar();this.renderMap();show('screen-map');this.saveRun();
-    toast('已恢复上次的冒险');
+    const rawActive=s.activeNode;
+    const activeKey=rawActive&&typeof rawActive.key==='string'?rawActive.key:null;
+    const activePhases=new Set(['combat','reward','event','shop','rest','chest']);
+    this.activeNode=activeKey&&nodes[activeKey]&&activePhases.has(rawActive.phase)
+      ? plainClone(rawActive):null;
+    $('topbar').classList.add('on');this.updateTopbar();
+    if(this.activeNode&&this.resumeActiveNode())toast('已恢复当前节点');
+    else{this.activeNode=null;this.renderMap();show('screen-map');this.saveRun();toast('已恢复上次的冒险')}
   },
   returnToTitle(){
     this.closeOverlay();
     $('topbar').classList.remove('on');
-    this._ended=false;this.combatEnded=false;this.busy=false;this.picked=null;
+    this._ended=false;this.combatEnded=false;this.busy=false;this.picked=null;this.activeNode=null;
     this.renderContinue();
     show('screen-title');
   },
@@ -1344,7 +1357,7 @@ const G={
     const C=this.char();
     this._ended=false;this.combatEnded=false;
     this.maxHp=C.hp;this.hp=C.hp;this.gold=C.gold;
-    this.act=0;this.row=0;this.curCol=-1;
+    this.act=0;this.row=0;this.curCol=-1;this.activeNode=null;
     this.relics=[];this.potions=['heisyo'];this.pendingRemove=false;
     this.stats={dmg:0,kills:0,cards:0,turns:0,elites:0};
     this.permStr=0;this.removeCount=0;
@@ -1352,7 +1365,7 @@ const G={
     this.startAct(0);
   },
   startAct(a){
-    this.act=a;this.row=0;this.curCol=-1;
+    this.act=a;this.row=0;this.curCol=-1;this.activeNode=null;
     this.genMap();
     $('topbar').classList.add('on');
     this.updateTopbar();this.renderMap();show('screen-map');this.saveRun();
@@ -1700,11 +1713,24 @@ const G={
     n.t=t;n.revealed=true;
     return t;
   },
+  availableNodeKeys(){
+    const available=new Set();
+    if(!this.nodes)return available;
+    if(this.row===0)Object.entries(this.nodes).forEach(([k,n])=>{if(n.r===1)available.add(k)});
+    else{
+      const current=Object.values(this.nodes).find(n=>n.r===this.row&&n.c===this.curCol);
+      if(current)current.edges.forEach(k=>available.add(k));
+    }
+    return available;
+  },
   enterNode(k){
-    const n=this.nodes[k];if(!n)return;
+    const n=this.nodes[k];
+    if(!n||this.activeNode||!this.availableNodeKeys().has(k))return toast('该节点当前不可到达');
     this.row=n.r;this.curCol=n.c;
     this.updateTopbar();SFX.card();
     const t=n.t==='unknown'?this.resolveUnknown(n):n.t;
+    const phase=['fight','elite','boss'].includes(t)?'combat':t;
+    this.activeNode={key:k,nodeType:t,phase,payload:null};
     if(t==='fight')this.startCombat('fight');
     else if(t==='elite')this.startCombat('elite');
     else if(t==='boss')this.startCombat('boss');
@@ -1714,7 +1740,18 @@ const G={
     else if(t==='chest')this.openChest();
   },
   backToMap(){
+    this.activeNode=null;
     this.updateTopbar();this.renderMap();show('screen-map');this.saveRun();
+  },
+  resumeActiveNode(){
+    const active=this.activeNode;if(!active)return false;
+    if(active.phase==='combat')return this.restoreCombat(active.payload);
+    if(active.phase==='reward')return this.renderSavedReward(active.payload);
+    if(active.phase==='event')return this.openEvent(active.payload);
+    if(active.phase==='shop')return this.openShop(active.payload);
+    if(active.phase==='rest'){this.openRest(true);return true}
+    if(active.phase==='chest')return this.openChest(active.payload);
+    return false;
   },
 
   /* ---------- 牌堆/卡组查看 ---------- */
@@ -1862,6 +1899,32 @@ Object.assign(G,{
     $('combat-log').textContent=kind==='boss'?`${A.bossName}:「让我见识一下你的实力吧……」`:'战斗开始!';
     show('screen-combat');
     this.startTurn();
+    if(this.activeNode){
+      this.activeNode.phase='combat';this.activeNode.payload=this.captureCombat();this.saveRun();
+    }
+  },
+  captureCombat(){
+    const fields=['combatKind','block','str','dex','weak','vuln','poison','might','healMight','blockMight','overhealPower','genjutsu','chakraDrain','clones','nindoBlk','clonePerTurn','vulnDrawPower','vulnDrawReady','vulnDrawConsumed','retainBlock','rampStr','rampSources','nextTurnEnergy','attacksPlayed','skillsPlayed','turn','energy','firstAtk','firstSkl','cardsPlayedThisTurn','_weakFresh','_vulnFresh'];
+    const state={};fields.forEach(k=>state[k]=plainClone(this[k]));
+    state.enemies=plainClone(this.enemies);
+    ['drawPile','discardPile','hand','exhaustPile'].forEach(k=>state[k]=(this[k]||[]).map(cardRef));
+    state.log=$('combat-log').textContent||'';
+    return state;
+  },
+  restoreCombat(payload){
+    if(!payload||!Array.isArray(payload.enemies)||!Array.isArray(payload.hand))return false;
+    const cardFields=new Set(['drawPile','discardPile','hand','exhaustPile']);
+    Object.entries(payload).forEach(([k,v])=>{
+      if(k==='enemies'||k==='log'||cardFields.has(k))return;
+      this[k]=plainClone(v);
+    });
+    this.enemies=plainClone(payload.enemies);
+    cardFields.forEach(k=>this[k]=(payload[k]||[]).map(cardFromRef).filter(Boolean));
+    this.picked=null;this.busy=false;this.combatEnded=false;
+    $('stage').className='act'+(this.act+1);
+    $('combat-log').textContent=payload.log||'战斗继续!';
+    show('screen-combat');this.updateTopbar();this.renderCombat();
+    return true;
   },
   playerEl(){return document.querySelector('#player-side .frame')},
   enemyEl(i){return document.querySelector(`[data-ei="${i}"] .frame`)},
@@ -2704,24 +2767,44 @@ Object.assign(G,{
     if(this.hasRelic('mission_pass'))goldMul+=0.2;
     gold=Math.floor(gold*goldMul);
     this.gold+=gold;SFX.gold();this.updateTopbar();
-    let html=`<div class="ritem noclick">🪙 缴获 ${gold} 金币</div>`;
+    let relic=null;
     if(kind==='elite'){
-      const r=this.randomRelic();
-      if(r){this.addRelic(r);html+=`<div class="ritem noclick">${RELICS[r].ic} 获得忍具「${RELICS[r].n}」<br><span style="color:var(--paper-dim);font-size:12.5px">${RELICS[r].d}</span></div>`}
+      relic=this.randomRelic();
+      if(relic)this.addRelic(relic);
     }
+    let potion=null;
     if(gameRandom()<(kind==='elite'?MAP_RULES.potionDrop.elite:MAP_RULES.potionDrop.fight)){
-      const pk=this.randomPotionKey();
-      this._pendingPotion=pk;
-      html+=`<div class="ritem" role="button" tabindex="0" id="potion-take" onclick="G.takePotion()">${POTIONS[pk].ic} 拾取秘药「${POTIONS[pk].n}」— ${POTIONS[pk].d}</div>`;
+      potion=this.randomPotionKey();
     }
-    html+=`<div class="sec-s" style="margin-top:10px">领悟新忍术 — 选择一张加入卡组(可跳过)</div>`;
     const cs=this.combatRewardCards(kind);
-    this._choices=cs;this._cardPicked=false;
-    html+=`<div class="cgrid" id="card-reward-grid">${cs.map((c,i)=>`<div role="button" tabindex="0" style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
-      <div class="sec-s" id="card-reward-status"></div>`;
-    html+=`<button class="btn ghost" id="reward-continue" onclick="G.backToMap()">跳过,继续前进</button>`;
+    const payload={rewardType:'combat',combatKind:kind,gold,relic,potion,potionTaken:false,
+      choices:cs.map(cardRef),cardPicked:false,selectedCard:null};
+    if(this.activeNode){this.activeNode.phase='reward';this.activeNode.payload=payload}
+    this.saveRun();
+    this.renderSavedReward(payload);
+  },
+  renderSavedReward(payload){
+    if(!payload||!['combat','boss'].includes(payload.rewardType))return false;
+    if(payload.rewardType==='boss')return this.renderBossReward(payload);
+    const cs=(payload.choices||[]).map(cardFromRef).filter(Boolean);
+    this._choices=cs;this._cardPicked=!!payload.cardPicked;
+    this._pendingPotion=payload.potion&&!payload.potionTaken?payload.potion:null;
+    let html=`<div class="ritem noclick">🪙 缴获 ${payload.gold||0} 金币</div>`;
+    if(payload.relic&&RELICS[payload.relic]){
+      const r=RELICS[payload.relic];
+      html+=`<div class="ritem noclick">${r.ic} 获得忍具「${r.n}」<br><span style="color:var(--paper-dim);font-size:12.5px">${r.d}</span></div>`;
+    }
+    if(payload.potion&&POTIONS[payload.potion]){
+      const p=POTIONS[payload.potion],taken=payload.potionTaken;
+      html+=`<div class="ritem ${taken?'noclick':''}" role="button" tabindex="0" id="potion-take" ${taken?'style="opacity:.4"':'onclick="G.takePotion()"'}>${p.ic} ${taken?'已拾取':'拾取'}秘药「${p.n}」— ${p.d}</div>`;
+    }
+    html+=`<div class="sec-s" style="margin-top:10px">领悟新忍术 — 选择一张加入卡组(可跳过)</div>
+      <div class="cgrid ${payload.cardPicked?'sold':''}" id="card-reward-grid" ${payload.cardPicked?'style="pointer-events:none"':''}>${cs.map((c,i)=>`<div role="button" tabindex="0" style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
+      <div class="sec-s" id="card-reward-status">${payload.cardPicked?(this._pendingPotion?'已选择卡牌,还可以拾取秘药':'已选择卡牌'):''}</div>
+      <button class="btn ghost" id="reward-continue" onclick="G.backToMap()">${payload.cardPicked?'继续前进':'跳过,继续前进'}</button>`;
     $('reward-list').innerHTML=html;
     show('screen-reward');
+    return true;
   },
   takePotion(){
     if(this._pendingPotion&&this.addPotion(this._pendingPotion)){
@@ -2730,12 +2813,18 @@ Object.assign(G,{
       this._pendingPotion=null;
       const status=$('card-reward-status');
       if(status&&this._cardPicked)status.textContent='奖励已领取完毕';
+      if(this.activeNode&&this.activeNode.phase==='reward'){
+        this.activeNode.payload.potionTaken=true;this.saveRun();
+      }
     }
   },
   takeCard(i){
     if(this._cardPicked)return toast('只能领悟一张');
     const c=this._choices[i];if(!c)return;
     this.deck.push(c);this._cardPicked=true;this._choices=[];
+    if(this.activeNode&&this.activeNode.phase==='reward'){
+      this.activeNode.payload.cardPicked=true;this.activeNode.payload.selectedCard=cardRef(c);this.saveRun();
+    }
     SFX.card();toast(`「${c.n}」加入卡组`);
     const grid=$('card-reward-grid');
     if(grid){grid.classList.add('sold');grid.style.pointerEvents='none'}
@@ -2753,27 +2842,44 @@ Object.assign(G,{
     const bossRelics=this.randomBossRelics(1);
     bossRelics.forEach(k=>this.addRelic(k));
     this.updateTopbar();
-    const relicHtml=bossRelics.length
-      ? bossRelics.map(k=>`<div class="ritem noclick">${BOSS_RELICS[k].ic} 获得首领忍具「${BOSS_RELICS[k].n}」<br><span style="color:var(--paper-dim);font-size:12.5px">${BOSS_RELICS[k].d}</span></div>`).join('')
-      : '<div class="ritem noclick">🪙 首领忍具已经收集齐全,额外缴获 120 金币</div>';
     if(!bossRelics.length){this.gold+=120;this.updateTopbar()}
-    let html=`<div class="sec-s" style="font-size:14px">${A.clearText||`${A.bossName}败退,通往${next.name}的路出现了。`}</div>
-      <div class="ritem noclick">🪙 缴获 ${gold} 金币 · 💚 休整回复 ${healAmt} 点生命</div>
-      <div class="sec-s" style="margin-top:12px;color:var(--gold)">◆ 首领战利品 ◆</div>
-      ${relicHtml}
-      <div class="sec-s" style="margin-top:10px">领悟一张稀有忍术 — 可跳过</div>`;
     const cs=this.randomCards(3,2).map(c=>this.maybeUpgradeRewardCard(c,this.rewardUpgradeChance('boss')));
-    this._choices=cs;this._cardPicked=false;
-    html+=`<div class="cgrid" id="boss-card-reward-grid">${cs.map((c,i)=>`<div role="button" tabindex="0" style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>
-      <div class="sec-s" id="boss-card-reward-status"></div>
+    const payload={rewardType:'boss',gold,healAmt,bossRelics,bonusGold:bossRelics.length?0:120,
+      choices:cs.map(cardRef),cardPicked:false,selectedCard:null};
+    if(this.activeNode){this.activeNode.phase='reward';this.activeNode.payload=payload}
+    this.saveRun();
+    this.renderSavedReward(payload);
+  },
+  renderBossReward(payload){
+    const A=ACTS[this.act],next=ACTS[this.act+1];if(!next)return false;
+    const cs=(payload.choices||[]).map(cardFromRef).filter(Boolean);
+    this._choices=cs;this._cardPicked=!!payload.cardPicked;
+    const relicHtml=(payload.bossRelics||[]).length
+      ? payload.bossRelics.map(k=>{const r=BOSS_RELICS[k];return r?`<div class="ritem noclick">${r.ic} 获得首领忍具「${r.n}」<br><span style="color:var(--paper-dim);font-size:12.5px">${r.d}</span></div>`:''}).join('')
+      : '<div class="ritem noclick">🪙 首领忍具已经收集齐全,额外缴获 120 金币</div>';
+    let html=`<div class="sec-s" style="font-size:14px">${A.clearText||`${A.bossName}败退,通往${next.name}的路出现了。`}</div>
+      <div class="ritem noclick">🪙 缴获 ${payload.gold||0} 金币 · 💚 休整回复 ${payload.healAmt||0} 点生命</div>
+      <div class="sec-s" style="margin-top:12px;color:var(--gold)">◆ 首领战利品 ◆</div>${relicHtml}
+      <div class="sec-s" style="margin-top:10px">领悟一张稀有忍术 — 可跳过</div>`;
+    if(payload.cardPicked&&payload.selectedCard){
+      const selected=cardFromRef(payload.selectedCard);
+      html+=`<div class="cgrid" id="boss-card-reward-grid"><div><div class="sec-s">已选忍术</div><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(selected,'static')}</div></div></div>`;
+    }else{
+      html+=`<div class="cgrid" id="boss-card-reward-grid">${cs.map((c,i)=>`<div role="button" tabindex="0" style="position:relative;width:var(--card-w);height:var(--card-h)" onclick="G.takeBossCard(${i})">${cardHTML(c,'static')}</div>`).join('')}</div>`;
+    }
+    html+=`<div class="sec-s" id="boss-card-reward-status">${payload.cardPicked?'未选择的忍术已经离开奖励池':''}</div>
       <button class="btn" onclick="G.toNextAct()">进入${next.name.split(' · ')[0]} →</button>`;
     $('reward-list').innerHTML=html;
     show('screen-reward');
+    return true;
   },
   takeBossCard(i){
     if(this._cardPicked)return toast('只能领悟一张');
     const c=this._choices[i];if(!c)return;
     this._cardPicked=true;this.deck.push(c);this._choices=[];
+    if(this.activeNode&&this.activeNode.phase==='reward'){
+      this.activeNode.payload.cardPicked=true;this.activeNode.payload.selectedCard=cardRef(c);this.saveRun();
+    }
     const grid=$('boss-card-reward-grid');
     if(grid){
       grid.innerHTML=`<div><div class="sec-s">已选忍术</div><div style="position:relative;width:var(--card-w);height:var(--card-h)">${cardHTML(c,'static')}</div></div>`;
@@ -2789,25 +2895,33 @@ Object.assign(G,{
   },
 
   /* ---------- 宝箱 ---------- */
-  openChest(){
-    const r=this.randomRelic();
+  openChest(payload=null){
+    let reward=payload;
+    if(!reward){
+      const relic=this.randomRelic();
+      reward={relic,bonusGold:relic?0:85};
+      if(relic)this.addRelic(relic);
+      else{this.gold+=85;this.updateTopbar()}
+      if(this.activeNode){this.activeNode.phase='chest';this.activeNode.payload=reward}
+      this.saveRun();SFX.gold();
+    }
     let body;
-    if(r){
-      this.addRelic(r);SFX.gold();
-      body=`<div class="ritem noclick">${RELICS[r].ic} 获得忍具「${RELICS[r].n}」<br><span style="color:var(--paper-dim);font-size:12.5px">${RELICS[r].d}</span></div>`;
+    if(reward.relic&&RELICS[reward.relic]){
+      const r=RELICS[reward.relic];
+      body=`<div class="ritem noclick">${r.ic} 获得忍具「${r.n}」<br><span style="color:var(--paper-dim);font-size:12.5px">${r.d}</span></div>`;
     }else{
-      this.gold+=85;SFX.gold();this.updateTopbar();
-      body='<div class="ritem noclick">🪙 忍具已经收集齐全,你找到了 85 金币</div>';
+      body=`<div class="ritem noclick">🪙 忍具已经收集齐全,你找到了 ${reward.bonusGold||85} 金币</div>`;
     }
     $('event-box').innerHTML=`<div class="eic">🎁</div>
       <div class="sec-t" style="font-size:19px;letter-spacing:.18em">补给宝箱</div>
       <p>封印锁应声打开,里面是一份为下一段路准备的补给。</p>
       ${body}<button class="btn" onclick="G.backToMap()">继续前进</button>`;
     show('screen-event');
+    return true;
   },
 
   /* ---------- 篝火 ---------- */
-  openRest(){
+  openRest(restoring=false){
     const pct=this.hasRelic('medkit')?0.5:0.3;
     const amt=Math.floor(this.maxHp*pct);
     $('screen-rest').innerHTML=`
@@ -2822,6 +2936,11 @@ Object.assign(G,{
         </div>
       </div>`;
     show('screen-rest');
+    if(!restoring){
+      if(this.activeNode){this.activeNode.phase='rest';this.activeNode.payload={}}
+      this.saveRun();
+    }
+    return true;
   },
   restHeal(amt){this.heal(amt);toast(`回复了 ${amt} 点生命`);this.backToMap()},
   restUpgrade(){
@@ -2857,14 +2976,31 @@ Object.assign(G,{
   },
 
   /* ---------- 商店 ---------- */
-  openShop(){
-    this.shopCards=this.randomCards(2,1);
-    this.shopCards.push(this.randomCard(2,this.shopCards.map(c=>c.key)));
-    this.shopPrices=this.shopCards.map(c=>c.r>=3?165:(c.r===2?110:60));
-    this.shopRelics=this.randomRelics(MAP_RULES.shopRelicSlots);
-    this.shopPotion=this.randomPotionKey();
-    this.removeUsed=false;
+  openShop(payload=null){
+    if(payload){
+      this.shopCards=(payload.cards||[]).map(cardFromRef);
+      this.shopPrices=(payload.prices||[]).map(n=>boundedInt(n,60,0,9999));
+      this.shopRelics=(payload.relics||[]).map(k=>own(RELICS,k)?k:null);
+      this.shopPotion=payload.potion&&own(POTIONS,payload.potion)?payload.potion:null;
+      this.removeUsed=!!payload.removeUsed;
+    }else{
+      this.shopCards=this.randomCards(2,1);
+      this.shopCards.push(this.randomCard(2,this.shopCards.map(c=>c.key)));
+      this.shopPrices=this.shopCards.map(c=>c.r>=3?165:(c.r===2?110:60));
+      this.shopRelics=this.randomRelics(MAP_RULES.shopRelicSlots);
+      this.shopPotion=this.randomPotionKey();
+      this.removeUsed=false;
+      this.saveShopState();
+    }
     this.renderShop();show('screen-shop');
+    return true;
+  },
+  saveShopState(){
+    if(!this.activeNode)return;
+    this.activeNode.phase='shop';
+    this.activeNode.payload={cards:(this.shopCards||[]).map(cardRef),prices:this.shopPrices||[],
+      relics:this.shopRelics||[],potion:this.shopPotion||null,removeUsed:!!this.removeUsed};
+    this.saveRun();
   },
   renderShop(){
     const aff=p=>this.gold>=p?'':'cant';
@@ -2896,20 +3032,20 @@ Object.assign(G,{
     const c=this.shopCards[i];if(!c)return;
     if(this.gold<this.shopPrices[i])return toast('金币不足');
     this.gold-=this.shopPrices[i];this.deck.push(c);this.shopCards[i]=null;
-    SFX.gold();toast(`购入「${c.n}」`);this.updateTopbar();this.renderShop();
+    this.saveShopState();SFX.gold();toast(`购入「${c.n}」`);this.updateTopbar();this.renderShop();
   },
   buyRelic(i){
     if(!this.shopRelics||!this.shopRelics[i])return;
     if(this.gold<150)return toast('金币不足');
     this.gold-=150;const r=this.shopRelics[i];this.shopRelics[i]=null;
-    this.addRelic(r);SFX.gold();toast(`获得「${RELICS[r].n}」`);this.renderShop();
+    this.addRelic(r);this.saveShopState();SFX.gold();toast(`获得「${RELICS[r].n}」`);this.renderShop();
   },
   buyPotion(){
     if(!this.shopPotion)return;
     if(this.gold<45)return toast('金币不足');
     if(!this.addPotion(this.shopPotion))return;
     this.gold-=45;this.shopPotion=null;
-    SFX.gold();this.updateTopbar();this.renderShop();
+    this.saveShopState();SFX.gold();this.updateTopbar();this.renderShop();
   },
   buyRemove(){
     if(this.removeUsed)return;
@@ -2920,13 +3056,30 @@ Object.assign(G,{
       if(!this.canRemoveCard()||this.gold<price)return this.renderShop();
       const removed=this.removeCardAt(idx);if(!removed)return this.renderShop();
       this.gold-=price;this.removeUsed=true;
-      SFX.card();toast(`移除了「${removed.n}」`);this.updateTopbar();this.renderShop();show('screen-shop');
+      this.saveShopState();SFX.card();toast(`移除了「${removed.n}」`);this.updateTopbar();this.renderShop();show('screen-shop');
     });
   },
 
   /* ---------- 奇遇 ---------- */
-  openEvent(){
-    const ev=pick(EVENTS);this._event=ev;
+  openEvent(payload=null){
+    let state=payload;
+    if(!state){
+      state={eventIndex:rnd(0,EVENTS.length-1),stage:'choice',result:null};
+      if(this.activeNode){this.activeNode.phase='event';this.activeNode.payload=state}
+      this.saveRun();
+    }
+    const eventIndex=boundedInt(state.eventIndex,-1,0,EVENTS.length-1);
+    const ev=EVENTS[eventIndex];if(!ev)return false;
+    this._event=ev;this._eventIndex=eventIndex;
+    if(state.stage==='remove'){
+      show('screen-event');
+      this.openEventRemovePicker();
+      return true;
+    }
+    if(state.stage==='resolved'){
+      $('event-box').innerHTML=`<div class="eic">${ev.ic}</div><p>${state.result||'你继续踏上了旅途。'}</p><button class="btn" onclick="G.backToMap()">继续前进</button>`;
+      show('screen-event');return true;
+    }
     $('event-box').innerHTML=`<div class="eic">${ev.ic}</div>
       <div class="sec-t" style="font-size:19px;letter-spacing:.18em">${ev.title}</div>
       <p>${ev.text}</p>
@@ -2934,22 +3087,31 @@ Object.assign(G,{
         const ok=!o.cond||o.cond(this);
         return `<button class="btn ghost" ${ok?'':'disabled'} onclick="G.eventChoice(${i})">${o.t}</button>`}).join('')}</div>`;
     show('screen-event');
+    return true;
   },
   eventChoice(i){
-    const r=this._event.opts[i].f(this);
+    const option=this._event&&this._event.opts[i];
+    if(!option||option.cond&&!option.cond(this))return toast('当前无法选择该选项');
+    const r=option.f(this);
     this.updateTopbar();
     if(this.hp<=0)return;
     if(this.pendingRemove){
       this.pendingRemove=false;
       if(!this.canRemoveCard())return this.backToMap();
-      return this.pickFromDeck('选择要移除的卡牌',()=>true,(c,idx)=>{
-        const removed=this.removeCardAt(idx);
-        if(removed)toast(`移除了「${removed.n}」`);
-        this.backToMap();
-      },false,()=>this.backToMap());
+      if(this.activeNode){this.activeNode.payload={eventIndex:this._eventIndex,stage:'remove',result:null};this.saveRun()}
+      return this.openEventRemovePicker();
     }
+    if(this.activeNode){this.activeNode.payload={eventIndex:this._eventIndex,stage:'resolved',result:r||''};this.saveRun()}
     $('event-box').innerHTML=`<div class="eic">${this._event.ic}</div>
       <p>${r}</p><button class="btn" onclick="G.backToMap()">继续前进</button>`;
+  },
+  openEventRemovePicker(){
+    if(!this.canRemoveCard())return this.backToMap();
+    return this.pickFromDeck('选择要移除的卡牌',()=>true,(c,idx)=>{
+      const removed=this.removeCardAt(idx);
+      if(removed)toast(`移除了「${removed.n}」`);
+      this.backToMap();
+    },false,()=>this.backToMap());
   },
 
   /* ---------- 结算 ---------- */
