@@ -91,15 +91,62 @@ G.enemies = [enemy];
 G.flashRelic = () => {};
 G.fxText = () => {};
 G.playerEl = () => null;
+const realDealDamage = G.dealDamage;
 const hitDamage = [];
 G.dealDamage = (target, amount) => { hitDamage.push(amount); target.hp -= amount; };
 G.execCard(context.mkCard('uzumaki_barrage'), enemy);
 assert(JSON.stringify(hitDamage) === JSON.stringify([12, 2, 2]), `first-attack relic bonus must affect one hit, got ${hitDamage.join('/')}`);
+G.dealDamage = realDealDamage;
+
+G.maxHp = 100;
+G.hp = 50;
+G.deck = [];
+G.potions = [];
+G.combatHealingUsed = 0;
+const firstHeal = G.healFromCard(10);
+const secondHeal = G.healFromCard(10);
+const thirdHeal = G.healFromCard(10);
+assert(firstHeal.offered === 10 && secondHeal.offered === 8 && thirdHeal.offered === 0, 'card healing must share an 18-point combat budget');
+assert(G.hp === 68 && G.combatHealingUsed === 18, 'card healing must stop after the combat budget is exhausted');
+G.heal(10);
+assert(G.hp === 78 && G.combatHealingUsed === 18, 'non-card healing must not consume the combat card-healing budget');
+G.hp = G.maxHp;
+G.combatHealingUsed = 0;
+const overheal = G.healFromCard(10);
+assert(overheal.offered === 10 && overheal.healed === 0 && overheal.overflow === 10 && G.combatHealingUsed === 10, 'overheal value must consume the shared combat budget');
+
+G.stats = {dmg: 0, kills: 0, cards: 0, turns: 0, elites: 0};
+G.hp = 50;
+G.block = 0;
+G.enemies = [];
+const statusTarget = {hp: 50, maxHp: 50, block: 20, stealth: 2, thorns: 5, boss: 0, phase2: null};
+G.enemies = [statusTarget];
+G.dealDamage(statusTarget, 10, 'status');
+assert(statusTarget.hp === 40 && statusTarget.block === 20 && statusTarget.stealth === 2, 'status damage must ignore block and stealth without consuming them');
+assert(G.hp === 50, 'status damage must not trigger reflection');
+
+const lethalTarget = {hp: 5, maxHp: 5, block: 0, stealth: 0, thorns: 4, boss: 0, phase2: null};
+G.enemies = [lethalTarget];
+G.hp = 50;
+G.dealDamage(lethalTarget, 10, 'attack');
+assert(lethalTarget.hp <= 0 && G.hp === 46, 'a lethal attack must still trigger reflection');
+
+const phaseTarget = {
+  hp: 5, maxHp: 100, block: 9, stealth: 1, thorns: 0, burn: 6, weak: 3, vuln: 2,
+  boss: 1, phase2done: false, mi: 0, tc: 0, str: 0, regen: 0, grow: null,
+  phase2: {n: 'phase two', sp: 'P2', hpRatio: 0.5, str: 1, moves: [{a: 1, txt: 'phase move'}], special: null, regen: 0, stealth: 0, thorns: 0},
+};
+G.enemies = [phaseTarget];
+G.combatKind = 'boss';
+G.dealDamage(phaseTarget, 10, 'status');
+assert(phaseTarget.phase2done && phaseTarget.hp === 50, 'lethal damage must transition a boss to phase two');
+assert(phaseTarget.block === 0 && phaseTarget.burn === 0 && phaseTarget.weak === 0 && phaseTarget.vuln === 0, 'boss phase transition must clear block and negative statuses');
 
 assert(html.includes("!this.availableNodeKeys().has(k)"), 'enterNode must validate route reachability');
 assert(html.includes("version:4"), 'save schema must persist active nodes');
 assert(html.includes("this.activeNode.payload.cardPicked=true"), 'selected reward state must be persisted');
 assert(html.includes("option.cond&&!option.cond(this)"), 'event choices must revalidate conditions');
+assert(html.includes("dealDamage(t,layers*c.burnBurst,'status')"), 'burn detonation must use status damage');
 assert(rngState().calls > 0, 'gameplay verification should exercise the real RNG');
 
-console.log('Gameplay verification passed: 10,000 maps, reward uniqueness/rarity, first-hit relic scope, active-node guards.');
+console.log('Gameplay verification passed: 10,000 maps, rewards, first-hit relics, healing cap, damage kinds, boss phase rules.');

@@ -611,16 +611,17 @@ const KW = {
   "易伤":"受到的攻击伤害提高 50%,每回合减少 1 层",
   "虚弱":"造成的攻击伤害降低 25%,每回合减少 1 层",
   "中毒":"每回合开始受到等同层数的伤害,随后减少 1 层",
-  "灼烧":"敌人行动前受到等同层数的伤害,随后减少 1 层",
-  "引爆":"立即按灼烧层数追加伤害,然后清空目标的灼烧",
+  "灼烧":"敌人行动前受到等同层数的状态伤害,随后减少 1 层。无视格挡、潜行与易伤,不触发反伤",
+  "引爆":"立即按灼烧层数造成状态伤害,然后清空目标的灼烧。无视力量、虚弱、易伤、格挡、潜行与反伤",
   "影分身":"每回合结束,按当前层数 ×3 获得格挡,随后自动减少 1 层",
   "忍道":"每回合开始获得等量格挡",
   "九尾":"每回合开始获得等量力量,每个来源持续 3 回合",
   "怪力":"下一张攻击牌对每个目标额外造成等量伤害,触发后清空。最多 20 层",
-  "医术":"每次打出回复牌时获得等量怪力",
+  "医术":"每次打出带回复的卡牌时获得等量怪力,包括获得医术的能力牌自身",
+  "疗愈额度":"每场战斗中,卡牌最多提供 18 点回复或盈疗值。秘药、忍具、事件与战后回复不占用额度",
   "聚力":"每次打出格挡牌时获得等量怪力",
   "潜行":"下一次受到攻击伤害降低 50%,随后减少 1 层",
-  "反伤":"被攻击时对玩家反弹等量伤害,即使攻击被格挡也会触发",
+  "反伤":"每次受到攻击伤害时对玩家反弹等量伤害。攻击被格挡或该击击败目标时仍会触发",
   "幻术":"下回合查克拉减少等量数值,与查克拉封印合计最多扣 2 点",
   "查克拉封印":"下回合查克拉减少等量数值,与幻术合计最多扣 2 点",
   "消耗":"打出后从本场战斗中移除,不进入弃牌堆",
@@ -764,7 +765,7 @@ const RELICS = {
   kunaibag:{ic:"🎒",n:"苦无袋",d:"每场战斗开始时获得 5 点格挡"},
   book:{ic:"📕",n:"亲热天堂",d:"每场战斗第 1 回合多抽 2 张牌"},
   hiraishin:{ic:"⚡",n:"飞雷神苦无",d:"每场战斗第 1 回合查克拉 +1"},
-  cells:{ic:"🧬",n:"千手细胞",d:"每回合开始回复 1 点生命"},
+  cells:{ic:"🧬",n:"千手细胞",d:"每场战斗胜利后回复 3 点生命"},
   headband:{ic:"🥋",n:"师父的护额",d:"获得时力量永久 +1"},
   fuuma:{ic:"✴️",n:"风魔手里剑",d:"每回合第 1 张攻击牌的首次命中伤害 +4"},
   sharingan:{ic:"👁️",n:"写轮眼",d:"你施加的易伤层数 +1"},
@@ -992,6 +993,7 @@ const $=id=>document.getElementById(id);
 const SAVE_KEY='nindo-road-save-v2';
 const MIN_DECK_SIZE=6;
 const MAX_CARDS_PER_TURN=100;
+const COMBAT_CARD_HEAL_CAP=18;
 const UINT32_MAX=0xffffffff;
 function normalizeSeed(value,fallback=0x9e3779b9){
   const n=Number(value);
@@ -1371,7 +1373,13 @@ const G={
     this.updateTopbar();this.renderMap();show('screen-map');this.saveRun();
   },
   floorLabel(){return `${this.act+1}-${this.row}`},
-  heal(n){if(n<=0)return;this.hp=Math.min(this.maxHp,this.hp+n);SFX.heal();this.updateTopbar()},
+  heal(n){
+    if(n<=0)return 0;
+    const before=this.hp;this.hp=Math.min(this.maxHp,this.hp+n);
+    const healed=this.hp-before;
+    if(healed>0){SFX.heal();this.updateTopbar()}
+    return healed;
+  },
   eventDamage(n){
     if(this.hasRelic('sakeflask'))n=Math.floor(n/2);
     this.hp-=n;SFX.hurt();this.updateTopbar();
@@ -1505,7 +1513,7 @@ const G={
     if(k==='smokeball'){this.block+=10;this.fxText(this.playerEl(),'+10','blk')}
     if(k==='bakukunai'){
       for(const e of this.enemies.filter(e=>e.hp>0)){
-        this.dealDamage(e,9);
+        this.dealDamage(e,9,'status');
         if(this.hp<=0){this.updateTopbar();return this.gameOver()}
       }
       if(this.checkWin())return;
@@ -1522,7 +1530,7 @@ const G={
     if(k==='eyedrops')this.enemies.filter(e=>e.hp>0).forEach(e=>{e.weak+=1;e.vuln+=1});
     if(k==='fireseal'){
       for(const e of this.enemies.filter(e=>e.hp>0)){
-        this.dealDamage(e,14);
+        this.dealDamage(e,14,'status');
         if(this.hp<=0){this.updateTopbar();return this.gameOver()}
       }
       if(this.checkWin())return;
@@ -1881,7 +1889,7 @@ Object.assign(G,{
     this.enemies.forEach(e=>this.applyEnemyDifficulty(e,kind));
     // 玩家战斗态
     this.block=0;this.str=this.permStr;this.dex=0;this.weak=0;this.vuln=0;this.poison=0;
-    this.might=0;this.healMight=0;this.blockMight=0;this.overhealPower=0;this.genjutsu=0;this.chakraDrain=0;
+    this.might=0;this.healMight=0;this.blockMight=0;this.overhealPower=0;this.genjutsu=0;this.chakraDrain=0;this.combatHealingUsed=0;
     this.clones=this.hasRelic('contract')?2:0;
     this.nindoBlk=0;this.clonePerTurn=0;this.vulnDrawPower=0;this.vulnDrawReady=false;this.vulnDrawConsumed=false;this.retainBlock=0;
     this.rampStr=0;this.rampSources=[];this.nextTurnEnergy=0;
@@ -1904,7 +1912,7 @@ Object.assign(G,{
     }
   },
   captureCombat(){
-    const fields=['combatKind','block','str','dex','weak','vuln','poison','might','healMight','blockMight','overhealPower','genjutsu','chakraDrain','clones','nindoBlk','clonePerTurn','vulnDrawPower','vulnDrawReady','vulnDrawConsumed','retainBlock','rampStr','rampSources','nextTurnEnergy','attacksPlayed','skillsPlayed','turn','energy','firstAtk','firstSkl','cardsPlayedThisTurn','_weakFresh','_vulnFresh'];
+    const fields=['combatKind','block','str','dex','weak','vuln','poison','might','healMight','blockMight','overhealPower','genjutsu','chakraDrain','combatHealingUsed','clones','nindoBlk','clonePerTurn','vulnDrawPower','vulnDrawReady','vulnDrawConsumed','retainBlock','rampStr','rampSources','nextTurnEnergy','attacksPlayed','skillsPlayed','turn','energy','firstAtk','firstSkl','cardsPlayedThisTurn','_weakFresh','_vulnFresh'];
     const state={};fields.forEach(k=>state[k]=plainClone(this[k]));
     state.enemies=plainClone(this.enemies);
     ['drawPile','discardPile','hand','exhaustPile'].forEach(k=>state[k]=(this[k]||[]).map(cardRef));
@@ -1951,7 +1959,6 @@ Object.assign(G,{
     if(this.turn===1&&this.hasRelic('chakra_bead')){this.str+=1;this.flashRelic('chakra_bead')}
     if(this.nindoBlk)this.block+=this.nindoBlk;
     this.tickRamp();
-    if(this.hasRelic('cells')&&this.hp<this.maxHp){this.hp++;this.flashRelic('cells')}
     if(this.poison>0){
       this.hp-=this.poison;this.fxText(this.playerEl(),'-'+this.poison);SFX.hurt();
       this.poison--;
@@ -2124,6 +2131,13 @@ Object.assign(G,{
     if(block>0)block+=this.dex||0;
     return Math.max(0,block);
   },
+  combatHealingRemaining(){return Math.max(0,COMBAT_CARD_HEAL_CAP-(this.combatHealingUsed||0))},
+  healFromCard(amount){
+    const offered=Math.min(Math.max(0,amount||0),this.combatHealingRemaining());
+    this.combatHealingUsed=(this.combatHealingUsed||0)+offered;
+    const healed=this.heal(offered);
+    return {offered,healed,overflow:Math.max(0,offered-healed)};
+  },
   cardDamageText(c){
     const me={str:this.str||0,weak:this.weak||0};
     const alive=(this.enemies||[]).filter(e=>e.hp>0);
@@ -2187,7 +2201,11 @@ Object.assign(G,{
     if(c.drawIfAnyAttacker)parts.push(`有敌人准备攻击时抽 <b>${c.drawIfAnyAttacker}</b> 张牌`);
     if(c.lowHpDraw)parts.push(`生命不高于 50% 时抽 <b>${c.lowHpDraw}</b> 张牌`);
     if(c.energy)parts.push(`获得 <b>${c.energy}</b> 点查克拉`);
-    if(c.heal)parts.push(`回复 <b>${c.heal}</b> 点生命`);
+    if(c.heal){
+      const available=Math.min(c.heal,this.combatHealingRemaining());
+      parts.push(`回复 <b>${available}</b> 点生命`);
+      parts.push(`本场<b>疗愈额度</b>剩余 <b>${this.combatHealingRemaining()}</b>`);
+    }
     if(c.cleanse)parts.push('清除自身中毒、虚弱、易伤');
     if(c.might)parts.push(`获得 <b>${c.might}</b> 层怪力`);
     if(c.gainMightPerTarget)parts.push(`每命中 1 名敌人获得 <b>${c.gainMightPerTarget}</b> 层怪力`);
@@ -2249,16 +2267,17 @@ Object.assign(G,{
     }else if(raw>0){this.fxBlock(this.playerEl());SFX.blk()}
     return d;
   },
-  dealDamage(e,raw,pure=false,ignoreStealth=false){
-    let d=raw;
-    const reflected=!pure?(e.thorns||0):0;
-    if(!pure&&e.stealth&&!ignoreStealth){
+  dealDamage(e,raw,kind='attack',ignoreStealth=false){
+    let d=Math.max(0,raw);
+    const isAttack=kind==='attack';
+    const reflected=isAttack?(e.thorns||0):0;
+    if(isAttack&&e.stealth&&!ignoreStealth){
       d=Math.ceil(d*0.5);
       e.stealth=Math.max(0,e.stealth-1);
       this.fxText(this.enemyEl(this.enemies.indexOf(e)),'潜行减伤','blk');
     }
-    const blocked=pure?0:Math.min(e.block,d);
-    if(!pure)e.block-=blocked;
+    const blocked=isAttack?Math.min(e.block,d):0;
+    if(isAttack)e.block-=blocked;
     d-=blocked;
     this.stats.dmg+=Math.min(d,Math.max(0,e.hp));
     e.hp-=d;
@@ -2271,11 +2290,11 @@ Object.assign(G,{
       setTimeout(()=>el.closest('.unit')&&el.closest('.unit').classList.remove('hitfx'),320);
     }
     SFX.atk();
-    if(e.hp<=0)this.handleDeath(e);
-    if(reflected&&raw>0&&e.hp>0){
+    if(reflected&&raw>0){
       this.damagePlayer(reflected,'反伤');
       this.fxText(this.enemyEl(this.enemies.indexOf(e)),'反伤','blk');
     }
+    if(e.hp<=0)this.handleDeath(e);
   },
   handleDeath(e){
     if(e.boss&&e.phase2&&!e.phase2done){
@@ -2284,6 +2303,7 @@ Object.assign(G,{
       e.n=p.n;e.sp=p.sp;e.sprite=p.sprite||e.sprite||"";e.hp=Math.floor(e.maxHp*p.hpRatio);
       e.str+=p.str;e.moves=p.moves;e.special=p.special;e.mi=0;e.tc=0;
       e.regen=p.regen||e.regen||0;e.grow=p.grow?{...p.grow}:(e.grow?{...e.grow}:null);
+      e.block=0;e.burn=0;e.weak=0;e.vuln=0;
       e.stealth=p.stealth||0;e.thorns=p.thorns||e.thorns||0;
       this.enhanceEnemyGrowth(e,this.combatKind||'boss');
       this.rollIntent(e);
@@ -2342,28 +2362,28 @@ Object.assign(G,{
           const wasPhase2=t.phase2done;
           const hitBonus=firstHitBonusAvailable?bonus:0;
           firstHitBonusAvailable=false;
-          this.dealDamage(t,this.calc(this.cardConditionalBase(c,t)+hitBonus,me,t),false,!!c.ignoreStealth);
+          this.dealDamage(t,this.calc(this.cardConditionalBase(c,t)+hitBonus,me,t),'attack',!!c.ignoreStealth);
           if(this.hp<=0)break;
           if(!wasPhase2&&t.phase2done){transformed=true;if(t===target)targetTransformed=true;break}
         }
         if(this.hp<=0)break;
         if(attackMight&&t.hp>0&&!transformed){
           const wasPhase2=t.phase2done;
-          this.dealDamage(t,this.calc(attackMight,{str:0,weak:this.weak},t),false,!!c.ignoreStealth);
+          this.dealDamage(t,this.calc(attackMight,{str:0,weak:this.weak},t),'attack',!!c.ignoreStealth);
           if(!wasPhase2&&t.phase2done){transformed=true;if(t===target)targetTransformed=true}
           if(this.hp<=0)break;
         }
         if(c.burnBurst&&t.burn>0&&t.hp>0&&!transformed){
           const layers=t.burn;t.burn=0;
           const wasPhase2=t.phase2done;
-          this.dealDamage(t,this.calc(layers*c.burnBurst,{str:0,weak:this.weak},t));
+          this.dealDamage(t,layers*c.burnBurst,'status');
           if(!wasPhase2&&t.phase2done){transformed=true;if(t===target)targetTransformed=true}
           if(this.hp<=0)break;
         }
         if(c.vuln&&t.hp>0){t.vuln+=c.vuln+statusBonus.v;vulnApplied=true}
       }
       if(c.blockStrike&&storedBlock>0&&target&&target.hp>0&&!targetTransformed){
-        this.dealDamage(target,this.calc(storedBlock,{str:0,weak:this.weak},target));
+        this.dealDamage(target,this.calc(storedBlock,{str:0,weak:this.weak},target),'attack');
       }
       if(attackMight&&!c.preserveMight){
         this.might=0;
@@ -2402,9 +2422,9 @@ Object.assign(G,{
       this.fxText(this.playerEl(),'怪力+'+(this.might-before),'blk');
     }
     if(c.heal){
-      const missing=Math.max(0,this.maxHp-this.hp),overflow=Math.max(0,c.heal-missing);
-      this.heal(c.heal);this.fxText(this.playerEl(),'+'+Math.min(c.heal,missing),'heal');
-      if(this.overhealPower&&overflow){const b=overflow*this.overhealPower;this.block+=b;this.fxText(this.playerEl(),'盈疗 +'+b,'blk')}
+      const result=this.healFromCard(c.heal);
+      this.fxText(this.playerEl(),result.healed?'+'+result.healed:'疗愈额度 0','heal');
+      if(this.overhealPower&&result.overflow){const b=result.overflow*this.overhealPower;this.block+=b;this.fxText(this.playerEl(),'盈疗 +'+b,'blk')}
       if(this.healMight)this.gainMight(this.healMight);
     }
     if(c.self){this.hp-=c.self;this.fxText(this.playerEl(),'-'+c.self);if(this.hp<=0){this.updateTopbar();return this.gameOver()}}
@@ -2447,7 +2467,7 @@ Object.assign(G,{
     const parts=[];
     if(e.burn>0){
       const d=e.burn;e.burn=Math.max(0,e.burn-1);
-      this.dealDamage(e,d,true);parts.push(`灼烧 -${d}`);
+      this.dealDamage(e,d,'status');parts.push(`灼烧 -${d}`);
     }
     if(e.hp>0&&e.regen&&e.hp<e.maxHp){
       const h=Math.min(e.regen,e.maxHp-e.hp);
@@ -2642,6 +2662,7 @@ Object.assign(G,{
       if(this.nindoBlk)add('忍道',this.nindoBlk,true);
       if(this.rampStr)add('九尾',this.rampStr,true);
       if(this.healMight)add('医术',this.healMight,true);
+      if(this.combatHealingUsed)add('疗愈额度',this.combatHealingRemaining(),this.combatHealingRemaining()>0);
       if(this.blockMight)add('聚力',this.blockMight,true);
       if(this.overhealPower)add('盈疗',this.overhealPower,true);
       if(this.nextTurnEnergy)add('蓄能',this.nextTurnEnergy,true);
@@ -2756,6 +2777,7 @@ Object.assign(G,{
   winCombat(){
     const kind=this.combatKind;
     if(this.hasRelic('ramen'))this.heal(3);
+    if(this.hasRelic('cells')){this.heal(3);this.flashRelic('cells')}
     if(this.hasRelic('slug_charm')&&this.hp<this.maxHp/2)this.heal(5);
     if(kind==='elite')this.stats.elites++;
     SFX.win();
