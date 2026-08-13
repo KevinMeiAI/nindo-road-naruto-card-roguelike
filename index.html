@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>忍道之路 · NINDO</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%238d211c'/%3E%3Cpath d='M10 10h44v44H10z' fill='none' stroke='%23f0e4c3' stroke-width='3'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='34' font-family='serif' fill='%23f0e4c3'%3EN%3C/text%3E%3C/svg%3E">
 <style>
@@ -20,9 +20,9 @@ body{
   background:var(--ink);
   color:var(--paper);
   font-family:"Noto Serif SC","Songti SC","STSong",serif;
-  overflow:hidden;user-select:none;-webkit-user-select:none;
+  overflow:hidden;
 }
-button{font-family:inherit}
+button,[role="button"]{font-family:inherit;user-select:none;-webkit-user-select:none}
 #app{width:100vw;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden}
 
 /* ============ 顶栏 ============ */
@@ -60,17 +60,17 @@ button{font-family:inherit}
 #screen-shop{
   background-image:
     linear-gradient(180deg,rgba(5,3,0,.56),rgba(5,3,0,.2) 46%,rgba(5,3,0,.64)),
-    url("assets/backgrounds/shop.jpg");
+    url("assets/runtime/backgrounds/shop.webp");
 }
 #screen-rest{
   background-image:
     linear-gradient(180deg,rgba(2,5,8,.5),rgba(2,5,8,.14) 45%,rgba(0,0,0,.58)),
-    url("assets/backgrounds/rest.jpg");
+    url("assets/runtime/backgrounds/rest.webp");
 }
 #screen-event{
   background-image:
     linear-gradient(180deg,rgba(2,4,9,.54),rgba(2,4,9,.16) 48%,rgba(0,0,0,.62)),
-    url("assets/backgrounds/event.jpg");
+    url("assets/runtime/backgrounds/event.webp");
 }
 #screen-shop::before,#screen-rest::before,#screen-event::before{
   content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
@@ -155,13 +155,13 @@ button{font-family:inherit}
   background-size:cover;background-position:center bottom;background-repeat:no-repeat}
 #stage.act1{background-image:
   linear-gradient(180deg,rgba(2,5,8,.34),rgba(2,5,8,.04) 52%,rgba(0,0,0,.2)),
-  url("assets/backgrounds/act1-forest.jpg")}
+  url("assets/runtime/backgrounds/act1-forest.webp")}
 #stage.act2{background-image:
   linear-gradient(180deg,rgba(3,2,8,.38),rgba(3,2,8,.06) 54%,rgba(0,0,0,.24)),
-  url("assets/backgrounds/act2-hideout.jpg")}
+  url("assets/runtime/backgrounds/act2-hideout.webp")}
 #stage.act3{background-image:
   linear-gradient(180deg,rgba(4,2,4,.36),rgba(4,2,4,.03) 55%,rgba(0,0,0,.24)),
-  url("assets/backgrounds/act3-ruins.jpg")}
+  url("assets/runtime/backgrounds/act3-ruins.webp")}
 #stage::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 6px)}
 #stage.shake{animation:shake .35s}
@@ -400,7 +400,7 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
 .relic-i:hover,.potion-i:hover{transform:translateY(-2px);filter:brightness(1.25)}
 
 /* Title / roster */
-#screen-title{padding:0;display:none;justify-content:stretch;align-items:stretch;background:#070806 url("assets/backgrounds/act1-forest.jpg") center/cover no-repeat}
+#screen-title{padding:0;display:none;justify-content:stretch;align-items:stretch;background:#070806 url("assets/runtime/backgrounds/act1-forest.webp") center/cover no-repeat}
 #screen-title.active{display:flex}
 #screen-title::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,6,5,.97) 0%,rgba(5,6,5,.84) 39%,rgba(5,6,5,.35) 68%,rgba(5,6,5,.68) 100%)}
 #screen-title::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 60%,rgba(0,0,0,.82)),repeating-linear-gradient(90deg,transparent 0 79px,rgba(255,255,255,.012) 80px)}
@@ -437,9 +437,9 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
 
 /* Map */
 #screen-map{padding:24px clamp(20px,5vw,72px) 0;background:#080907 center/cover fixed no-repeat}
-#screen-map[data-act="0"]{background-image:linear-gradient(rgba(6,8,7,.82),rgba(6,8,7,.95)),url("assets/backgrounds/act1-forest.jpg")}
-#screen-map[data-act="1"]{background-image:linear-gradient(rgba(7,5,9,.84),rgba(7,5,9,.96)),url("assets/backgrounds/act2-hideout.jpg")}
-#screen-map[data-act="2"]{background-image:linear-gradient(rgba(8,5,6,.84),rgba(8,5,6,.96)),url("assets/backgrounds/act3-ruins.jpg")}
+#screen-map[data-act="0"]{background-image:linear-gradient(rgba(6,8,7,.82),rgba(6,8,7,.95)),url("assets/runtime/backgrounds/act1-forest.webp")}
+#screen-map[data-act="1"]{background-image:linear-gradient(rgba(7,5,9,.84),rgba(7,5,9,.96)),url("assets/runtime/backgrounds/act2-hideout.webp")}
+#screen-map[data-act="2"]{background-image:linear-gradient(rgba(8,5,6,.84),rgba(8,5,6,.96)),url("assets/runtime/backgrounds/act3-ruins.webp")}
 .map-toolbar{position:sticky;top:-24px;z-index:8;width:min(760px,100%);margin:0 auto;background:rgba(8,9,7,.94);border-bottom:1px solid rgba(223,178,86,.25);backdrop-filter:blur(8px)}.map-head{display:flex;align-items:end;justify-content:space-between;width:100%;margin:0;padding:18px 10px 12px}.map-head .sec-t{text-align:left;margin:2px 0 0;font-size:20px;letter-spacing:.08em}.act-banner{text-align:left;font-family:"PingFang SC",sans-serif;font-size:9px;letter-spacing:.2em;color:var(--naruto)}
 .map-progress{text-align:right;border-right:3px solid var(--naruto);padding-right:10px}.map-progress small{display:block;color:#777567;font-family:"PingFang SC",sans-serif;font-size:8px;letter-spacing:.12em}.map-progress b{font-size:15px;color:var(--paper)}
 .map-legend{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;width:100%;margin:0;padding:5px 5px 8px}.map-legend span{font-family:"PingFang SC",sans-serif;font-size:9px;color:#aba48e;background:rgba(0,0,0,.45);padding:4px 8px;border:1px solid rgba(240,228,195,.1);border-radius:2px}
@@ -468,10 +468,14 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
 .card .gem{top:-9px;left:-9px;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#b9efff,#2284aa 45%,#0b354b 76%);border:2px solid #a9e7f8;box-shadow:0 3px 9px #000,0 0 8px rgba(76,199,239,.4);font-size:15px}.card .nm{font-size:var(--card-name-size,13px)!important;min-height:20px;padding:0 15px 4px;color:#f2e8ce;letter-spacing:.03em}.card .art{position:relative;height:var(--card-art-h);margin:1px 0 4px;border-radius:3px;border:1px solid color-mix(in srgb,var(--cc) 62%,#111);background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--cc) 44%,#222),#0b0c09 72%);filter:none;box-shadow:inset 0 0 18px rgba(0,0,0,.5);isolation:isolate}.card .art::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 34%,rgba(0,0,0,.28))}.card .art img{filter:saturate(.92) contrast(1.08)}.art-glyph{font-size:34px;filter:drop-shadow(0 4px 5px #000);z-index:1}.art-seal{position:absolute;font-size:72px;font-weight:900;color:rgba(255,255,255,.055);transform:rotate(-8deg);z-index:0}.card .tband{position:relative;z-index:2;margin:-10px auto 1px;border-radius:2px;padding:2px 12px;background:#181912;border-color:color-mix(in srgb,var(--cc) 55%,#222);font-size:7px}.card .ds{margin:0 3px;padding:7px 5px 2px;color:#d8d0b8;font-size:10px;line-height:1.38;background:rgba(0,0,0,.18);border-top:1px solid rgba(240,228,195,.08)}.card .ds.middesc{font-size:9.5px}.card .ds.longdesc{font-size:8.9px}.card .ds b{color:#f2a14b}.card .rar{font-family:"PingFang SC",sans-serif;font-size:7px;color:#b7ae94}.card.r2{box-shadow:0 7px 16px rgba(0,0,0,.65),0 0 12px rgba(223,178,86,.25),inset 0 0 0 2px #080906}.card.r3{animation:rarePulse 3.2s ease-in-out infinite;box-shadow:0 7px 16px rgba(0,0,0,.65),0 0 18px rgba(151,109,204,.42),inset 0 0 0 2px #080906}@keyframes rarePulse{50%{filter:brightness(1.08)}}
 .kw{all:unset;display:inline;color:#f4bc68;font:inherit;font-weight:800;border-bottom:1px dotted rgba(244,188,104,.8);cursor:help;line-height:inherit}.kw:hover,.kw:focus-visible{color:#ffe0a3;border-bottom-style:solid;outline:none;text-shadow:0 0 8px rgba(244,188,104,.45)}
 #keyword-tip{position:fixed;z-index:140;width:min(270px,calc(100vw - 20px));padding:10px 12px;border:1px solid rgba(223,178,86,.7);background:rgba(10,11,8,.97);color:#d8d0b8;font:11px/1.55 "PingFang SC","Microsoft YaHei",sans-serif;box-shadow:0 10px 26px rgba(0,0,0,.65);pointer-events:none;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .12s ease,transform .12s ease,visibility .12s}.keyword-tip-title{display:block;margin-bottom:2px;color:#f4bc68;font-weight:900;font-size:12px}.keyword-tip-on{opacity:1!important;visibility:visible!important;transform:none!important}
+.card-detail-panel{width:min(480px,100%);margin:auto!important;padding:22px 18px;background:rgba(12,13,10,.96);border-top:1px solid rgba(223,178,86,.42);border-bottom:1px solid rgba(223,178,86,.42);box-shadow:0 22px 60px rgba(0,0,0,.58)}
+.card-detail-shell{--card-w:232px;--card-h:332px;--card-art-h:140px;position:relative;width:var(--card-w);height:var(--card-h);margin:0 auto}
+.card-detail-shell .card{cursor:default}.card-detail-shell .card .nm{font-size:var(--card-name-size,16px)!important;min-height:25px}.card-detail-shell .card .tband{font-size:9px}.card-detail-shell .card .ds,.card-detail-shell .card .ds.middesc{font-size:12.5px;line-height:1.5;padding:10px 8px 4px}.card-detail-shell .card .ds.longdesc{font-size:11.8px;line-height:1.42}.card-detail-shell .card .rar{font-size:9px}.card-detail-shell .card .gem{width:38px;height:38px;font-size:18px}
+.card-detail-actions{display:flex;flex-direction:column;gap:9px;width:min(300px,100%);margin:16px auto 0}.card-detail-actions .btn{width:100%;min-height:44px;padding:10px 16px}
 .technique-callout{position:absolute;z-index:48;left:50%;top:24%;transform:translateX(-50%);pointer-events:none;text-align:center;animation:techniqueCall 1s ease forwards}.technique-callout small{display:block;color:#aba48e;font:8px "PingFang SC",sans-serif;letter-spacing:.3em}.technique-callout b{display:block;margin-top:2px;padding:7px 24px;color:#fff;font-size:22px;letter-spacing:.16em;text-shadow:0 3px 8px #000;border-top:1px solid currentColor;border-bottom:1px solid currentColor;background:linear-gradient(90deg,transparent,rgba(5,5,4,.86),transparent)}.technique-callout.atk b{color:#ff765b}.technique-callout.skl b{color:#66e0cf}.technique-callout.pwr b{color:#c6a0ef}@keyframes techniqueCall{0%{opacity:0;transform:translate(-50%,18px) scale(.92)}20%,68%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-16px) scale(1.03)}}
 
 /* Rewards, overlays and scene panels */
-#screen-reward,#screen-end{padding:32px;background:#080907 center/cover no-repeat}#screen-reward[data-act="0"]{background-image:linear-gradient(rgba(6,7,5,.78),rgba(6,7,5,.96)),url("assets/backgrounds/act1-forest.jpg")}#screen-reward[data-act="1"]{background-image:linear-gradient(rgba(7,5,9,.78),rgba(7,5,9,.96)),url("assets/backgrounds/act2-hideout.jpg")}#screen-reward[data-act="2"]{background-image:linear-gradient(rgba(8,5,6,.78),rgba(8,5,6,.96)),url("assets/backgrounds/act3-ruins.jpg")}#screen-end{background-image:linear-gradient(rgba(6,7,5,.74),rgba(6,7,5,.96)),url("assets/backgrounds/act3-ruins.jpg")}
+#screen-reward,#screen-end{padding:32px;background:#080907 center/cover no-repeat}#screen-reward[data-act="0"]{background-image:linear-gradient(rgba(6,7,5,.78),rgba(6,7,5,.96)),url("assets/runtime/backgrounds/act1-forest.webp")}#screen-reward[data-act="1"]{background-image:linear-gradient(rgba(7,5,9,.78),rgba(7,5,9,.96)),url("assets/runtime/backgrounds/act2-hideout.webp")}#screen-reward[data-act="2"]{background-image:linear-gradient(rgba(8,5,6,.78),rgba(8,5,6,.96)),url("assets/runtime/backgrounds/act3-ruins.webp")}#screen-end{background-image:linear-gradient(rgba(6,7,5,.74),rgba(6,7,5,.96)),url("assets/runtime/backgrounds/act3-ruins.webp")}
 #reward-list{width:min(900px,100%);margin:auto;padding:22px;background:rgba(12,13,10,.8);border-top:1px solid rgba(223,178,86,.34);border-bottom:1px solid rgba(223,178,86,.34);backdrop-filter:blur(10px)}
 .cgrid{gap:18px;margin:14px 0}.ritem{min-width:300px;max-width:580px;border-radius:3px;padding:13px 20px;background:rgba(22,22,17,.94);border-color:rgba(223,178,86,.25);box-shadow:0 8px 22px rgba(0,0,0,.3);font-family:"PingFang SC",sans-serif}.ritem:hover{border-color:var(--gold);background:#242219;transform:translateY(-2px)}
 #overlay{background:rgba(4,5,4,.84);backdrop-filter:blur(12px);padding:32px}#overlay.on::before{content:"";position:fixed;inset:5%;border:1px solid rgba(223,178,86,.16);pointer-events:none}#overlay>.center{width:min(900px,100%);margin:auto;padding:24px;background:rgba(14,15,11,.88);border-top:1px solid rgba(223,178,86,.32);border-bottom:1px solid rgba(223,178,86,.32)}
@@ -493,13 +497,20 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
 }
 @media (max-width:620px){
   :root{--card-w:116px;--card-h:172px;--card-art-h:64px}
-  #topbar{min-height:72px}.hud-vitals{justify-content:flex-start;overflow:hidden}.tstat{font-size:11px}.hud-route{display:none}.hud-kit{width:100%;justify-content:flex-end}.deck-btn{margin-right:auto}#relicbar{max-width:92px}.relic-i,.potion-i{width:25px;height:25px}
+  #topbar{min-height:82px}.hud-vitals{justify-content:flex-start;overflow:hidden}.tstat{font-size:11px}.hud-route{display:none}.hud-kit{width:100%;justify-content:flex-end;min-height:42px}.deck-btn{margin-right:auto}.tbtn{min-height:40px}#relicbar{max-width:136px}.relic-i,.potion-i{width:40px;height:40px;font-size:17px}.icon-btn{min-width:40px;padding:0}
   #screen-title{justify-content:flex-start}.title-shell{padding:20px 14px}.title-kicker{margin-bottom:12px}.title-kanji{width:54px;height:64px;font-size:36px}.title-main{font-size:42px}.title-sub{font-size:8px}.title-desc{font-size:11.5px;line-height:1.65;margin:13px 0 18px}.roster-heading h2{font-size:18px}
   .char-grid{display:grid;grid-template-columns:1fr;gap:8px}.char-card{min-height:168px}.char-portrait{width:52%;height:115%;left:auto;right:-2%;top:-7%;object-position:center}.char-card::before{background:linear-gradient(90deg,rgba(9,10,8,.96) 0 48%,transparent 78%)}.char-card-body{top:0;bottom:0;width:68%;padding:20px 12px;background:linear-gradient(90deg,rgba(8,9,7,.98) 0 72%,transparent);display:flex;flex-direction:column;justify-content:center}.char-index{font-size:20px}.char-name{font-size:18px}.char-desc{min-height:auto}.roster-note{display:none}
   #screen-map{padding:16px 8px 0}.map-toolbar{top:-16px}.map-head{padding-inline:8px}.map-head .sec-t{font-size:15px}.map-legend{gap:3px}.map-legend span{font-size:8px;padding:3px 5px}#map-wrap{padding:10px 12px 20px}
   #stage{min-height:255px;--combat-player-w:44%;--combat-enemy-w:56%;background-position:center bottom}.frame.sprite-frame{width:104px;height:132px}.unit.player .frame.sprite-frame{width:108px;height:136px}.unit.elite .frame.sprite-frame{width:110px;height:142px}.unit.boss .frame.sprite-frame{width:125px;height:158px}#enemy-side{gap:0;padding-inline:0}.enemy-slot>.intent{min-width:72px;max-width:105px!important;padding:3px 5px;font-size:9px}.enemy-slot>.intent::before{font-size:6px}.uname,.hpbar{min-width:84px;width:84px}.uname{font-size:9px;padding:3px}.hpbar{height:11px}.hptx{margin-top:-11px;font-size:8px}.strow{max-width:100px;gap:2px}.stag{font-size:7px;padding:0 3px}.technique-callout b{font-size:16px;padding:5px 14px}
-  #combat-info{height:31px;padding:3px 6px}.pilebtn{font-size:0;padding:2px 6px}.pilebtn span,.pilebtn::first-letter{font-size:10px}#combat-log{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#hand-outer{gap:5px;padding:4px 5px 7px}#orb{width:48px;height:48px;min-width:48px;font-size:17px}#orb::before{width:36px;height:36px}#endturn{min-width:58px;width:58px;height:50px;padding:5px;font-size:10px}.card .nm{font-size:calc(var(--card-name-size,12px)*.82)!important}.card .art{margin-bottom:2px}.card .tband{font-size:6px;margin-top:-8px}.card .ds{font-size:7.8px;line-height:1.18;padding:5px 3px}.card .ds.middesc{font-size:7.3px}.card .ds.longdesc{font-size:6.8px}.card .rar{font-size:5.8px}.card .gem{width:25px;height:25px;font-size:12px}
+  #combat-info{height:44px;padding:2px 6px}.pilebtn{min-width:42px;min-height:40px;font-size:0;padding:2px 7px}.pilebtn span,.pilebtn::first-letter{font-size:11px}#combat-log{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#hand-outer{gap:5px;padding:4px 5px 7px}#orb{width:50px;height:50px;min-width:50px;font-size:17px}#orb::before{width:38px;height:38px}#endturn{min-width:62px;width:62px;height:54px;padding:5px;font-size:11px}.card .nm{font-size:calc(var(--card-name-size,12px)*.86)!important}.card .art{margin-bottom:2px}.card .tband{font-size:7px;margin-top:-8px}.card .ds{font-size:9.5px;line-height:1.24;padding:5px 3px}.card .ds.middesc{font-size:9px}.card .ds.longdesc{font-size:8.5px;line-height:1.18}.card .rar{font-size:7.5px}.card .gem{width:27px;height:27px;font-size:13px}
   #screen-shop,#screen-rest,#screen-event,#screen-reward{padding:14px}.shop-shell,.rest-shell,#reward-list{padding:16px 10px}.rest-choices{grid-template-columns:1fr;gap:8px}.rest-choice{min-height:108px}.event-box{padding:20px 15px}.ritem{min-width:0;width:100%;font-size:12px}.shop-relic{width:132px;min-height:160px}
+  #overlay .cgrid,#screen-reward .cgrid,#screen-shop .cgrid{--card-w:150px;--card-h:220px;--card-art-h:90px;gap:12px}
+  #overlay .cgrid .card .nm,#screen-reward .cgrid .card .nm,#screen-shop .cgrid .card .nm{font-size:var(--card-name-size,12px)!important}
+  #overlay .cgrid .card .ds,#screen-reward .cgrid .card .ds,#screen-shop .cgrid .card .ds{font-size:11.5px;line-height:1.35}
+  #overlay .cgrid .card .ds.middesc,#screen-reward .cgrid .card .ds.middesc,#screen-shop .cgrid .card .ds.middesc{font-size:11px}
+  #overlay .cgrid .card .ds.longdesc,#screen-reward .cgrid .card .ds.longdesc,#screen-shop .cgrid .card .ds.longdesc{font-size:10.5px;line-height:1.28}
+  #overlay .cgrid .card .rar,#screen-reward .cgrid .card .rar,#screen-shop .cgrid .card .rar{font-size:8.5px}
+  #overlay{padding:12px}.card-detail-panel{padding:18px 12px}.card-detail-shell{--card-w:220px;--card-h:316px;--card-art-h:132px}.card-detail-shell .card .nm{font-size:var(--card-name-size,15px)!important}.card-detail-shell .card .ds,.card-detail-shell .card .ds.middesc{font-size:12px;line-height:1.45}.card-detail-shell .card .ds.longdesc{font-size:11.5px;line-height:1.38}
 }
 </style>
 </head>
@@ -534,21 +545,21 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
         <div id="continue-wrap" class="center"></div>
         <div class="char-grid">
           <button class="char-card" data-char="naruto" onclick="G.newRun('naruto')">
-            <img class="char-portrait" src="assets/sprites/naruto.png" alt="漩涡鸣人">
+            <img class="char-portrait" src="assets/runtime/sprites/naruto.webp" alt="漩涡鸣人" decoding="async">
             <span class="char-index">01</span>
             <div class="char-card-body"><div class="char-role">分身连携 / 仙术反击</div><div class="char-name">漩涡鸣人</div>
               <div class="char-desc">生成并调度影分身，在防御收益与连段爆发间选择。</div>
               <div class="char-deck"><span>生命 80</span><span>螺旋丸</span><span>影分身</span></div></div>
           </button>
           <button class="char-card" data-char="sasuke" onclick="G.newRun('sasuke')">
-            <img class="char-portrait" src="assets/sprites/sasuke.png" alt="宇智波佐助">
+            <img class="char-portrait" src="assets/runtime/sprites/sasuke.webp" alt="宇智波佐助" decoding="async">
             <span class="char-index">02</span>
             <div class="char-card-body"><div class="char-role">火遁灼烧 / 雷遁引爆</div><div class="char-name">宇智波佐助</div>
               <div class="char-desc">用火遁铺设灼烧，再以雷遁和写轮眼精确收割。</div>
               <div class="char-deck"><span>生命 72</span><span>狮子连弹</span><span>千鸟</span></div></div>
           </button>
           <button class="char-card" data-char="sakura" onclick="G.newRun('sakura')">
-            <img class="char-portrait" src="assets/sprites/sakura.png" alt="春野樱">
+            <img class="char-portrait" src="assets/runtime/sprites/sakura.webp" alt="春野樱" decoding="async">
             <span class="char-index">03</span>
             <div class="char-card-body"><div class="char-role">怪力储备 / 百豪盈疗</div><div class="char-name">春野樱</div>
               <div class="char-desc">储存怪力、调配治疗与格挡，再用精准重拳终结。</div>
@@ -573,7 +584,7 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
 
   <div class="screen" id="screen-combat">
     <div id="stage">
-      <div id="turn-banner"></div>
+      <div id="turn-banner" role="status" aria-live="assertive"></div>
       <div id="target-hint">— 点 击 敌 人 选 择 目 标 —</div>
       <div id="player-side"></div>
       <div id="enemy-side"></div>
@@ -582,7 +593,7 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
       <div id="combat-info">
         <button class="pilebtn" onclick="G.viewPile('draw')">📥 抽牌堆 <span id="n-draw">0</span></button>
         <button class="pilebtn" onclick="G.viewPile('exhaust')">📛 消耗堆 <span id="n-exhaust">0</span></button>
-        <span id="combat-log" style="flex:1;text-align:center;padding:0 6px"></span>
+        <span id="combat-log" role="status" aria-live="polite" style="flex:1;text-align:center;padding:0 6px"></span>
         <button class="pilebtn" onclick="G.viewPile('discard')">📤 弃牌堆 <span id="n-discard">0</span></button>
       </div>
       <div id="hand-outer">
@@ -599,7 +610,7 @@ button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--chakr
   <div class="screen" id="screen-shop"></div>
   <div class="screen" id="screen-end"><div class="center" id="end-content" style="margin-top:7vh"></div></div>
 
-  <div id="overlay"></div>
+  <div id="overlay" role="dialog" aria-modal="true"></div>
   <div id="toast"></div>
   <div id="keyword-tip" role="tooltip" aria-hidden="true"></div>
 </div>
@@ -1126,21 +1137,27 @@ function cardDescClass(desc){
   if(len>22)return ' middesc';
   return '';
 }
+function runtimeAssetPath(source){
+  const match=String(source||'').match(/^assets\/(card-art|sprites|backgrounds)\/([^/.]+)\.(?:jpg|png)$/i);
+  return match?`assets/runtime/${match[1]}/${match[2]}.webp`:source;
+}
+function isCompactCardViewport(){return window.matchMedia?window.matchMedia('(max-width: 620px)').matches:window.innerWidth<=620}
 const KW_TERMS=Object.keys(KW).sort((a,b)=>b.length-a.length);
 const KW_PATTERN=new RegExp(KW_TERMS.map(name=>name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'g');
-function annotateKeywords(html){
+function annotateKeywords(html,interactive=false){
   return String(html).split(/(<[^>]+>)/g).map(part=>{
     if(part.startsWith('<'))return part;
     return part.replace(KW_PATTERN,name=>{
-      const button=`<button type="button" class="kw" data-kw="${esc(name)}" aria-label="${esc(name+': '+KW[name])}" aria-describedby="keyword-tip" onpointerdown="event.stopPropagation()" onmouseenter="G.showKeyword(event,this)" onmouseleave="G.hideKeyword()" onfocus="G.showKeyword(event,this)" onblur="G.hideKeyword()" onclick="event.preventDefault();event.stopPropagation();G.showKeyword(event,this,true)">${name}</button>`;
-      return button;
+      const attrs=`class="kw" data-kw="${esc(name)}" aria-label="${esc(name+': '+KW[name])}" aria-describedby="keyword-tip" onpointerdown="event.stopPropagation()" onmouseenter="G.showKeyword(event,this)" onmouseleave="G.hideKeyword()" onclick="event.preventDefault();event.stopPropagation();G.showKeyword(event,this,true)"`;
+      return interactive?`<button type="button" ${attrs} onfocus="G.showKeyword(event,this)" onblur="G.hideKeyword()">${name}</button>`:`<span ${attrs}>${name}</span>`;
     });
   }).join('');
 }
-function cardHTML(c,extra="",style=""){
+function cardHTML(c,extra="",style="",options={}){
   const rawDesc=(window.G&&G.cardDesc)?G.cardDesc(c):c.d;
-  const desc=annotateKeywords(rawDesc);
-  const art=`<img src="${esc(c.art)}" alt="">`;
+  const desc=annotateKeywords(rawDesc,!!options.keywordInteractive);
+  const eager=!!options.eager;
+  const art=`<img src="${esc(runtimeAssetPath(c.art))}" alt="" loading="${eager?'eager':'lazy'}" decoding="async">`;
   const keyboard=String(extra).split(/\s+/).includes('inhand')?'role="button" tabindex="0"':'';
   return `<div ${keyboard} data-card-key="${esc(c.key)}" data-upgraded="${c.upgraded?1:0}" oncontextmenu="event.preventDefault();event.stopPropagation();G.previewUpgrade('${c.key}',${c.upgraded?1:0});return false" class="card ${c.t} r${c.r} ${c.upgraded?'upg':''} ${extra}" style="${style}">
     <div class="gem">${c.unplayable?'✕':c.c}</div>
@@ -1152,7 +1169,7 @@ function cardHTML(c,extra="",style=""){
   </div>`;
 }
 function unitPortrait(icon,sprite,name=""){
-  return sprite?`<img class="sprite" src="${esc(sprite)}" alt="${esc(name)}">`:`<div class="face">${icon}</div>`;
+  return sprite?`<img class="sprite" src="${esc(runtimeAssetPath(sprite))}" alt="${esc(name)}" decoding="async">`:`<div class="face">${icon}</div>`;
 }
 function unitFrame(icon,sprite,name=""){
   return `<div class="frame ${sprite?'sprite-frame':'emoji-frame'}">${unitPortrait(icon,sprite,name)}</div>`;
@@ -1784,6 +1801,49 @@ const G={
       <button class="btn ghost" onclick="G.closeOverlay()">关 闭</button>`;
     ov.classList.add('on');
   },
+  showCardDetail(card,options={}){
+    if(!card)return;
+    const ov=$('overlay');
+    const returnState=options.returnState||(ov.classList.contains('on')?{html:ov.innerHTML}:null);
+    this._cardDetailReturn=returnState;
+    const actions=[];
+    if(typeof options.handIndex==='number'){
+      const canPlay=!card.unplayable&&card.c<=this.energy&&!this.busy;
+      if(canPlay)actions.push(`<button class="btn" onclick="G.playCardFromDetail(${options.handIndex})">${this.cardNeedsTarget(card)?'选择目标':'打出忍术'}</button>`);
+      else actions.push(`<button class="btn" disabled>${card.unplayable?'无法打出':'查克拉不足'}</button>`);
+    }
+    if(options.previewUpgrade&&CARDS[card.key]&&CARDS[card.key].up&&Object.keys(CARDS[card.key].up).length&&!card.upgraded){
+      actions.push(`<button class="btn blue" onclick="G.previewUpgradeFromDetail('${card.key}')">查看升级效果</button>`);
+    }
+    actions.push('<button class="btn ghost" onclick="G.closeCardDetail()">返 回</button>');
+    ov.innerHTML=`<div class="center card-detail-panel">
+      <div class="act-banner">NINJUTSU ARCHIVE / 忍术档案</div>
+      <div class="card-detail-shell">${cardHTML(card,'static','',{eager:true,keywordInteractive:true})}</div>
+      <div class="card-detail-actions">${actions.join('')}</div>
+    </div>`;
+    ov.classList.add('on');
+  },
+  playCardFromDetail(i){
+    this.closeCardDetail(false);
+    const c=this.hand&&this.hand[i];if(!c)return;
+    if(this.cardNeedsTarget(c)){
+      this.picked=i;$('target-hint').classList.toggle('on',this.enemies.filter(e=>e.hp>0).length>1);this.renderCombat();
+      if(this.enemies.filter(e=>e.hp>0).length===1)return this.playCardAt(i,this.enemies.find(e=>e.hp>0));
+      return toast('点击一个敌人作为目标');
+    }
+    this.playCardAt(i,null);
+  },
+  previewUpgradeFromDetail(key){
+    const returnState={html:$('overlay').innerHTML};
+    this._cardDetailReturn=null;this._previewReturnOverlay=returnState;
+    this.previewUpgrade(key,false);
+  },
+  closeCardDetail(restore=true){
+    const ov=$('overlay'),ret=this._cardDetailReturn;
+    this._cardDetailReturn=null;
+    if(restore&&ret&&ret.html){ov.innerHTML=ret.html;ov.classList.add('on');return}
+    ov.classList.remove('on');ov.innerHTML='';
+  },
   pickFromDeck(title,filter,onPick,allowCancel=true,onEmpty=null){
     const list=this.deck.map((c,i)=>({c,i})).filter(x=>filter(x.c));
     if(!list.length){toast('没有符合条件的卡牌');return onEmpty?onEmpty():undefined}
@@ -1827,7 +1887,7 @@ const G={
     if(ret&&ret.html){ov.innerHTML=ret.html;ov.classList.add('on');return}
     this.closeOverlay();
   },
-  closeOverlay(){this._previewReturnOverlay=null;$('overlay').classList.remove('on');$('overlay').innerHTML=''},
+  closeOverlay(){this._previewReturnOverlay=null;this._cardDetailReturn=null;$('overlay').classList.remove('on');$('overlay').innerHTML=''},
 };
 </script>
 <script>
@@ -2003,6 +2063,7 @@ Object.assign(G,{
   clickCard(i){
     if(this.busy)return;
     const c=this.hand[i];if(!c)return;
+    if(isCompactCardViewport())return this.showCardDetail(c,{handIndex:i,previewUpgrade:true});
     if(c.unplayable){toast('「'+c.n+'」无法打出——这是诅咒');return}
     if(c.c>this.energy){toast('查克拉不足');SFX.blk();return}
     const alive=this.enemies.filter(e=>e.hp>0);
@@ -2682,7 +2743,7 @@ Object.assign(G,{
     $('player-side').innerHTML=`<div class="unit player" ${cancelAttrs} onclick="G.cancelPick()">
       ${unitFrame(C.face,C.sprite,C.n)}
       <div class="uname">${C.n} ${this.block?`<span class="ub">🛡️${this.block}</span>`:''}</div>
-      <div class="hpbar pb"><i style="width:${Math.max(0,this.hp/this.maxHp*100)}%"></i></div>
+      <div class="hpbar pb" role="progressbar" aria-label="${esc(C.n)}生命" aria-valuemin="0" aria-valuemax="${this.maxHp}" aria-valuenow="${Math.max(0,this.hp)}"><i style="width:${Math.max(0,this.hp/this.maxHp*100)}%"></i></div>
       <div class="hptx">${Math.max(0,this.hp)} / ${this.maxHp}</div>
       <div class="strow">${this.stTags({str:this.str,weak:this.weak,vuln:this.vuln},true)}</div>
     </div>`;
@@ -2697,7 +2758,7 @@ Object.assign(G,{
         <div class="unit ${dead?'dead':''} ${e.elite?'elite':''} ${e.boss?'boss':''} ${!dead?'targetable':''} ${pickedTarget&&!dead?'target-glow':''}" ${targetAttrs} data-ei="${i}" onclick="G.clickEnemy(${i})">
           ${unitFrame(e.sp,e.sprite,e.n)}
           <div class="uname">${e.n} ${e.block?`<span class="ub">🛡️${e.block}</span>`:''}</div>
-          <div class="hpbar"><i style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></i></div>
+          <div class="hpbar" role="progressbar" aria-label="${esc(e.n)}生命" aria-valuemin="0" aria-valuemax="${e.maxHp}" aria-valuenow="${Math.max(0,e.hp)}"><i style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></i></div>
           <div class="hptx">${Math.max(0,e.hp)} / ${e.maxHp}</div>
           <div class="strow">${this.stTags(e)}</div>
         </div>

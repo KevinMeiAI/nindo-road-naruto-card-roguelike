@@ -48,6 +48,8 @@ for (const [key, definition] of Object.entries(cards)) {
   if (definition.art) {
     const artworkUrl = new URL(`../${definition.art}`, import.meta.url);
     assert(fs.existsSync(artworkUrl), `${key}: artwork file does not exist: ${definition.art}`);
+    const runtimeArtwork = definition.art.replace('assets/card-art/', 'assets/runtime/card-art/').replace(/\.jpg$/, '.webp');
+    assert(fs.existsSync(new URL(`../${runtimeArtwork}`, import.meta.url)), `${key}: runtime artwork file does not exist: ${runtimeArtwork}`);
   }
   const base = cardFactory.mkCard(key, false);
   for (const [field, value] of Object.entries(definition)) {
