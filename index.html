@@ -670,7 +670,7 @@ const CARDS = {
   shuriken:{n:"手里剑乱舞",t:"atk",c:1,r:1,ic:"✴️",art:"assets/card-art/shuriken-v2.jpg",d:"对<b>所有</b>敌人造成 <b>4</b> 点伤害。若命中至少 2 名敌人,抽 <b>1</b> 张牌",dmg:4,aoe:1,drawIfMulti:1,up:{d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害。若命中至少 2 名敌人,抽 <b>1</b> 张牌",dmg:6}},
   smoke:{n:"烟雾弹",t:"skl",c:1,r:1,ic:"💨",art:"assets/card-art/smoke-v2.jpg",d:"获得 <b>5</b> 点格挡。若有敌人准备攻击,抽 <b>1</b> 张牌",blk:5,drawIfAnyAttacker:1,up:{d:"获得 <b>8</b> 点格挡。若有敌人准备攻击,抽 <b>1</b> 张牌",blk:8}},
   fuuin:{n:"封印术",t:"skl",c:1,r:1,ic:"🈲",art:"assets/card-art/fuuin-v2.jpg",d:"对所有敌人施加 <b>2</b> 层虚弱",weak:2,all:1,up:{d:"对所有敌人施加 <b>3</b> 层虚弱",weak:3}},
-  shunshin:{n:"瞬身术",t:"skl",c:0,r:1,ic:"⚡",art:"assets/card-art/shunshin-v2.jpg",d:"抽 <b>2</b> 张牌",draw:2,up:{d:"抽 <b>3</b> 张牌",draw:3}},
+  shunshin:{n:"瞬身术",t:"skl",c:1,r:1,ic:"⚡",art:"assets/card-art/shunshin-v2.jpg",d:"抽 <b>2</b> 张牌",draw:2,up:{d:"抽 <b>3</b> 张牌",draw:3}},
   guard:{n:"铁壁防御",t:"skl",c:2,r:1,ic:"🛡️",art:"assets/card-art/guard-v2.jpg",d:"获得 <b>11</b> 点格挡",blk:11,up:{d:"获得 <b>15</b> 点格挡",blk:15}},
   sharingan_copy:{n:"看破",t:"skl",c:1,r:1,ic:"👁️",art:"assets/card-art/sharingan_copy.jpg",d:"获得 <b>3</b> 点格挡。目标准备攻击时额外 +<b>5</b>。施加 <b>1</b> 层虚弱",blk:3,blockIfTargetAttacking:5,tweak:1,chars:["sasuke"],up:{d:"获得 <b>4</b> 点格挡。目标准备攻击时额外 +<b>7</b>。施加 <b>1</b> 层虚弱",blk:4,blockIfTargetAttacking:7}},
   kage_shuriken:{n:"影手里剑",t:"atk",c:2,r:1,ic:"✴️",art:"assets/card-art/kage_shuriken-v2.jpg",d:"造成 <b>12</b> 点伤害。若目标有易伤,抽 <b>2</b> 张牌",dmg:12,drawIfVuln:2,up:{d:"造成 <b>16</b> 点伤害。若目标有易伤,抽 <b>2</b> 张牌",dmg:16}},
@@ -686,11 +686,11 @@ const CARDS = {
   precise_punch:{n:"精准重拳",t:"atk",c:1,r:1,ic:"👊",art:"assets/card-art/precise_punch.jpg",d:"造成 <b>6</b> 点伤害。目标有虚弱时额外造成 <b>6</b> 点伤害",dmg:6,bonusVsWeak:6,chars:["sakura"],up:{d:"造成 <b>8</b> 点伤害。目标有虚弱时额外造成 <b>8</b> 点伤害",dmg:8,bonusVsWeak:8}},
   ground_slam:{n:"碎地冲击",t:"atk",c:1,r:1,ic:"🌋",art:"assets/card-art/ground_slam.jpg",d:"对<b>所有</b>敌人造成 <b>4</b> 点伤害。每命中 1 名敌人,获得 <b>1</b> 层怪力",dmg:4,aoe:1,gainMightPerTarget:1,chars:["sakura"],up:{d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害。每命中 1 名敌人,获得 <b>1</b> 层怪力",dmg:6}},
   medical_guard:{n:"医疗架势",t:"pwr",c:1,r:1,ic:"💚",art:"assets/card-art/medical_guard.jpg",d:"身法 +<b>1</b>,回复 <b>2</b> 点生命。每次打出回复牌获得 <b>1</b> 层怪力",dex:1,heal:2,healMight:1,chars:["sakura"],up:{d:"身法 +<b>1</b>,回复 <b>5</b> 点生命。每次打出回复牌获得 <b>2</b> 层怪力",heal:5,healMight:2}},
-  chakra_step:{n:"查克拉步",t:"skl",c:0,r:1,ic:"🔵",art:"assets/card-art/chakra_step-v2.jpg",d:"获得 <b>2</b> 点格挡,抽 <b>1</b> 张牌",blk:2,draw:1,up:{d:"获得 <b>4</b> 点格挡,抽 <b>1</b> 张牌",blk:4}},
+  chakra_step:{n:"查克拉步",t:"skl",c:1,r:1,ic:"🔵",art:"assets/card-art/chakra_step-v2.jpg",d:"获得 <b>5</b> 点格挡,抽 <b>1</b> 张牌",blk:5,draw:1,up:{d:"获得 <b>8</b> 点格挡,抽 <b>1</b> 张牌",blk:8}},
   wire_trap:{n:"钢丝陷阱",t:"skl",c:1,r:1,ic:"🧵",art:"assets/card-art/wire_trap-v2.jpg",d:"获得 <b>4</b> 点格挡,对所有敌人施加 <b>1</b> 层易伤",blk:4,tvuln:1,all:1,up:{d:"获得 <b>6</b> 点格挡,对所有敌人施加 <b>2</b> 层易伤",blk:6,tvuln:2}},
   focus_fist:{n:"蓄力正拳",t:"skl",c:1,r:1,ic:"💥",art:"assets/card-art/focus_fist.jpg",d:"获得 <b>4</b> 点格挡,获得 <b>3</b> 层怪力",blk:4,might:3,chars:["sakura"],up:{d:"获得 <b>6</b> 点格挡,获得 <b>4</b> 层怪力",blk:6,might:4}},
   clone_assault:{n:"分身突击",t:"atk",c:1,r:1,ic:"👥",art:"assets/card-art/clone_assault.jpg",d:"造成 <b>5</b> 点伤害。消耗至多 1 层影分身,追加 1 次攻击",dmg:5,cloneSpend:1,cloneExtraHits:1,chars:["naruto"],up:{d:"造成 <b>7</b> 点伤害。消耗至多 1 层影分身,追加 1 次攻击",dmg:7}},
-  transformation_feint:{n:"变身佯动",t:"skl",c:0,r:1,ic:"🎭",art:"assets/card-art/transformation_feint.jpg",d:"获得 <b>3</b> 点格挡。若任意敌人有负面状态,抽 <b>1</b> 张牌。<b>保留</b>",blk:3,drawIfDebuffed:1,retain:1,chars:["naruto"],up:{d:"获得 <b>5</b> 点格挡。若任意敌人有负面状态,抽 <b>1</b> 张牌。<b>保留</b>",blk:5}},
+  transformation_feint:{n:"变身佯动",t:"skl",c:0,r:1,ic:"🎭",art:"assets/card-art/transformation_feint.jpg",d:"获得 <b>3</b> 点格挡。<b>保留</b>",blk:3,retain:1,chars:["naruto"],up:{d:"获得 <b>5</b> 点格挡。<b>保留</b>",blk:5}},
   uzumaki_barrage:{n:"鸣人连弹",t:"atk",c:1,r:1,ic:"🍥",art:"assets/card-art/uzumaki_barrage.jpg",d:"造成 <b>2</b>×<b>3</b> 点伤害。本回合打出过技能牌时追加 1 次攻击",dmg:2,hits:3,comboHits:1,chars:["naruto"],up:{d:"造成 <b>3</b>×<b>3</b> 点伤害。本回合打出过技能牌时追加 1 次攻击",dmg:3}},
   dragon_fire:{n:"火遁·龙火",t:"atk",c:1,r:1,ic:"🐉",art:"assets/card-art/dragon_fire.jpg",d:"造成 <b>5</b> 点伤害,施加 <b>3</b> 层灼烧",dmg:5,burn:3,chars:["sasuke"],up:{d:"造成 <b>7</b> 点伤害,施加 <b>4</b> 层灼烧",dmg:7,burn:4}},
   chidori_spear:{n:"千鸟锐枪",t:"atk",c:1,r:1,ic:"⚡",art:"assets/card-art/chidori_spear.jpg",d:"造成 <b>7</b> 点伤害。目标有灼烧时额外造成 <b>5</b> 点伤害",dmg:7,bonusVsBurn:5,chars:["sasuke"],up:{d:"造成 <b>9</b> 点伤害。目标有灼烧时额外造成 <b>7</b> 点伤害",dmg:9,bonusVsBurn:7}},
@@ -724,7 +724,7 @@ const CARDS = {
   cherry_blossom:{n:"樱花冲",t:"atk",c:2,r:2,ic:"🌸",art:"assets/card-art/cherry_blossom.jpg",d:"造成 <b>12</b> 点伤害。本牌释放的怪力效果翻倍",dmg:12,mightMultiplier:2,chars:["sakura"],up:{d:"造成 <b>16</b> 点伤害。本牌释放的怪力效果翻倍",dmg:16}},
   chakra_scalpel:{n:"查克拉手术刀",t:"atk",c:1,r:2,ic:"🔪",art:"assets/card-art/chakra_scalpel.jpg",d:"造成 <b>6</b> 点伤害,使目标力量 -<b>2</b>",dmg:6,enemyStrDown:2,chars:["sakura"],up:{d:"造成 <b>8</b> 点伤害,使目标力量 -<b>3</b>",dmg:8,enemyStrDown:3}},
   rupture_punch:{n:"破绽重拳",t:"atk",c:1,r:2,ic:"👊",art:"assets/card-art/rupture_punch.jpg",d:"造成 <b>7</b> 点伤害。目标已有易伤时额外造成 <b>6</b> 点伤害,再施加 <b>1</b> 层易伤",dmg:7,bonusVsVuln:6,vuln:1,chars:["sakura"],up:{d:"造成 <b>10</b> 点伤害。目标已有易伤时额外造成 <b>8</b> 点伤害,再施加 <b>1</b> 层易伤",dmg:10,bonusVsVuln:8}},
-  sexy_jutsu:{n:"色诱之术",t:"skl",c:1,r:2,ic:"💫",art:"assets/card-art/sexy_jutsu-v2.jpg",d:"对目标施加 <b>3</b> 层虚弱。若目标正准备攻击,抽 <b>2</b> 张牌",tweak:3,drawIfTargetAttacking:2,chars:["naruto"],up:{c:0,d:"对目标施加 <b>3</b> 层虚弱。若目标正准备攻击,抽 <b>2</b> 张牌(费用 1→0)"}},
+  sexy_jutsu:{n:"色诱之术",t:"skl",c:1,r:2,ic:"💫",art:"assets/card-art/sexy_jutsu-v2.jpg",d:"对目标施加 <b>3</b> 层虚弱。若目标正准备攻击,抽 <b>2</b> 张牌",tweak:3,drawIfTargetAttacking:2,chars:["naruto"],up:{d:"对目标施加 <b>4</b> 层虚弱。若目标正准备攻击,抽 <b>2</b> 张牌",tweak:4}},
   toad_oil_bomb:{n:"蛤蟆油炎弹",t:"atk",c:2,r:2,ic:"🐸",art:"assets/card-art/toad_oil_bomb.jpg",d:"对<b>所有</b>敌人造成 <b>6</b> 点伤害,施加 <b>3</b> 层灼烧和 <b>1</b> 层虚弱",dmg:6,burn:3,weak:1,aoe:1,chars:["naruto"],up:{d:"对<b>所有</b>敌人造成 <b>9</b> 点伤害,施加 <b>4</b> 层灼烧和 <b>1</b> 层虚弱",dmg:9,burn:4}},
   phoenix_wire:{n:"凤仙火爪红",t:"atk",c:2,r:2,ic:"🔥",art:"assets/card-art/phoenix_wire.jpg",d:"造成 <b>4</b>×<b>2</b> 点伤害,施加 <b>3</b> 层灼烧和 <b>1</b> 层易伤",dmg:4,hits:2,burn:3,vuln:1,chars:["sasuke"],up:{d:"造成 <b>6</b>×<b>2</b> 点伤害,施加 <b>4</b> 层灼烧和 <b>1</b> 层易伤",dmg:6,burn:4}},
   chidori_blade:{n:"雷遁·千鸟刃",t:"atk",c:2,r:2,ic:"🗡️",art:"assets/card-art/chidori_blade.jpg",d:"造成 <b>10</b> 点伤害。引爆灼烧,每层额外造成 <b>2</b> 点伤害,施加 <b>1</b> 层易伤",dmg:10,burnBurst:2,vuln:1,chars:["sasuke"],up:{d:"造成 <b>13</b> 点伤害。引爆灼烧,每层额外造成 <b>3</b> 点伤害,施加 <b>1</b> 层易伤",dmg:13,burnBurst:3}},
@@ -766,7 +766,7 @@ const RELICS = {
   hiraishin:{ic:"⚡",n:"飞雷神苦无",d:"每场战斗第 1 回合查克拉 +1"},
   cells:{ic:"🧬",n:"千手细胞",d:"每回合开始回复 1 点生命"},
   headband:{ic:"🥋",n:"师父的护额",d:"获得时力量永久 +1"},
-  fuuma:{ic:"✴️",n:"风魔手里剑",d:"每回合打出的第 1 张攻击牌伤害 +4"},
+  fuuma:{ic:"✴️",n:"风魔手里剑",d:"每回合第 1 张攻击牌的首次命中伤害 +4"},
   sharingan:{ic:"👁️",n:"写轮眼",d:"你施加的易伤层数 +1"},
   contract:{ic:"📜",n:"通灵契约",d:"每场战斗开始时获得 2 层影分身"},
   medkit:{ic:"🩹",n:"医疗背包",d:"篝火休息回复量提升至 50%"},
@@ -785,7 +785,7 @@ const RELICS = {
 const BOSS_RELICS = {
   scroll:{ic:"📜",n:"卷轴·通灵奥义",d:"每回合查克拉上限 +1"},
   sage_cloak:{ic:"🧥",n:"仙人袍",d:"最大生命 +18,每场战斗开始获得 8 点格挡"},
-  kyuubi_seal:{ic:"🦊",n:"九尾封印·钥",d:"每回合打出的第 1 张攻击牌伤害 +6,最大生命 -8"},
+  kyuubi_seal:{ic:"🦊",n:"九尾封印·钥",d:"每回合第 1 张攻击牌的首次命中伤害 +6,最大生命 -8"},
   forbidden_scroll:{ic:"📕",n:"禁术卷轴",d:"最大生命 -10,每回合多抽 1 张牌"},
   hokage_cloak:{ic:"🧥",n:"火影披风",d:"最大生命 +12,战斗开始力量 +1、身法 +1"},
 };
@@ -926,7 +926,7 @@ const EVENTS = [
    ]},
   {ic:"⛩️",title:"荒废的神社",text:"半倒的鸟居后是一座小神社,功德箱积满灰尘,神像的眼睛似乎在注视你。",
    opts:[
-     {t:"🙏 虔诚参拜(移除 1 张卡牌)",f:g=>{g.pendingRemove=true;return null}},
+     {t:"🙏 虔诚参拜(移除 1 张卡牌)",cond:g=>g.canRemoveCard(),f:g=>{g.pendingRemove=true;return null}},
      {t:"🪙 搜刮功德箱(+55 金币,受 9 点伤害)",f:g=>{g.gold+=55;g.eventDamage(9);if(g.hp<=0)return null;return "你刚抓起铜钱,房梁突然塌了一角砸在背上……"}},
    ]},
   {ic:"🕸️",title:"咒印的低语",text:"一块漆黑的石碑上刻着禁术,触碰它的瞬间,强大的力量顺着指尖涌入,同时有什么阴冷的东西爬上了后颈……",
@@ -959,7 +959,7 @@ const EVENTS = [
   {ic:"🏥",title:"医疗班营地",text:"前线医疗班正在转移伤员,有人认出了你的护额,示意你坐下处理伤势。",
    opts:[
      {t:"🩹 接受治疗(回复 22 点生命)",f:g=>{g.heal(22);return "绿色查克拉覆盖伤口,疼痛明显缓和。"}},
-     {t:"🕸️ 清理咒印(移除 1 张诅咒)",cond:g=>g.deck.some(c=>c.t==='curse'),f:g=>{const i=g.deck.findIndex(c=>c.t==='curse');const c=g.deck.splice(i,1)[0];return `医疗忍者切断了「${c.n}」的查克拉残留。`}},
+     {t:"🕸️ 清理咒印(移除 1 张诅咒)",cond:g=>g.canRemoveCard()&&g.deck.some(c=>c.t==='curse'),f:g=>{const i=g.deck.findIndex(c=>c.t==='curse');const c=g.removeCardAt(i);return c?`医疗忍者切断了「${c.n}」的查克拉残留。`:"卡组已经不能继续精简。"}},
      {t:"🍙 交出兵粮丸(换取随机秘药)",cond:g=>g.potions.includes('heisyo'),f:g=>{const i=g.potions.indexOf('heisyo');if(i<0)return "你身上没有兵粮丸可以留下。";g.potions.splice(i,1);const p=g.randomPotionKey(['heisyo']);g.addPotion(p);return `你留下兵粮丸,医疗班回赠一份「${POTIONS[p].n}」。`}},
    ]},
   {ic:"🏞️",title:"终末之谷",text:"巨像之间水声轰鸣。你想起两个名字,也想起力量与羁绊从来不是同一条路。",
@@ -992,6 +992,8 @@ const $=id=>document.getElementById(id);
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const SAVE_KEY='nindo-road-save-v2';
+const MIN_DECK_SIZE=6;
+const MAX_CARDS_PER_TURN=100;
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
 const boundedInt=(v,fallback,min,max)=>{
   const n=Number(v);
@@ -1164,7 +1166,7 @@ const G={
         version:2,character:this.character,hp:this.hp,maxHp:this.maxHp,gold:this.gold,
         act:this.act,row:this.row,curCol:this.curCol,mapRows:this.mapRows,
         deck:this.deck.map(c=>({key:c.key,upgraded:!!c.upgraded})),relics:this.relics,potions:this.potions,stats:this.stats,
-        permStr:this.permStr,nodes
+        permStr:this.permStr,removeCount:this.removeCount,nodes
       }));
     }catch(e){}
   },
@@ -1233,6 +1235,7 @@ const G={
     const stat=k=>boundedInt(own(stats,k)?stats[k]:0,0,0,999999999);
     this.stats={dmg:stat('dmg'),kills:stat('kills'),cards:stat('cards'),turns:stat('turns'),elites:stat('elites')};
     this.permStr=boundedInt(s.permStr,0,0,99);
+    this.removeCount=boundedInt(s.removeCount,0,0,999);
     this.mapRows=MAP_RULES.rows;this.nodes=nodes;
     this.pendingRemove=false;this._ended=false;this.combatEnded=false;this.busy=false;this.picked=null;
     $('topbar').classList.add('on');this.updateTopbar();this.renderMap();show('screen-map');
@@ -1285,6 +1288,14 @@ const G={
   characterEventCard(kind){
     return CHARACTER_EVENT_CARDS[kind][this.character]||CHARACTER_EVENT_CARDS[kind].naruto;
   },
+  canRemoveCard(){return Array.isArray(this.deck)&&this.deck.length>MIN_DECK_SIZE},
+  removePrice(){return 75+(this.removeCount||0)*25},
+  removeCardAt(index){
+    if(!this.canRemoveCard()||!Number.isInteger(index)||index<0||index>=this.deck.length)return null;
+    const [card]=this.deck.splice(index,1);
+    if(card)this.removeCount=(this.removeCount||0)+1;
+    return card||null;
+  },
 
   /* ---------- 新开局 ---------- */
   newRun(charKey=null){
@@ -1297,7 +1308,7 @@ const G={
     this.act=0;this.row=0;this.curCol=-1;
     this.relics=[];this.potions=['heisyo'];this.pendingRemove=false;
     this.stats={dmg:0,kills:0,cards:0,turns:0,elites:0};
-    this.permStr=0;
+    this.permStr=0;this.removeCount=0;
     this.deck=C.deck.map(k=>mkCard(k));
     this.startAct(0);
   },
@@ -1832,7 +1843,7 @@ Object.assign(G,{
       this.fxText(this.playerEl(),`查克拉-${chakraPenalty}`,'blk');
       this.genjutsu=0;this.chakraDrain=0;
     }
-    this.firstAtk=true;this.firstSkl=true;this.attacksPlayed=0;this.skillsPlayed=0;
+    this.firstAtk=true;this.firstSkl=true;this.attacksPlayed=0;this.skillsPlayed=0;this.cardsPlayedThisTurn=0;
     this.vulnDrawConsumed=false;this.vulnDrawReady=this.vulnDrawPower>0;
     if(this.clonePerTurn){this.clones+=this.clonePerTurn;this.fxText(this.playerEl(),'影分身+'+this.clonePerTurn,'blk')}
     if(this.turn===1&&this.hasRelic('chakra_bead')){this.str+=1;this.flashRelic('chakra_bead')}
@@ -1942,10 +1953,14 @@ Object.assign(G,{
   },
   playCardAt(idx,target){
     const c=this.hand[idx];if(!c||c.c>this.energy)return;
+    if((this.cardsPlayedThisTurn||0)>=MAX_CARDS_PER_TURN){
+      this.picked=null;$('target-hint').classList.remove('on');this.renderCombat();
+      return toast(`本回合已达到 ${MAX_CARDS_PER_TURN} 张出牌上限,请结束回合`);
+    }
     this.picked=null;$('target-hint').classList.remove('on');
     this.cardPlayFx(c);
     this.hand.splice(idx,1);
-    this.stats.cards++;
+    this.stats.cards++;this.cardsPlayedThisTurn=(this.cardsPlayedThisTurn||0)+1;
     this.execCard(c,target);
     if(this.hp<=0){this.gameOver();return}
     if(this.combatEnded)return;
@@ -2008,14 +2023,27 @@ Object.assign(G,{
     return Math.max(0,block);
   },
   cardDamageText(c){
-    const bonus=this.cardAttackBonus(c);
     const me={str:this.str||0,weak:this.weak||0};
     const alive=(this.enemies||[]).filter(e=>e.hp>0);
     const targets=alive.length?alive:[{vuln:0,weak:0,burn:0}];
     const vals=[...new Set((targets.length?targets:[{vuln:0}]).map(t=>{
-      let d=this.calc(this.cardConditionalBase(c,t)+bonus,me,t);
+      let d=this.calc(this.cardConditionalBase(c,t),me,t);
       if(t.stealth&&!c.ignoreStealth)d=Math.ceil(d*0.5);
       return d;
+    }))].sort((a,b)=>a-b);
+    return vals.length>1?`${vals[0]}-${vals[vals.length-1]}`:`${vals[0]||0}`;
+  },
+  cardFirstHitBonusText(c){
+    const bonus=this.cardAttackBonus(c);
+    if(!bonus)return '';
+    const me={str:this.str||0,weak:this.weak||0};
+    const alive=(this.enemies||[]).filter(e=>e.hp>0);
+    const targets=alive.length?alive:[{vuln:0,weak:0,burn:0}];
+    const vals=[...new Set(targets.map(t=>{
+      const base=this.cardConditionalBase(c,t);
+      let normal=this.calc(base,me,t),boosted=this.calc(base+bonus,me,t);
+      if(t.stealth&&!c.ignoreStealth){normal=Math.ceil(normal*0.5);boosted=Math.ceil(boosted*0.5)}
+      return Math.max(0,boosted-normal);
     }))].sort((a,b)=>a-b);
     return vals.length>1?`${vals[0]}-${vals[vals.length-1]}`:`${vals[0]||0}`;
   },
@@ -2039,6 +2067,8 @@ Object.assign(G,{
       const hits=this.cardEffectiveHits(c);
       const dmg=hits>1?`<b>${d}</b>×<b>${hits}</b>`:`<b>${d}</b>`;
       parts.push(`${c.aoe?'对<b>所有</b>敌人':''}造成 ${dmg} 点伤害`);
+      const firstHitBonus=this.cardFirstHitBonusText(c);
+      if(firstHitBonus)parts.push(`本牌首次命中额外造成 <b>${firstHitBonus}</b> 点伤害`);
     }
     if(c.blk||c.blockPerAttacker)parts.push(`获得 <b>${this.cardBlockAmount(c)}</b> 点格挡`);
     if(c.intentBlockPct){
@@ -2176,10 +2206,11 @@ Object.assign(G,{
     const hadDebuffedEnemy=aliveBefore.some(e=>e.weak>0||e.vuln>0||e.burn>0);
     const wasLowHp=this.hp<=this.maxHp*.5;
     const storedBlock=this.block;
-    let bonus=0;
+    let bonus=0,firstHitBonusAvailable=false;
     if(c.t==='atk'&&this.firstAtk){
       if(this.hasRelic('fuuma')){bonus+=4;this.flashRelic('fuuma')}
       if(this.hasRelic('kyuubi_seal')){bonus+=6;this.flashRelic('kyuubi_seal')}
+      firstHitBonusAvailable=bonus>0;
       this.firstAtk=false;
     }
     if(c.t==='skl'&&this.firstSkl){
@@ -2207,7 +2238,9 @@ Object.assign(G,{
         for(let h=0;h<hitCount;h++){
           if(t.hp<=0)break;
           const wasPhase2=t.phase2done;
-          this.dealDamage(t,this.calc(this.cardConditionalBase(c,t)+bonus,me,t),false,!!c.ignoreStealth);
+          const hitBonus=firstHitBonusAvailable?bonus:0;
+          firstHitBonusAvailable=false;
+          this.dealDamage(t,this.calc(this.cardConditionalBase(c,t)+hitBonus,me,t),false,!!c.ignoreStealth);
           if(this.hp<=0)break;
           if(!wasPhase2&&t.phase2done){transformed=true;if(t===target)targetTransformed=true;break}
         }
@@ -2796,6 +2829,7 @@ Object.assign(G,{
   },
   renderShop(){
     const aff=p=>this.gold>=p?'':'cant';
+    const removePrice=this.removePrice();
     let h=`<div class="shop-shell"><div class="act-banner">TRAVELING MERCHANT / 行商补给</div><div class="sec-t">行商的帐篷</div>
       <div class="sec-s">“钱可以买不到忍道，但能让你活着走得更远。” · 持有 <b style="color:var(--gold)">${this.gold}</b> 金币</div>
       <div class="divider"></div><div class="shop-section-title">忍术卷轴</div><div class="cgrid shop-shelf">`;
@@ -2814,7 +2848,8 @@ Object.assign(G,{
     }
     if(this.shopPotion){const p=POTIONS[this.shopPotion];
       h+=`<div class="shop-relic" role="button" tabindex="0" onclick="G.buyPotion()" style="border-color:var(--chakra)"><div class="ric">${p.ic}</div><div class="rname" style="color:var(--chakra)">${p.n}</div><div class="rdesc">${p.d}</div><div class="price ${aff(45)}">🪙 45</div></div>`}
-    h+=`<div class="shop-relic ${this.removeUsed?'sold':''}" role="button" tabindex="0" onclick="G.buyRemove()"><div class="ric">🗑️</div><div class="rname">删卡服务</div><div class="rdesc">从卡组中永久移除一张卡牌</div><div class="price ${aff(75)}">🪙 75</div></div>`;
+    const removeUnavailable=this.removeUsed||!this.canRemoveCard();
+    h+=`<div class="shop-relic ${removeUnavailable?'sold':''}" role="button" tabindex="0" onclick="G.buyRemove()"><div class="ric">🗑️</div><div class="rname">删卡服务</div><div class="rdesc">${this.canRemoveCard()?`从卡组中永久移除一张卡牌,至少保留 ${MIN_DECK_SIZE} 张`:`卡组至少需要保留 ${MIN_DECK_SIZE} 张卡牌`}</div><div class="price ${aff(removePrice)}">🪙 ${removePrice}</div></div>`;
     h+=`</div><div class="center" style="margin-top:18px"><button class="btn ghost" onclick="G.backToMap()">离开商店</button></div></div>`;
     $('screen-shop').innerHTML=h;
   },
@@ -2839,10 +2874,14 @@ Object.assign(G,{
   },
   buyRemove(){
     if(this.removeUsed)return;
-    if(this.gold<75)return toast('金币不足');
+    if(!this.canRemoveCard())return toast(`卡组至少需要保留 ${MIN_DECK_SIZE} 张卡牌`);
+    const price=this.removePrice();
+    if(this.gold<price)return toast('金币不足');
     this.pickFromDeck('选择要移除的卡牌',()=>true,(c,idx)=>{
-      this.gold-=75;this.removeUsed=true;this.deck.splice(idx,1);
-      SFX.card();toast(`移除了「${c.n}」`);this.updateTopbar();this.renderShop();show('screen-shop');
+      if(!this.canRemoveCard()||this.gold<price)return this.renderShop();
+      const removed=this.removeCardAt(idx);if(!removed)return this.renderShop();
+      this.gold-=price;this.removeUsed=true;
+      SFX.card();toast(`移除了「${removed.n}」`);this.updateTopbar();this.renderShop();show('screen-shop');
     });
   },
 
@@ -2863,8 +2902,11 @@ Object.assign(G,{
     if(this.hp<=0)return;
     if(this.pendingRemove){
       this.pendingRemove=false;
+      if(!this.canRemoveCard())return this.backToMap();
       return this.pickFromDeck('选择要移除的卡牌',()=>true,(c,idx)=>{
-        this.deck.splice(idx,1);toast(`移除了「${c.n}」`);this.backToMap();
+        const removed=this.removeCardAt(idx);
+        if(removed)toast(`移除了「${removed.n}」`);
+        this.backToMap();
       },false,()=>this.backToMap());
     }
     $('event-box').innerHTML=`<div class="eic">${this._event.ic}</div>

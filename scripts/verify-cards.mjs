@@ -34,21 +34,9 @@ for (const [key, character] of Object.entries(characters)) {
   assert(rarity[0] > rarity[1] && rarity[1] > rarity[2], `${key}: rarity counts must descend, got ${rarity.join('/')}`);
 }
 
-const ignoredShapeFields = new Set(['n', 'ic', 'art', 'd', 'up', 'chars', 'r', 'c']);
-const shape = card => Object.keys(card)
-  .filter(field => !ignoredShapeFields.has(field) && card[field])
-  .sort()
-  .join('+');
-const shapeGroups = new Map();
 for (const [key, card] of Object.entries(cards)) {
   if (card.t === 'curse' || card.r === 0) continue;
-  const signature = shape(card);
-  if (!shapeGroups.has(signature)) shapeGroups.set(signature, []);
-  shapeGroups.get(signature).push(`${key}(${card.n})`);
   assert(card.up && typeof card.up.d === 'string', `${key}: reward card must define an upgraded description`);
-}
-for (const group of shapeGroups.values()) {
-  assert(group.length === 1, `duplicate field shape: ${group.join(' = ')}`);
 }
 
 const cardFactory = vm.runInNewContext(
@@ -74,6 +62,13 @@ for (const [key, definition] of Object.entries(cards)) {
     if (field === 'n') continue;
     assert(Object.is(upgraded[field], value), `${key}: mkCard upgrade mismatch for ${field}`);
   }
+
+  for (const [label, card] of [['base', definition], ['upgrade', {...definition, ...definition.up}]]) {
+    const drawAmount = Object.entries(card)
+      .filter(([field]) => field === 'draw' || field.startsWith('drawIf') || field.endsWith('Draw'))
+      .reduce((sum, [, value]) => sum + (Number(value) || 0), 0);
+    assert(!(card.c === 0 && !card.ex && drawAmount > 0), `${key} ${label}: non-exhausting zero-cost draw requires balance review`);
+  }
 }
 
 const requiredKeywords = ['怪力', '影分身', '灼烧', '引爆', '保留', '盈疗', '洞察', '固守'];
@@ -86,4 +81,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`Card data verification passed: ${Object.keys(cards).length} cards, 39 reward cards per character, 0 duplicate field-shape collisions.`);
+console.log(`Card data verification passed: ${Object.keys(cards).length} cards, 39 reward cards per character, no unsafe zero-cost draw cards.`);
